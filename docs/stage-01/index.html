@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 1: Markov Chains | Building LLMs from First Principles</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --text: #1a1a1a;
+            --accent: #2563eb;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --code-bg: #f3f4f6;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #111827;
+                --text: #f9fafb;
+                --accent: #60a5fa;
+                --muted: #9ca3af;
+                --border: #374151;
+                --code-bg: #1f2937;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        nav {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta {
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 2.5rem 0 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p { margin-bottom: 1rem; }
+
+        .callout {
+            background: var(--code-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .callout-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        code {
+            font-family: 'SF Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        :not(pre) > code {
+            background: var(--code-bg);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+        }
+
+        ul, ol {
+            margin: 1rem 0 1rem 1.5rem;
+        }
+
+        li { margin-bottom: 0.5rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background: var(--code-bg);
+            font-weight: 600;
+        }
+
+        .interactive-note {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .interactive-note {
+                background: linear-gradient(135deg, #1e3a5f 0%, #312e81 100%);
+                border-color: #3b82f6;
+            }
+        }
+
+        .interactive-note a {
+            color: var(--accent);
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="../">← Building LLMs from First Principles</a>
+    </nav>
+
+    <header>
+        <h1>Stage 1: The Simplest Language Model</h1>
+        <p class="meta">Markov Chains — Where It All Begins</p>
+    </header>
+
+    <main>
+        <div class="interactive-note">
+            <strong>Interactive Version Available!</strong><br>
+            Run the <a href="https://github.com/USER/llm-first-principles/blob/main/code/stage-01/stage_01_markov_interactive.py">marimo notebook</a> locally for interactive sliders, live visualizations, and parameter exploration.
+        </div>
+
+        <h2>Overview</h2>
+        <p>
+            We start with the simplest possible language model: one that predicts the next
+            character based only on counting what came before. This humble model introduces
+            concepts that echo through every modern LLM:
+        </p>
+        <ul>
+            <li><strong>Autoregressive generation</strong>: predicting one token at a time</li>
+            <li><strong>Training = optimization</strong>: learning from data</li>
+            <li><strong>Perplexity</strong>: measuring how "surprised" a model is</li>
+            <li><strong>Temperature</strong>: controlling randomness in generation</li>
+        </ul>
+
+        <h2>What is Language Modeling?</h2>
+        <p>
+            Given the text "The cat sat on the", what word comes next? A <strong>language model</strong>
+            assigns probabilities to text. Formally, it learns:
+        </p>
+        <p>$$P(x_1, x_2, \ldots, x_n)$$</p>
+        <p>
+            The probability of an entire sequence. But sequences can be arbitrarily long!
+            With vocabulary size $|V|$ and sequence length $n$, there are $|V|^n$ possible
+            sequences. That's impossibly large.
+        </p>
+
+        <h3>The Chain Rule to the Rescue</h3>
+        <p>The chain rule of probability lets us factorize:</p>
+        <p>$$P(x_1, x_2, x_3) = P(x_1) \cdot P(x_2 | x_1) \cdot P(x_3 | x_1, x_2)$$</p>
+        <p>In general:</p>
+        <p>$$P(x_1, \ldots, x_n) = \prod_{i=1}^{n} P(x_i | x_1, \ldots, x_{i-1})$$</p>
+        <p>
+            Now we've converted one impossible distribution into $n$ conditional distributions.
+            But each conditional still depends on <em>all</em> previous tokens!
+        </p>
+
+        <h3>The Markov Assumption</h3>
+        <p><strong>Simplifying assumption</strong>: The future depends only on the <em>recent</em> past.</p>
+        <ul>
+            <li><strong>Order-1 (bigram)</strong>: $P(x_i | x_1, \ldots, x_{i-1}) \approx P(x_i | x_{i-1})$</li>
+            <li><strong>Order-k</strong>: $P(x_i | x_1, \ldots, x_{i-1}) \approx P(x_i | x_{i-k}, \ldots, x_{i-1})$</li>
+        </ul>
+        <p>
+            This is <em>wrong</em> for language — "The cat that sat on the mat next to the dog ... <strong>was</strong> sleeping"
+            has long-range dependencies. But wrong assumptions can still be useful!
+        </p>
+
+        <h2>Implementation</h2>
+        <p>The training algorithm is beautifully simple: <strong>just count</strong>.</p>
+
+<pre><code class="language-python">class MarkovChain:
+    def __init__(self, order: int = 1):
+        self.order = order
+        self.counts = defaultdict(Counter)
+        self.totals = defaultdict(int)
+
+    def train(self, tokens: list[str]) -> None:
+        padded = ['&lt;START&gt;'] * self.order + tokens + ['&lt;END&gt;']
+
+        for i in range(len(padded) - self.order):
+            history = tuple(padded[i:i + self.order])
+            next_token = padded[i + self.order]
+
+            self.counts[history][next_token] += 1
+            self.totals[history] += 1
+
+    def probability(self, history: tuple, next_token: str) -> float:
+        if history not in self.counts:
+            return 0.0
+        return self.counts[history][next_token] / self.totals[history]</code></pre>
+
+        <h2>The Fundamental Trade-off</h2>
+        <p>Watch what happens as you increase the order:</p>
+
+        <table>
+            <tr><th>Order</th><th>Train Perplexity</th><th>Test Perplexity</th><th>States</th></tr>
+            <tr><td>1</td><td>~6.5</td><td>~7</td><td>32</td></tr>
+            <tr><td>2</td><td>~2.1</td><td>~3</td><td>185</td></tr>
+            <tr><td>3</td><td>~1.3</td><td>∞</td><td>329</td></tr>
+            <tr><td>5</td><td>~1.1</td><td>∞</td><td>435</td></tr>
+        </table>
+
+        <div class="callout">
+            <div class="callout-title">The trade-off:</div>
+            <p><strong>More context → better predictions</strong><br>
+            <strong>More context → sparser observations</strong></p>
+            <p>This is why we need neural networks: they can <em>generalize</em> from similar patterns.</p>
+        </div>
+
+        <h2>Key Insight: Training = Counting = MLE</h2>
+        <p>
+            Our counting procedure is actually <strong>maximum likelihood estimation</strong>.
+            For a bigram model, the log-likelihood is:
+        </p>
+        <p>$$\log L(\theta) = \sum_{a,b} \text{count}(a,b) \cdot \log \theta_{a \to b}$$</p>
+        <p>Taking derivatives and using Lagrange multipliers, we get:</p>
+        <p>$$\theta^*_{a \to b} = \frac{\text{count}(a,b)}{\text{count}(a, \cdot)}$$</p>
+        <p><strong>Counting <em>is</em> optimization!</strong></p>
+
+        <h2>Perplexity</h2>
+        <p>$$\text{Perplexity} = \exp\left(-\frac{1}{N} \sum_{i=1}^{N} \log P(x_i | \text{context})\right)$$</p>
+        <p>
+            <strong>Intuition:</strong> If perplexity = 50, the model is as uncertain as choosing
+            uniformly among 50 equally likely options at each position.
+        </p>
+
+        <h2>Temperature Sampling</h2>
+        <p>Temperature controls the "randomness" of sampling:</p>
+        <p>$$P'(x) = \frac{\exp(\log P(x) / T)}{\sum_y \exp(\log P(y) / T)}$$</p>
+        <ul>
+            <li><strong>T &lt; 1</strong>: Distribution becomes <em>sharper</em> (more deterministic)</li>
+            <li><strong>T = 1</strong>: Original distribution</li>
+            <li><strong>T &gt; 1</strong>: Distribution becomes <em>flatter</em> (more random)</li>
+        </ul>
+
+        <h2>What's Next?</h2>
+        <p>
+            We've built a working language model! But it can't generalize — it only works with
+            exact pattern matches. To move beyond these limitations, we need neural networks.
+            But to train neural networks, we need gradients.
+        </p>
+        <p>
+            <strong>→ Stage 2: Automatic Differentiation</strong>
+        </p>
+    </main>
+
+    <footer>
+        <span><a href="../">← Home</a></span>
+        <span>Stage 2: Coming Soon →</span>
+    </footer>
+</body>
+</html>

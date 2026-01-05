@@ -1,4 +1,4 @@
-name: deploy-book
+name: deploy-docs
 
 on:
   push:
@@ -21,11 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -33,16 +28,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install jupyter-book
+          pip install mkdocs-material pymdown-extensions
 
-      - name: Build the book
+      - name: Build the docs
         run: |
-          jupyter-book build .
+          mkdocs build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '_build/html'
+          path: 'site'
 
   deploy:
     environment:

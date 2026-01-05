@@ -36,3 +36,6 @@ Thumbs.db
 
 # Jupyter Book
 _build/
+
+# MkDocs
+site/

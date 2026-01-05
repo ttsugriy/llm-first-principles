@@ -351,6 +351,13 @@ def _(MarkovChain, SAMPLE_TEXT, order_slider):
 
 @app.cell
 def _(mo, model, test_ppl, train_ppl):
+    # Format test perplexity (handle infinity)
+    test_ppl_str = f"{test_ppl:.2f}" if test_ppl != float('inf') else "∞ (unseen n-grams)"
+
+    # Detect issues
+    overfitting_msg = "**Overfitting detected!** Test perplexity >> Train perplexity" if test_ppl > train_ppl * 1.5 and test_ppl != float('inf') else ""
+    inf_msg = "**Infinite perplexity!** The test set contains n-grams never seen in training." if test_ppl == float('inf') else ""
+
     mo.md(
         f"""
         ### Model Statistics
@@ -361,10 +368,10 @@ def _(mo, model, test_ppl, train_ppl):
         | **Unique states (histories)** | {model.num_states():,} |
         | **Vocabulary size** | {len(model.vocab)} |
         | **Train perplexity** | {train_ppl:.2f} |
-        | **Test perplexity** | {test_ppl:.2f if test_ppl != float('inf') else "∞ (unseen n-grams)"} |
+        | **Test perplexity** | {test_ppl_str} |
 
-        {"**Overfitting detected!** Test perplexity >> Train perplexity" if test_ppl > train_ppl * 1.5 and test_ppl != float('inf') else ""}
-        {"**Infinite perplexity!** The test set contains n-grams never seen in training." if test_ppl == float('inf') else ""}
+        {overfitting_msg}
+        {inf_msg}
         """
     )
     return

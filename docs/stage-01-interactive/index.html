@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="./favicon.ico" />
+    <!-- Preload is necessary because we show these images when we disconnect from the server,
+    but at that point we cannot load these images from the server -->
+    <link rel="preload" href="./assets/gradient-yHQUC_QB.png" as="image" />
+    <link rel="preload" href="./assets/noise-60BoTA8O.png" as="image" />
+    <!-- Preload the fonts -->
+    <link rel="preload" href="./assets/Lora-VariableFont_wght-B2ootaw-.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/PTSans-Regular-CxL0S8W7.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/PTSans-Bold-D9fedIX3.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Regular-BTCkDNvf.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Medium-DU3aDxX5.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Bold-CLVRCuM9.ttf" as="font" crossorigin="anonymous" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="a marimo app" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.json" />
+
+    <script data-marimo="true">
+      function __resizeIframe(obj) {
+        var scrollbarHeight = 20; // Max between windows, mac, and linux
+
+        function setHeight() {
+          // Guard against race condition where iframe isn't ready
+          if (!obj.contentWindow?.document?.documentElement) {
+            return;
+          }
+          var element = obj.contentWindow.document.documentElement;
+          // If there is no vertical scrollbar, we don't need to resize the iframe
+          if (element.scrollHeight === element.clientHeight) {
+            return;
+          }
+
+          // Create a new height that includes the scrollbar height if it's visible
+          var hasHorizontalScrollbar = element.scrollWidth > element.clientWidth;
+          var newHeight = element.scrollHeight + (hasHorizontalScrollbar ? scrollbarHeight : 0);
+
+          // Only update the height if it's different from the current height
+          if (obj.style.height !== `${newHeight}px`) {
+            obj.style.height = `${newHeight}px`;
+          }
+        }
+
+        // Resize the iframe to the height of the content and bottom scrollbar height
+        setHeight();
+
+        // Resize the iframe when the content changes
+        const resizeObserver = new ResizeObserver((entries) => {
+          setHeight();
+        });
+        // Only observe if iframe content is ready
+        if (obj.contentWindow?.document?.body) {
+          resizeObserver.observe(obj.contentWindow.document.body);
+        }
+      }
+    </script>
+    <marimo-filename hidden>notebook.py</marimo-filename>
+    <!-- TODO(Trevor): Legacy, required by VS Code plugin. Remove when plugin is updated (see marimo/server/_templates/template.py) -->
+    <marimo-version data-version="{{ version }}" hidden></marimo-version>
+    <marimo-user-config data-config="{{ user_config }}" hidden></marimo-user-config>
+    <marimo-server-token data-token="{{ server_token }}" hidden></marimo-server-token>
+    <!-- /TODO -->
+    <title>stage 01 markov interactive</title>
+    <script type="module" crossorigin src="./assets/index-vG-gdKWq.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/preload-helper-DImqtvgl.js">
+    <link rel="modulepreload" crossorigin href="./assets/chunk-DZLz74EQ.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-BcIddLXZ.js">
+    <link rel="modulepreload" crossorigin href="./assets/compiler-runtime-Cr9loedd.js">
+    <link rel="modulepreload" crossorigin href="./assets/jsx-runtime-mwDPpfh_.js">
+    <link rel="modulepreload" crossorigin href="./assets/useEventListener-D1FLsfmf.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-dom-D6bRRS5R.js">
+    <link rel="modulepreload" crossorigin href="./assets/Combination-DWHMUa0d.js">
+    <link rel="modulepreload" crossorigin href="./assets/cn-DEUt_IsG.js">
+    <link rel="modulepreload" crossorigin href="./assets/menu-items-Dm8s6sMr.js">
+    <link rel="modulepreload" crossorigin href="./assets/hotkeys-ClCtr3_I.js">
+    <link rel="modulepreload" crossorigin href="./assets/button-Zjtz1syG.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-1ZdxNBaX.js">
+    <link rel="modulepreload" crossorigin href="./assets/createLucideIcon-CaU6_Jtx.js">
+    <link rel="modulepreload" crossorigin href="./assets/check-Dc7YCRim.js">
+    <link rel="modulepreload" crossorigin href="./assets/select-Di-JjADd.js">
+    <link rel="modulepreload" crossorigin href="./assets/multi-map-COQ6MvP7.js">
+    <link rel="modulepreload" crossorigin href="./assets/chevron-right-BExEgq1M.js">
+    <link rel="modulepreload" crossorigin href="./assets/dropdown-menu-ChUikXiI.js">
+    <link rel="modulepreload" crossorigin href="./assets/tooltip-CerBk_un.js">
+    <link rel="modulepreload" crossorigin href="./assets/_Uint8Array-D5Z9rM2X.js">
+    <link rel="modulepreload" crossorigin href="./assets/_getTag-CVRrQL_Q.js">
+    <link rel="modulepreload" crossorigin href="./assets/_baseIsEqual-CVFfFJm2.js">
+    <link rel="modulepreload" crossorigin href="./assets/jotai-BTnrNcC1.js">
+    <link rel="modulepreload" crossorigin href="./assets/invariant-D5a0EE05.js">
+    <link rel="modulepreload" crossorigin href="./assets/isArrayLikeObject-DKyJYtr8.js">
+    <link rel="modulepreload" crossorigin href="./assets/merge-Dvc5opZF.js">
+    <link rel="modulepreload" crossorigin href="./assets/zod-U2NFpcFA.js">
+    <link rel="modulepreload" crossorigin href="./assets/utils-BpjB6B-Y.js">
+    <link rel="modulepreload" crossorigin href="./assets/requests-DD3OWR81.js">
+    <link rel="modulepreload" crossorigin href="./assets/once-3GsqimLM.js">
+    <link rel="modulepreload" crossorigin href="./assets/toDate-CnvLb18a.js">
+    <link rel="modulepreload" crossorigin href="./assets/_baseSlice-BWZ0PeaJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/_arrayMap-DQI2GUNb.js">
+    <link rel="modulepreload" crossorigin href="./assets/isSymbol-xTSywenE.js">
+    <link rel="modulepreload" crossorigin href="./assets/toString-CBnct2wx.js">
+    <link rel="modulepreload" crossorigin href="./assets/_hasUnicode-3DIK_jNi.js">
+    <link rel="modulepreload" crossorigin href="./assets/upperFirst-CBQfDRod.js">
+    <link rel="modulepreload" crossorigin href="./assets/capitalize-CBqvgOfA.js">
+    <link rel="modulepreload" crossorigin href="./assets/ai-model-dropdown-CCxgO0mJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/badge-CxcKOiwY.js">
+    <link rel="modulepreload" crossorigin href="./assets/use-toast-BPMVOfO3.js">
+    <link rel="modulepreload" crossorigin href="./assets/constants-CEISdYm1.js">
+    <link rel="modulepreload" crossorigin href="./assets/Deferred-Mppm0cvJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/config-e9OVB2bJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/uuid-4lb_EYpq.js">
+    <link rel="modulepreload" crossorigin href="./assets/key-BOd4SjWu.js">
+    <link rel="modulepreload" crossorigin href="./assets/connection-CsVOmbVi.js">
+    <link rel="modulepreload" crossorigin href="./assets/useLifecycle-CxNbfWnk.js">
+    <link rel="modulepreload" crossorigin href="./assets/useNonce-CL3DrH5R.js">
+    <link rel="modulepreload" crossorigin href="./assets/capabilities-CEL4hxAo.js">
+    <link rel="modulepreload" crossorigin href="./assets/createReducer-C6dJ71nW.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-o3-gJN-A.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-DdXBxU_X.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-Dv7WCK3M.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-w3K5vvwl.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-DXPWGCwf.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-BOJjflZo.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-ws1ADWL0.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-BGbJQ9FV.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-dCpey1ug.js">
+    <link rel="modulepreload" crossorigin href="./assets/stex-w1KpyykF.js">
+    <link rel="modulepreload" crossorigin href="./assets/_baseProperty-c4IQJQis.js">
+    <link rel="modulepreload" crossorigin href="./assets/toNumber-CTOPJrpu.js">
+    <link rel="modulepreload" crossorigin href="./assets/now-BXqTLlmI.js">
+    <link rel="modulepreload" crossorigin href="./assets/debounce-BUM2losY.js">
+    <link rel="modulepreload" crossorigin href="./assets/toInteger-Bor4StOs.js">
+    <link rel="modulepreload" crossorigin href="./assets/type-DVCC-93H.js">
+    <link rel="modulepreload" crossorigin href="./assets/marked.esm-BB_RKOA5.js">
+    <link rel="modulepreload" crossorigin href="./assets/main-CCaZmKLi.js">
+    <link rel="modulepreload" crossorigin href="./assets/cells-DV6dfoCq.js">
+    <link rel="modulepreload" crossorigin href="./assets/kbd-BfBY_QKr.js">
+    <link rel="modulepreload" crossorigin href="./assets/renderShortcut-a-3t8sis.js">
+    <link rel="modulepreload" crossorigin href="./assets/useEvent-itkPNnCe.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDeleteCell-Ba4wqcnv.js">
+    <link rel="modulepreload" crossorigin href="./assets/lazy-ijSQmhmN.js">
+    <link rel="modulepreload" crossorigin href="./assets/defaultLocale-DEWTIUVh.js">
+    <link rel="modulepreload" crossorigin href="./assets/precisionRound-BLxyDkD7.js">
+    <link rel="modulepreload" crossorigin href="./assets/defaultLocale-B9-NA0ur.js">
+    <link rel="modulepreload" crossorigin href="./assets/vega-loader.browser-Cp1bHVeU.js">
+    <link rel="modulepreload" crossorigin href="./assets/tooltip-Yli91_uW.js">
+    <link rel="modulepreload" crossorigin href="./assets/ErrorBoundary-5_63wxX3.js">
+    <link rel="modulepreload" crossorigin href="./assets/alert-dialog-BZHeDuaE.js">
+    <link rel="modulepreload" crossorigin href="./assets/dialog-CzmSXArA.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDebounce--Sw2WRQ5.js">
+    <link rel="modulepreload" crossorigin href="./assets/numbers-Dft9TKC1.js">
+    <link rel="modulepreload" crossorigin href="./assets/SSRProvider-CMB_HLxO.js">
+    <link rel="modulepreload" crossorigin href="./assets/context-BqH7Jigl.js">
+    <link rel="modulepreload" crossorigin href="./assets/useNumberFormatter-BPGR7t2W.js">
+    <link rel="modulepreload" crossorigin href="./assets/usePress-C2JVmCUi.js">
+    <link rel="modulepreload" crossorigin href="./assets/input-DuVApvWu.js">
+    <link rel="modulepreload" crossorigin href="./assets/ImperativeModal-ExH1h9et.js">
+    <link rel="modulepreload" crossorigin href="./assets/cell-link-Bp_0p3CR.js">
+    <link rel="modulepreload" crossorigin href="./assets/alert-B5fh2kMN.js">
+    <link rel="modulepreload" crossorigin href="./assets/links-90C38wV6.js">
+    <link rel="modulepreload" crossorigin href="./assets/state-BHcVA2dC.js">
+    <link rel="modulepreload" crossorigin href="./assets/MarimoErrorOutput-ZIgqDBQe.js">
+    <link rel="modulepreload" crossorigin href="./assets/spinner-1oeuzoUk.js">
+    <link rel="modulepreload" crossorigin href="./assets/_arrayReduce-DV4IVFuG.js">
+    <link rel="modulepreload" crossorigin href="./assets/startCase-RfubwhHM.js">
+    <link rel="modulepreload" crossorigin href="./assets/strings-DRRWXNT2.js">
+    <link rel="modulepreload" crossorigin href="./assets/command-DhuV6_de.js">
+    <link rel="modulepreload" crossorigin href="./assets/popover-BoRNi4dY.js">
+    <link rel="modulepreload" crossorigin href="./assets/useRunCells-WnlQjiPG.js">
+    <link rel="modulepreload" crossorigin href="./assets/copy-SPzF4B1M.js">
+    <link rel="modulepreload" crossorigin href="./assets/copy-CDDalEhv.js">
+    <link rel="modulepreload" crossorigin href="./assets/copy-icon-Ckew1l1_.js">
+    <link rel="modulepreload" crossorigin href="./assets/mode-BK9SOQXS.js">
+    <link rel="modulepreload" crossorigin href="./assets/purify.es-CmG1k0Cr.js">
+    <link rel="modulepreload" crossorigin href="./assets/RenderHTML-BBVeCFEd.js">
+    <link rel="modulepreload" crossorigin href="./assets/table-Bj1zHGNd.js">
+    <link rel="modulepreload" crossorigin href="./assets/tabs-CGHt3Blh.js">
+    <link rel="modulepreload" crossorigin href="./assets/useAsyncData-BPaRR7vx.js">
+    <link rel="modulepreload" crossorigin href="./assets/useIframeCapabilities-BLQ5-OdI.js">
+    <link rel="modulepreload" crossorigin href="./assets/error-banner-rdjPobI5.js">
+    <link rel="modulepreload" crossorigin href="./assets/formats-Cit8Tr_y.js">
+    <link rel="modulepreload" crossorigin href="./assets/useTheme-CJkb1R7C.js">
+    <link rel="modulepreload" crossorigin href="./assets/en-US-Bxm1PGFP.js">
+    <link rel="modulepreload" crossorigin href="./assets/isValid-CFczudfT.js">
+    <link rel="modulepreload" crossorigin href="./assets/maps-cpHLsM9S.js">
+    <link rel="modulepreload" crossorigin href="./assets/shim-FF_l0CN4.js">
+    <link rel="modulepreload" crossorigin href="./assets/download-DrI1Gw05.js">
+    <link rel="modulepreload" crossorigin href="./assets/extends-DhnjMUSs.js">
+    <link rel="modulepreload" crossorigin href="./assets/emotion-is-prop-valid.esm-CjexKXdD.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDateFormatter-CQ9jB95h.js">
+    <link rel="modulepreload" crossorigin href="./assets/range-ZclXTdAh.js">
+    <link rel="modulepreload" crossorigin href="./assets/table-CmDieCGZ.js">
+    <link rel="modulepreload" crossorigin href="./assets/Output-BNpy6qAs.js">
+    <link rel="modulepreload" crossorigin href="./assets/name-cell-input-VEOAxqMs.js">
+    <link rel="modulepreload" crossorigin href="./assets/useHotkey-Ca6pS8sJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/objectWithoutPropertiesLoose-CNyONSoo.js">
+    <link rel="modulepreload" crossorigin href="./assets/esm-C1NahKuy.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-bbz7Slba.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-Duhp104c.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-CH5tSYom.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-Zii08NWl.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-C27NmZjJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-DWvYBldG.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-B309G_89.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-5c-fdIcP.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-COzB_eCZ.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-BMfw4eeq.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-Z76N9TEr.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-C3eCrV3K.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-3nYEuz31.js">
+    <link rel="modulepreload" crossorigin href="./assets/apl-DOdxvsp7.js">
+    <link rel="modulepreload" crossorigin href="./assets/asciiarmor-iHsvYBsh.js">
+    <link rel="modulepreload" crossorigin href="./assets/asn1-CjQdFpKC.js">
+    <link rel="modulepreload" crossorigin href="./assets/brainfuck-DtaPUQOb.js">
+    <link rel="modulepreload" crossorigin href="./assets/clike-CEj-3lIu.js">
+    <link rel="modulepreload" crossorigin href="./assets/clojure-BoRNIjWi.js">
+    <link rel="modulepreload" crossorigin href="./assets/cmake-BDPy65SJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/cobol-B1NZRKFh.js">
+    <link rel="modulepreload" crossorigin href="./assets/coffeescript-C6u-3CUG.js">
+    <link rel="modulepreload" crossorigin href="./assets/commonlisp-PnS0RzOo.js">
+    <link rel="modulepreload" crossorigin href="./assets/crystal-CmwgoX1x.js">
+    <link rel="modulepreload" crossorigin href="./assets/css-BOMeM4Jz.js">
+    <link rel="modulepreload" crossorigin href="./assets/cypher-BNcNWKra.js">
+    <link rel="modulepreload" crossorigin href="./assets/d-BMO4C4Kr.js">
+    <link rel="modulepreload" crossorigin href="./assets/diff-pLFk18zx.js">
+    <link rel="modulepreload" crossorigin href="./assets/dtd-Cufzm3tN.js">
+    <link rel="modulepreload" crossorigin href="./assets/dylan-CohSy5uK.js">
+    <link rel="modulepreload" crossorigin href="./assets/ecl-BhEt80nJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/eiffel-CKJVLfM7.js">
+    <link rel="modulepreload" crossorigin href="./assets/elm-ClkLCCoU.js">
+    <link rel="modulepreload" crossorigin href="./assets/erlang-D2TH4-Et.js">
+    <link rel="modulepreload" crossorigin href="./assets/simple-mode-CXCwEnyS.js">
+    <link rel="modulepreload" crossorigin href="./assets/factor-6NmCZvh-.js">
+    <link rel="modulepreload" crossorigin href="./assets/forth-DV7ZwZS0.js">
+    <link rel="modulepreload" crossorigin href="./assets/fortran-C9_PuY2l.js">
+    <link rel="modulepreload" crossorigin href="./assets/gas-CGuyKmgF.js">
+    <link rel="modulepreload" crossorigin href="./assets/gherkin-BwmPTL6e.js">
+    <link rel="modulepreload" crossorigin href="./assets/groovy-DJxiqoVo.js">
+    <link rel="modulepreload" crossorigin href="./assets/haskell-DOcPZqkO.js">
+    <link rel="modulepreload" crossorigin href="./assets/haxe-BVSsVSdX.js">
+    <link rel="modulepreload" crossorigin href="./assets/idl-D5drHePd.js">
+    <link rel="modulepreload" crossorigin href="./assets/javascript-rI4fd75W.js">
+    <link rel="modulepreload" crossorigin href="./assets/jinja2-BrZGqXAx.js">
+    <link rel="modulepreload" crossorigin href="./assets/julia-z0xq3uqV.js">
+    <link rel="modulepreload" crossorigin href="./assets/livescript-BbVvVfSY.js">
+    <link rel="modulepreload" crossorigin href="./assets/lua-CtEmKXsU.js">
+    <link rel="modulepreload" crossorigin href="./assets/mathematica-B-SjlQIm.js">
+    <link rel="modulepreload" crossorigin href="./assets/mbox-BdnWvTJv.js">
+    <link rel="modulepreload" crossorigin href="./assets/mirc-Cyycx3am.js">
+    <link rel="modulepreload" crossorigin href="./assets/mllike-ZkoLEmrh.js">
+    <link rel="modulepreload" crossorigin href="./assets/modelica-DIZcE54y.js">
+    <link rel="modulepreload" crossorigin href="./assets/mscgen-MISBZbzR.js">
+    <link rel="modulepreload" crossorigin href="./assets/mumps-Cnu1tNUa.js">
+    <link rel="modulepreload" crossorigin href="./assets/nsis-CUebodQn.js">
+    <link rel="modulepreload" crossorigin href="./assets/ntriples-2rre165b.js">
+    <link rel="modulepreload" crossorigin href="./assets/octave-C7u5CeUZ.js">
+    <link rel="modulepreload" crossorigin href="./assets/oz-D5aE2uST.js">
+    <link rel="modulepreload" crossorigin href="./assets/pascal-DTApZM3o.js">
+    <link rel="modulepreload" crossorigin href="./assets/perl-Ckgh9LJK.js">
+    <link rel="modulepreload" crossorigin href="./assets/pig-jAl9a1Kh.js">
+    <link rel="modulepreload" crossorigin href="./assets/powershell-C_IKzlOl.js">
+    <link rel="modulepreload" crossorigin href="./assets/properties-BdVxDpDJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/protobuf-DLu_SUI6.js">
+    <link rel="modulepreload" crossorigin href="./assets/pug-fgP-dIQ4.js">
+    <link rel="modulepreload" crossorigin href="./assets/puppet-CShRizHW.js">
+    <link rel="modulepreload" crossorigin href="./assets/python-ChTwa-ru.js">
+    <link rel="modulepreload" crossorigin href="./assets/q-D2OTJZH4.js">
+    <link rel="modulepreload" crossorigin href="./assets/r-DRqIAgj1.js">
+    <link rel="modulepreload" crossorigin href="./assets/rpm-BStFD27m.js">
+    <link rel="modulepreload" crossorigin href="./assets/ruby-C37hkPS4.js">
+    <link rel="modulepreload" crossorigin href="./assets/sas-CCEIl8BG.js">
+    <link rel="modulepreload" crossorigin href="./assets/scheme-B0jflgrk.js">
+    <link rel="modulepreload" crossorigin href="./assets/shell-Cq7B0hFW.js">
+    <link rel="modulepreload" crossorigin href="./assets/sieve-DS0lS4kt.js">
+    <link rel="modulepreload" crossorigin href="./assets/smalltalk-HHM53Uii.js">
+    <link rel="modulepreload" crossorigin href="./assets/sparql-BMqtnWzI.js">
+    <link rel="modulepreload" crossorigin href="./assets/stylus-Br2gMpMI.js">
+    <link rel="modulepreload" crossorigin href="./assets/swift-BJ8qi_zI.js">
+    <link rel="modulepreload" crossorigin href="./assets/tcl-D0knbOX7.js">
+    <link rel="modulepreload" crossorigin href="./assets/textile-DrRQSuh3.js">
+    <link rel="modulepreload" crossorigin href="./assets/toml-C2kDGfZi.js">
+    <link rel="modulepreload" crossorigin href="./assets/troff-2dFxqWQa.js">
+    <link rel="modulepreload" crossorigin href="./assets/ttcn-cfg-CBXajWEo.js">
+    <link rel="modulepreload" crossorigin href="./assets/ttcn-Cj4sIofh.js">
+    <link rel="modulepreload" crossorigin href="./assets/turtle-CDdPtp5F.js">
+    <link rel="modulepreload" crossorigin href="./assets/vb-CtEhAMYU.js">
+    <link rel="modulepreload" crossorigin href="./assets/vbscript-B0nzdgzL.js">
+    <link rel="modulepreload" crossorigin href="./assets/velocity-DR7TSall.js">
+    <link rel="modulepreload" crossorigin href="./assets/verilog-MmKxT9bW.js">
+    <link rel="modulepreload" crossorigin href="./assets/vhdl-0jJrpQNA.js">
+    <link rel="modulepreload" crossorigin href="./assets/webidl-D9f20BkN.js">
+    <link rel="modulepreload" crossorigin href="./assets/xquery-B0eSGN9q.js">
+    <link rel="modulepreload" crossorigin href="./assets/yacas-BS613OH9.js">
+    <link rel="modulepreload" crossorigin href="./assets/z80-CJYC52xh.js">
+    <link rel="modulepreload" crossorigin href="./assets/esm-DXHMyc8g.js">
+    <link rel="modulepreload" crossorigin href="./assets/trash-DpmcvlCC.js">
+    <link rel="modulepreload" crossorigin href="./assets/ConsoleOutput-CcWTsPJI.js">
+    <link rel="modulepreload" crossorigin href="./assets/icons-HGhpVPVr.js">
+    <link rel="modulepreload" crossorigin href="./assets/add-missing-import-pmcK06GU.js">
+    <link rel="modulepreload" crossorigin href="./assets/blob-B96v6VlX.js">
+    <link rel="modulepreload" crossorigin href="./assets/add-cell-with-ai-DF_F9Sqz.js">
+    <link rel="modulepreload" crossorigin href="./assets/chart-no-axes-column-C2nGNVra.js">
+    <link rel="modulepreload" crossorigin href="./assets/square-function-DncO0xCM.js">
+    <link rel="modulepreload" crossorigin href="./assets/spec-Cdxt7KQF.js">
+    <link rel="modulepreload" crossorigin href="./assets/focus--Piy3rX5.js">
+    <link rel="modulepreload" crossorigin href="./assets/useInstallPackage-B1IBfLxp.js">
+    <link rel="modulepreload" crossorigin href="./assets/column-preview-BavQbx6K.js">
+    <link rel="modulepreload" crossorigin href="./assets/useAddCell-Ig4Te4YX.js">
+    <link rel="modulepreload" crossorigin href="./assets/toggle-CPnmDQd7.js">
+    <link rel="modulepreload" crossorigin href="./assets/api-qc-D7yz9.js">
+    <link rel="modulepreload" crossorigin href="./assets/globals-Bcw0dX52.js">
+    <link rel="modulepreload" crossorigin href="./assets/share-Bur20myQ.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-I8SxGjN9.js">
+    <link rel="modulepreload" crossorigin href="./assets/memoize-DhF8x4Aa.js">
+    <link rel="modulepreload" crossorigin href="./assets/_toKey-16owuO_q.js">
+    <link rel="modulepreload" crossorigin href="./assets/_baseSet-L2qemYhz.js">
+    <link rel="modulepreload" crossorigin href="./assets/utilities.esm-SfrtJjbv.js">
+    <link rel="modulepreload" crossorigin href="./assets/floating-outline-CgxonLQ-.js">
+    <link rel="modulepreload" crossorigin href="./assets/eye-off-BIDUS-iw.js">
+    <link rel="modulepreload" crossorigin href="./assets/plus-DWAWtOBJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/readonly-python-code-ChK3PfU6.js">
+    <link rel="modulepreload" crossorigin href="./assets/file-video-camera-gcIrLbdD.js">
+    <link rel="modulepreload" crossorigin href="./assets/file-text-Z92DzmMA.js">
+    <link rel="modulepreload" crossorigin href="./assets/file-Cesos4Qp.js">
+    <link rel="modulepreload" crossorigin href="./assets/types--mPsPGF4.js">
+    <link rel="modulepreload" crossorigin href="./assets/label-FIGQlkj5.js">
+    <link rel="modulepreload" crossorigin href="./assets/form-Cdn744fY.js">
+    <link rel="modulepreload" crossorigin href="./assets/textarea-DA_SbCD5.js">
+    <link rel="modulepreload" crossorigin href="./assets/circle-x-Bb-EcEyG.js">
+    <link rel="modulepreload" crossorigin href="./assets/refresh-ccw-ETV_gv20.js">
+    <link rel="modulepreload" crossorigin href="./assets/trash-2-D1jEfGpj.js">
+    <link rel="modulepreload" crossorigin href="./assets/form-q5HZfP0M.js">
+    <link rel="modulepreload" crossorigin href="./assets/field-mNGJv_67.js">
+    <link rel="modulepreload" crossorigin href="./assets/switch-p-zRh0zu.js">
+    <link rel="modulepreload" crossorigin href="./assets/useBoolean-CG31RE8p.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDeepCompareMemoize-DkEGS3Wg.js">
+    <link rel="modulepreload" crossorigin href="./assets/LazyAnyLanguageCodeMirror-De4wCXx1.js">
+    <link rel="modulepreload" crossorigin href="./assets/types-B_LGU134.js">
+    <link rel="modulepreload" crossorigin href="./assets/prop-types-BAY7nW8B.js">
+    <link rel="modulepreload" crossorigin href="./assets/es-CM14OBji.js">
+    <link rel="modulepreload" crossorigin href="./assets/VisuallyHidden-B9I0t9He.js">
+    <link rel="modulepreload" crossorigin href="./assets/_baseFlatten-ViL-mfkw.js">
+    <link rel="modulepreload" crossorigin href="./assets/get-BUGWIXZE.js">
+    <link rel="modulepreload" crossorigin href="./assets/hasIn-BgJKauE7.js">
+    <link rel="modulepreload" crossorigin href="./assets/_basePickBy-CSDa7ReR.js">
+    <link rel="modulepreload" crossorigin href="./assets/pick-BQzWKfma.js">
+    <link rel="modulepreload" crossorigin href="./assets/square-B9bfYM_2.js">
+    <link rel="modulepreload" crossorigin href="./assets/download-kgdScOCd.js">
+    <link rel="modulepreload" crossorigin href="./assets/globe-BGR7PZfb.js">
+    <link rel="modulepreload" crossorigin href="./assets/send-C0pANzAH.js">
+    <link rel="modulepreload" crossorigin href="./assets/refresh-cw-DKt4M-wV.js">
+    <link rel="modulepreload" crossorigin href="./assets/settings-DvMaGwYY.js">
+    <link rel="modulepreload" crossorigin href="./assets/bundle.esm-Bah18HX6.js">
+    <link rel="stylesheet" crossorigin href="./assets/cells-BvrC6Bsv.css">
+    <link rel="stylesheet" crossorigin href="./assets/Output-j3zW187k.css">
+    <link rel="stylesheet" crossorigin href="./assets/ConsoleOutput-BFFTcC5Y.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-BmcO-QYJ.css">
+  <marimo-wasm hidden=""></marimo-wasm>
+    <script>
+        if (window.location.protocol === 'file:') {
+            alert('Warning: This file must be served by an HTTP server to function correctly.');
+        }
+    </script>
+    
+    <style>
+        #save-button {
+            display: none !important;
+        }
+        #filename-input {
+            display: none !important;
+        }
+    </style>
+    <marimo-code hidden="">import%20marimo%0A%0A__generated_with%20%3D%20%220.17.6%22%0Aapp%20%3D%20marimo.App(width%3D%22medium%22)%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20import%20marimo%20as%20mo%0A%20%20%20%20return%20(mo%2C)%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20%23%20Stage%201%3A%20The%20Simplest%20Language%20Model%0A%0A%20%20%20%20%23%23%20Markov%20Chains%20%E2%80%94%20Where%20It%20All%20Begins%0A%0A%20%20%20%20Welcome%20to%20the%20first%20stage%20of%20**Building%20LLMs%20from%20First%20Principles**.%0A%0A%20%20%20%20We%20start%20with%20the%20simplest%20possible%20language%20model%3A%20one%20that%20predicts%20the%20next%0A%20%20%20%20character%20based%20only%20on%20counting%20what%20came%20before.%20This%20humble%20model%20introduces%0A%20%20%20%20concepts%20that%20echo%20through%20every%20modern%20LLM%3A%0A%0A%20%20%20%20-%20**Autoregressive%20generation**%3A%20predicting%20one%20token%20at%20a%20time%0A%20%20%20%20-%20**Training%20%3D%20optimization**%3A%20learning%20from%20data%0A%20%20%20%20-%20**Perplexity**%3A%20measuring%20how%20%22surprised%22%20a%20model%20is%0A%20%20%20%20-%20**Temperature**%3A%20controlling%20randomness%20in%20generation%0A%0A%20%20%20%20By%20the%20end%20of%20this%20notebook%2C%20you'll%20understand%20*exactly*%20why%20these%20concepts%20work.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20%23%20Core%20imports%0A%20%20%20%20from%20collections%20import%20defaultdict%2C%20Counter%0A%20%20%20%20from%20typing%20import%20Dict%2C%20List%2C%20Tuple%2C%20Optional%0A%20%20%20%20import%20math%0A%20%20%20%20import%20random%0A%20%20%20%20return%20Counter%2C%20Dict%2C%20List%2C%20Tuple%2C%20defaultdict%2C%20math%2C%20random%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Part%201%3A%20What%20is%20Language%20Modeling%3F%0A%0A%20%20%20%20Given%20the%20text%20%22The%20cat%20sat%20on%20the%22%2C%20what%20word%20comes%20next%3F%0A%0A%20%20%20%20A%20**language%20model**%20assigns%20probabilities%20to%20text.%20Formally%2C%20it%20learns%3A%0A%0A%20%20%20%20%24%24P(x_1%2C%20x_2%2C%20%5Cldots%2C%20x_n)%24%24%0A%0A%20%20%20%20The%20probability%20of%20an%20entire%20sequence.%20But%20sequences%20can%20be%20arbitrarily%20long!%0A%20%20%20%20With%20vocabulary%20size%20%24%7CV%7C%24%20and%20sequence%20length%20%24n%24%2C%20there%20are%20%24%7CV%7C%5En%24%20possible%0A%20%20%20%20sequences.%20That's%20impossibly%20large.%0A%0A%20%20%20%20%23%23%23%20The%20Chain%20Rule%20to%20the%20Rescue%0A%0A%20%20%20%20The%20chain%20rule%20of%20probability%20lets%20us%20factorize%3A%0A%0A%20%20%20%20%24%24P(x_1%2C%20x_2%2C%20x_3)%20%3D%20P(x_1)%20%5Ccdot%20P(x_2%20%7C%20x_1)%20%5Ccdot%20P(x_3%20%7C%20x_1%2C%20x_2)%24%24%0A%0A%20%20%20%20In%20general%3A%0A%0A%20%20%20%20%24%24P(x_1%2C%20%5Cldots%2C%20x_n)%20%3D%20%5Cprod_%7Bi%3D1%7D%5E%7Bn%7D%20P(x_i%20%7C%20x_1%2C%20%5Cldots%2C%20x_%7Bi-1%7D)%24%24%0A%0A%20%20%20%20Now%20we've%20converted%20one%20impossible%20distribution%20into%20%24n%24%20conditional%20distributions.%0A%20%20%20%20But%20each%20conditional%20still%20depends%20on%20*all*%20previous%20tokens!%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20%23%23%23%20The%20Markov%20Assumption%0A%0A%20%20%20%20**Simplifying%20assumption**%3A%20The%20future%20depends%20only%20on%20the%20*recent*%20past.%0A%0A%20%20%20%20-%20**Order-1%20(bigram)**%3A%20%24P(x_i%20%7C%20x_1%2C%20%5Cldots%2C%20x_%7Bi-1%7D)%20%5Capprox%20P(x_i%20%7C%20x_%7Bi-1%7D)%24%0A%20%20%20%20-%20**Order-k**%3A%20%24P(x_i%20%7C%20x_1%2C%20%5Cldots%2C%20x_%7Bi-1%7D)%20%5Capprox%20P(x_i%20%7C%20x_%7Bi-k%7D%2C%20%5Cldots%2C%20x_%7Bi-1%7D)%24%0A%0A%20%20%20%20This%20is%20*wrong*%20for%20language%20%E2%80%94%20%22The%20cat%20that%20sat%20on%20the%20mat%20next%20to%20the%20dog%20...%20**was**%20sleeping%22%0A%20%20%20%20has%20long-range%20dependencies.%20But%20wrong%20assumptions%20can%20still%20be%20useful!%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Part%202%3A%20The%20Implementation%0A%0A%20%20%20%20Let's%20build%20a%20complete%20Markov%20chain%20language%20model.%20The%20training%20algorithm%20is%0A%20%20%20%20beautifully%20simple%3A%20**just%20count**.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(Counter%2C%20Dict%2C%20List%2C%20Tuple%2C%20defaultdict%2C%20math%2C%20random)%3A%0A%20%20%20%20class%20MarkovChain%3A%0A%20%20%20%20%20%20%20%20%22%22%22N-gram%20language%20model%20using%20the%20Markov%20assumption.%22%22%22%0A%0A%20%20%20%20%20%20%20%20def%20__init__(self%2C%20order%3A%20int%20%3D%201)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20Initialize%20Markov%20chain.%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Args%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20order%3A%20Number%20of%20previous%20tokens%20to%20condition%20on%20(1%20%3D%20bigram)%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20self.order%20%3D%20order%0A%20%20%20%20%20%20%20%20%20%20%20%20self.counts%3A%20Dict%5BTuple%2C%20Counter%5D%20%3D%20defaultdict(Counter)%0A%20%20%20%20%20%20%20%20%20%20%20%20self.totals%3A%20Dict%5BTuple%2C%20int%5D%20%3D%20defaultdict(int)%0A%20%20%20%20%20%20%20%20%20%20%20%20self.vocab%3A%20set%20%3D%20set()%0A%0A%20%20%20%20%20%20%20%20def%20train(self%2C%20tokens%3A%20List%5Bstr%5D)%20-%3E%20None%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22Train%20on%20a%20sequence%20of%20tokens%20by%20counting%20transitions.%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%20Add%20special%20start%2Fend%20tokens%0A%20%20%20%20%20%20%20%20%20%20%20%20padded%20%3D%20%5B%22%3CSTART%3E%22%5D%20*%20self.order%20%2B%20tokens%20%2B%20%5B%22%3CEND%3E%22%5D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%20Count%20all%20n-grams%0A%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20range(len(padded)%20-%20self.order)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20history%20%3D%20tuple(padded%5Bi%20%3A%20i%20%2B%20self.order%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20next_token%20%3D%20padded%5Bi%20%2B%20self.order%5D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.counts%5Bhistory%5D%5Bnext_token%5D%20%2B%3D%201%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.totals%5Bhistory%5D%20%2B%3D%201%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.vocab.add(next_token)%0A%0A%20%20%20%20%20%20%20%20def%20probability(self%2C%20history%3A%20Tuple%2C%20next_token%3A%20str)%20-%3E%20float%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22Get%20probability%20P(next_token%20%7C%20history).%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20history%20not%20in%20self.counts%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%200.0%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20self.counts%5Bhistory%5D%5Bnext_token%5D%20%2F%20self.totals%5Bhistory%5D%0A%0A%20%20%20%20%20%20%20%20def%20get_distribution(self%2C%20history%3A%20Tuple)%20-%3E%20Dict%5Bstr%2C%20float%5D%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22Get%20full%20probability%20distribution%20given%20history.%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20history%20not%20in%20self.counts%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%20%7B%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20total%20%3D%20self.totals%5Bhistory%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20%7Btoken%3A%20count%20%2F%20total%20for%20token%2C%20count%20in%20self.counts%5Bhistory%5D.items()%7D%0A%0A%20%20%20%20%20%20%20%20def%20generate(%0A%20%20%20%20%20%20%20%20%20%20%20%20self%2C%20max_length%3A%20int%20%3D%20100%2C%20temperature%3A%20float%20%3D%201.0%2C%20seed%3A%20str%20%3D%20%22%22%0A%20%20%20%20%20%20%20%20)%20-%3E%20str%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22Generate%20text%20using%20ancestral%20sampling.%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20seed%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20history%20%3D%20tuple(list(seed)%5B-self.order%20%3A%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20len(history)%20%3C%20self.order%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20history%20%3D%20tuple(%5B%22%3CSTART%3E%22%5D%20*%20(self.order%20-%20len(history)))%20%2B%20history%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20generated%20%3D%20list(seed)%0A%20%20%20%20%20%20%20%20%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20history%20%3D%20tuple(%5B%22%3CSTART%3E%22%5D%20*%20self.order)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20generated%20%3D%20%5B%5D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20for%20_%20in%20range(max_length)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20dist%20%3D%20self.get_distribution(history)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20not%20dist%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20break%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Apply%20temperature%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20temperature%20!%3D%201.0%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20dist%20%3D%20self._apply_temperature(dist%2C%20temperature)%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Sample%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20tokens%20%3D%20list(dist.keys())%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20probs%20%3D%20list(dist.values())%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20next_token%20%3D%20random.choices(tokens%2C%20weights%3Dprobs%2C%20k%3D1)%5B0%5D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20next_token%20%3D%3D%20%22%3CEND%3E%22%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20break%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20generated.append(next_token)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20history%20%3D%20tuple(list(history)%5B1%3A%5D%20%2B%20%5Bnext_token%5D)%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20%22%22.join(generated)%0A%0A%20%20%20%20%20%20%20%20def%20_apply_temperature(%0A%20%20%20%20%20%20%20%20%20%20%20%20self%2C%20dist%3A%20Dict%5Bstr%2C%20float%5D%2C%20temp%3A%20float%0A%20%20%20%20%20%20%20%20)%20-%3E%20Dict%5Bstr%2C%20float%5D%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22Apply%20temperature%20to%20distribution.%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20log_probs%20%3D%20%7Bk%3A%20math.log(v%20%2B%201e-10)%20%2F%20temp%20for%20k%2C%20v%20in%20dist.items()%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20max_log%20%3D%20max(log_probs.values())%0A%20%20%20%20%20%20%20%20%20%20%20%20exp_probs%20%3D%20%7Bk%3A%20math.exp(v%20-%20max_log)%20for%20k%2C%20v%20in%20log_probs.items()%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20total%20%3D%20sum(exp_probs.values())%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20%7Bk%3A%20v%20%2F%20total%20for%20k%2C%20v%20in%20exp_probs.items()%7D%0A%0A%20%20%20%20%20%20%20%20def%20perplexity(self%2C%20tokens%3A%20List%5Bstr%5D)%20-%3E%20float%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22Compute%20perplexity%20on%20a%20sequence.%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20padded%20%3D%20%5B%22%3CSTART%3E%22%5D%20*%20self.order%20%2B%20tokens%20%2B%20%5B%22%3CEND%3E%22%5D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20log_prob_sum%20%3D%200.0%0A%20%20%20%20%20%20%20%20%20%20%20%20n_tokens%20%3D%200%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20range(len(padded)%20-%20self.order)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20history%20%3D%20tuple(padded%5Bi%20%3A%20i%20%2B%20self.order%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20next_token%20%3D%20padded%5Bi%20%2B%20self.order%5D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20prob%20%3D%20self.probability(history%2C%20next_token)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20prob%20%3D%3D%200%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%20float(%22inf%22)%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20log_prob_sum%20%2B%3D%20math.log(prob)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20n_tokens%20%2B%3D%201%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20math.exp(-log_prob_sum%20%2F%20n_tokens)%0A%0A%20%20%20%20%20%20%20%20def%20num_states(self)%20-%3E%20int%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%22%22%22Return%20number%20of%20unique%20history%20states.%22%22%22%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20len(self.counts)%0A%20%20%20%20return%20(MarkovChain%2C)%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Part%203%3A%20Interactive%20Exploration%0A%0A%20%20%20%20Now%20let's%20explore%20how%20Markov%20chains%20work!%20Use%20the%20controls%20below%20to%3A%0A%0A%20%20%20%201.%20**Adjust%20the%20order**%20(context%20length)%20of%20the%20model%0A%20%20%20%202.%20**Change%20the%20temperature**%20for%20generation%0A%20%20%20%203.%20**See%20train%20vs%20test%20perplexity**%20to%20understand%20overfitting%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20%23%20Sample%20text%20for%20training%20(Shakespeare%20excerpt)%0A%20%20%20%20SAMPLE_TEXT%20%3D%20%22%22%22%0A%20%20%20%20To%20be%2C%20or%20not%20to%20be%2C%20that%20is%20the%20question%3A%0A%20%20%20%20Whether%20'tis%20nobler%20in%20the%20mind%20to%20suffer%0A%20%20%20%20The%20slings%20and%20arrows%20of%20outrageous%20fortune%2C%0A%20%20%20%20Or%20to%20take%20arms%20against%20a%20sea%20of%20troubles%0A%20%20%20%20And%20by%20opposing%20end%20them.%20To%20die%3A%20to%20sleep%3B%0A%20%20%20%20No%20more%3B%20and%20by%20a%20sleep%20to%20say%20we%20end%0A%20%20%20%20The%20heart-ache%20and%20the%20thousand%20natural%20shocks%0A%20%20%20%20That%20flesh%20is%20heir%20to%3A%20'tis%20a%20consummation%0A%20%20%20%20Devoutly%20to%20be%20wish'd.%20To%20die%2C%20to%20sleep%3B%0A%20%20%20%20To%20sleep%2C%20perchance%20to%20dream%3A%20ay%2C%20there's%20the%20rub%3A%0A%20%20%20%20For%20in%20that%20sleep%20of%20death%20what%20dreams%20may%20come%2C%0A%20%20%20%20When%20we%20have%20shuffled%20off%20this%20mortal%20coil%2C%0A%20%20%20%20Must%20give%20us%20pause%3A%20there's%20the%20respect%0A%20%20%20%20That%20makes%20calamity%20of%20so%20long%20life.%0A%20%20%20%20For%20who%20would%20bear%20the%20whips%20and%20scorns%20of%20time%2C%0A%20%20%20%20The%20oppressor's%20wrong%2C%20the%20proud%20man's%20contumely%2C%0A%20%20%20%20The%20pangs%20of%20despised%20love%2C%20the%20law's%20delay%2C%0A%20%20%20%20The%20insolence%20of%20office%2C%20and%20the%20spurns%0A%20%20%20%20That%20patient%20merit%20of%20the%20unworthy%20takes%2C%0A%20%20%20%20When%20he%20himself%20might%20his%20quietus%20make%0A%20%20%20%20With%20a%20bare%20bodkin%3F%20Who%20would%20fardels%20bear%2C%0A%20%20%20%20To%20grunt%20and%20groan%20under%20a%20weary%20life%2C%0A%20%20%20%20But%20that%20the%20dread%20of%20something%20after%20death%2C%0A%20%20%20%20The%20undiscovered%20country%2C%20from%20whose%20bourn%0A%20%20%20%20No%20traveller%20returns%2C%20puzzles%20the%20will%2C%0A%20%20%20%20And%20makes%20us%20rather%20bear%20those%20ills%20we%20have%0A%20%20%20%20Than%20fly%20to%20others%20that%20we%20know%20not%20of%3F%0A%20%20%20%20Thus%20conscience%20does%20make%20cowards%20of%20us%20all%2C%0A%20%20%20%20And%20thus%20the%20native%20hue%20of%20resolution%0A%20%20%20%20Is%20sicklied%20o'er%20with%20the%20pale%20cast%20of%20thought%2C%0A%20%20%20%20And%20enterprises%20of%20great%20pith%20and%20moment%2C%0A%20%20%20%20With%20this%20regard%20their%20currents%20turn%20awry%0A%20%20%20%20And%20lose%20the%20name%20of%20action.%0A%20%20%20%20%22%22%22%0A%20%20%20%20return%20(SAMPLE_TEXT%2C)%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20%23%20Interactive%20controls%0A%20%20%20%20order_slider%20%3D%20mo.ui.slider(%0A%20%20%20%20%20%20%20%201%2C%2010%2C%20value%3D3%2C%20step%3D1%2C%20label%3D%22**Order**%20(context%20length)%22%0A%20%20%20%20)%0A%20%20%20%20temp_slider%20%3D%20mo.ui.slider(%0A%20%20%20%20%20%20%20%200.1%2C%202.0%2C%20value%3D1.0%2C%20step%3D0.1%2C%20label%3D%22**Temperature**%20(sampling%20randomness)%22%0A%20%20%20%20)%0A%20%20%20%20num_samples_slider%20%3D%20mo.ui.slider(%0A%20%20%20%20%20%20%20%201%2C%205%2C%20value%3D3%2C%20step%3D1%2C%20label%3D%22**Number%20of%20samples**%22%0A%20%20%20%20)%0A%0A%20%20%20%20mo.md(%0A%20%20%20%20%20%20%20%20f%22%22%22%0A%20%20%20%20%20%20%20%20%23%23%23%20Model%20Controls%0A%0A%20%20%20%20%20%20%20%20%7Border_slider%7D%0A%0A%20%20%20%20%20%20%20%20%7Btemp_slider%7D%0A%0A%20%20%20%20%20%20%20%20%7Bnum_samples_slider%7D%0A%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20)%0A%20%20%20%20return%20num_samples_slider%2C%20order_slider%2C%20temp_slider%0A%0A%0A%40app.cell%0Adef%20_(MarkovChain%2C%20SAMPLE_TEXT%2C%20order_slider)%3A%0A%20%20%20%20%23%20Train%20model%20with%20current%20order%0A%20%20%20%20def%20train_model(order%3A%20int%2C%20text%3A%20str)%3A%0A%20%20%20%20%20%20%20%20tokens%20%3D%20list(text.lower())%0A%20%20%20%20%20%20%20%20%23%20Split%20into%20train%2Ftest%20(80%2F20)%0A%20%20%20%20%20%20%20%20split_idx%20%3D%20int(len(tokens)%20*%200.8)%0A%20%20%20%20%20%20%20%20train_tokens%20%3D%20tokens%5B%3Asplit_idx%5D%0A%20%20%20%20%20%20%20%20test_tokens%20%3D%20tokens%5Bsplit_idx%3A%5D%0A%0A%20%20%20%20%20%20%20%20model%20%3D%20MarkovChain(order%3Dorder)%0A%20%20%20%20%20%20%20%20model.train(train_tokens)%0A%0A%20%20%20%20%20%20%20%20train_ppl%20%3D%20model.perplexity(train_tokens)%0A%20%20%20%20%20%20%20%20test_ppl%20%3D%20model.perplexity(test_tokens)%0A%0A%20%20%20%20%20%20%20%20return%20model%2C%20train_ppl%2C%20test_ppl%2C%20train_tokens%2C%20test_tokens%0A%0A%20%20%20%20%23%20This%20will%20reactively%20update%20when%20order_slider%20changes%0A%20%20%20%20model%2C%20train_ppl%2C%20test_ppl%2C%20train_tokens%2C%20test_tokens%20%3D%20train_model(%0A%20%20%20%20%20%20%20%20order_slider.value%2C%20SAMPLE_TEXT%0A%20%20%20%20)%0A%20%20%20%20return%20model%2C%20test_ppl%2C%20train_ppl%0A%0A%0A%40app.cell%0Adef%20_(mo%2C%20model%2C%20test_ppl%2C%20train_ppl)%3A%0A%20%20%20%20mo.md(%0A%20%20%20%20%20%20%20%20f%22%22%22%0A%20%20%20%20%20%20%20%20%23%23%23%20Model%20Statistics%0A%0A%20%20%20%20%20%20%20%20%7C%20Metric%20%7C%20Value%20%7C%0A%20%20%20%20%20%20%20%20%7C--------%7C-------%7C%0A%20%20%20%20%20%20%20%20%7C%20**Order%20(context%20length)**%20%7C%20%7Bmodel.order%7D%20%7C%0A%20%20%20%20%20%20%20%20%7C%20**Unique%20states%20(histories)**%20%7C%20%7Bmodel.num_states()%3A%2C%7D%20%7C%0A%20%20%20%20%20%20%20%20%7C%20**Vocabulary%20size**%20%7C%20%7Blen(model.vocab)%7D%20%7C%0A%20%20%20%20%20%20%20%20%7C%20**Train%20perplexity**%20%7C%20%7Btrain_ppl%3A.2f%7D%20%7C%0A%20%20%20%20%20%20%20%20%7C%20**Test%20perplexity**%20%7C%20%7Btest_ppl%3A.2f%20if%20test_ppl%20!%3D%20float('inf')%20else%20%22%E2%88%9E%20(unseen%20n-grams)%22%7D%20%7C%0A%0A%20%20%20%20%20%20%20%20%7B%22**Overfitting%20detected!**%20Test%20perplexity%20%3E%3E%20Train%20perplexity%22%20if%20test_ppl%20%3E%20train_ppl%20*%201.5%20and%20test_ppl%20!%3D%20float('inf')%20else%20%22%22%7D%0A%20%20%20%20%20%20%20%20%7B%22**Infinite%20perplexity!**%20The%20test%20set%20contains%20n-grams%20never%20seen%20in%20training.%22%20if%20test_ppl%20%3D%3D%20float('inf')%20else%20%22%22%7D%0A%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo%2C%20model%2C%20num_samples_slider%2C%20temp_slider)%3A%0A%20%20%20%20%23%20Generate%20samples%0A%20%20%20%20samples%20%3D%20%5B%0A%20%20%20%20%20%20%20%20model.generate(max_length%3D150%2C%20temperature%3Dtemp_slider.value)%0A%20%20%20%20%20%20%20%20for%20_%20in%20range(num_samples_slider.value)%0A%20%20%20%20%5D%0A%0A%20%20%20%20sample_text%20%3D%20%22%5Cn%5Cn%22.join(%5Bf%22**Sample%20%7Bi%2B1%7D%3A**%5Cn%3E%20%7Bs%7D%22%20for%20i%2C%20s%20in%20enumerate(samples)%5D)%0A%0A%20%20%20%20mo.md(%0A%20%20%20%20%20%20%20%20f%22%22%22%0A%20%20%20%20%20%20%20%20%23%23%23%20Generated%20Samples%0A%0A%20%20%20%20%20%20%20%20Temperature%20%3D%20%7Btemp_slider.value%7D%20(%7B%22greedy%22%20if%20temp_slider.value%20%3C%200.5%20else%20%22balanced%22%20if%20temp_slider.value%20%3C%3D%201.0%20else%20%22creative%22%7D)%0A%0A%20%20%20%20%20%20%20%20%7Bsample_text%7D%0A%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Part%204%3A%20Understanding%20Temperature%0A%0A%20%20%20%20Temperature%20controls%20the%20%22randomness%22%20of%20sampling.%20Mathematically%3A%0A%0A%20%20%20%20%24%24P'(x)%20%3D%20%5Cfrac%7B%5Cexp(%5Clog%20P(x)%20%2F%20T)%7D%7B%5Csum_y%20%5Cexp(%5Clog%20P(y)%20%2F%20T)%7D%24%24%0A%0A%20%20%20%20-%20**T%20%3C%201**%3A%20Distribution%20becomes%20*sharper*%20(more%20deterministic)%0A%20%20%20%20-%20**T%20%3D%201**%3A%20Original%20distribution%0A%20%20%20%20-%20**T%20%3E%201**%3A%20Distribution%20becomes%20*flatter*%20(more%20random)%0A%0A%20%20%20%20As%20T%20%E2%86%92%200%2C%20we%20get%20argmax%20(greedy)%20decoding.%0A%20%20%20%20As%20T%20%E2%86%92%20%E2%88%9E%2C%20we%20get%20uniform%20random%20sampling.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Part%205%3A%20The%20Overfitting%20Problem%0A%0A%20%20%20%20Watch%20what%20happens%20as%20you%20increase%20the%20order%3A%0A%0A%20%20%20%20%7C%20Order%20%7C%20What%20Happens%20%7C%0A%20%20%20%20%7C-------%7C--------------%7C%0A%20%20%20%20%7C%201%20%7C%20Very%20few%20states%2C%20can't%20capture%20patterns%20%7C%0A%20%20%20%20%7C%202-3%20%7C%20Good%20balance%2C%20captures%20some%20structure%20%7C%0A%20%20%20%20%7C%205%2B%20%7C%20Many%20states%2C%20starts%20memorizing%20training%20data%20%7C%0A%20%20%20%20%7C%2010%2B%20%7C%20Almost%20every%20history%20is%20unique!%20%7C%0A%0A%20%20%20%20**The%20fundamental%20trade-off%3A**%0A%20%20%20%20-%20More%20context%20%E2%86%92%20better%20predictions%0A%20%20%20%20-%20More%20context%20%E2%86%92%20sparser%20observations%0A%0A%20%20%20%20This%20is%20why%20we%20need%20neural%20networks%3A%20they%20can%20**generalize**%20from%20similar%20patterns%2C%0A%20%20%20%20rather%20than%20requiring%20exact%20matches.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(MarkovChain%2C%20SAMPLE_TEXT%2C%20mo)%3A%0A%20%20%20%20import%20matplotlib.pyplot%20as%20plt%0A%20%20%20%20import%20numpy%20as%20np%0A%0A%20%20%20%20%23%20Compute%20perplexity%20across%20orders%0A%20%20%20%20def%20compute_perplexity_curve(text%3A%20str%2C%20max_order%3A%20int%20%3D%208)%3A%0A%20%20%20%20%20%20%20%20tokens%20%3D%20list(text.lower())%0A%20%20%20%20%20%20%20%20split_idx%20%3D%20int(len(tokens)%20*%200.8)%0A%20%20%20%20%20%20%20%20train_tokens%20%3D%20tokens%5B%3Asplit_idx%5D%0A%20%20%20%20%20%20%20%20test_tokens%20%3D%20tokens%5Bsplit_idx%3A%5D%0A%0A%20%20%20%20%20%20%20%20orders%20%3D%20list(range(1%2C%20max_order%20%2B%201))%0A%20%20%20%20%20%20%20%20train_ppls%20%3D%20%5B%5D%0A%20%20%20%20%20%20%20%20test_ppls%20%3D%20%5B%5D%0A%20%20%20%20%20%20%20%20num_states%20%3D%20%5B%5D%0A%0A%20%20%20%20%20%20%20%20for%20order%20in%20orders%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20m%20%3D%20MarkovChain(order%3Dorder)%0A%20%20%20%20%20%20%20%20%20%20%20%20m.train(train_tokens)%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20train_ppls.append(m.perplexity(train_tokens))%0A%20%20%20%20%20%20%20%20%20%20%20%20test_ppl%20%3D%20m.perplexity(test_tokens)%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%20Cap%20infinite%20for%20plotting%0A%20%20%20%20%20%20%20%20%20%20%20%20test_ppls.append(min(test_ppl%2C%20100))%0A%20%20%20%20%20%20%20%20%20%20%20%20num_states.append(m.num_states())%0A%0A%20%20%20%20%20%20%20%20return%20orders%2C%20train_ppls%2C%20test_ppls%2C%20num_states%0A%0A%20%20%20%20orders%2C%20train_ppls%2C%20test_ppls%2C%20num_states_list%20%3D%20compute_perplexity_curve(SAMPLE_TEXT)%0A%0A%20%20%20%20%23%20Create%20visualization%0A%20%20%20%20fig%2C%20axes%20%3D%20plt.subplots(1%2C%202%2C%20figsize%3D(12%2C%204))%0A%0A%20%20%20%20%23%20Perplexity%20plot%0A%20%20%20%20axes%5B0%5D.plot(orders%2C%20train_ppls%2C%20%22b-o%22%2C%20label%3D%22Train%22%2C%20linewidth%3D2%2C%20markersize%3D8)%0A%20%20%20%20axes%5B0%5D.plot(orders%2C%20test_ppls%2C%20%22r-s%22%2C%20label%3D%22Test%22%2C%20linewidth%3D2%2C%20markersize%3D8)%0A%20%20%20%20axes%5B0%5D.set_xlabel(%22Order%20(context%20length)%22%2C%20fontsize%3D12)%0A%20%20%20%20axes%5B0%5D.set_ylabel(%22Perplexity%20(lower%20%3D%20better)%22%2C%20fontsize%3D12)%0A%20%20%20%20axes%5B0%5D.set_title(%22Train%20vs%20Test%20Perplexity%22%2C%20fontsize%3D14%2C%20fontweight%3D%22bold%22)%0A%20%20%20%20axes%5B0%5D.legend(fontsize%3D11)%0A%20%20%20%20axes%5B0%5D.set_yscale(%22log%22)%0A%20%20%20%20axes%5B0%5D.grid(True%2C%20alpha%3D0.3)%0A%0A%20%20%20%20%23%20State%20space%20plot%0A%20%20%20%20axes%5B1%5D.bar(orders%2C%20num_states_list%2C%20color%3D%22steelblue%22%2C%20edgecolor%3D%22black%22)%0A%20%20%20%20axes%5B1%5D.set_xlabel(%22Order%20(context%20length)%22%2C%20fontsize%3D12)%0A%20%20%20%20axes%5B1%5D.set_ylabel(%22Number%20of%20unique%20states%22%2C%20fontsize%3D12)%0A%20%20%20%20axes%5B1%5D.set_title(%22State%20Space%20Explosion%22%2C%20fontsize%3D14%2C%20fontweight%3D%22bold%22)%0A%20%20%20%20axes%5B1%5D.set_yscale(%22log%22)%0A%20%20%20%20axes%5B1%5D.grid(True%2C%20alpha%3D0.3%2C%20axis%3D%22y%22)%0A%0A%20%20%20%20plt.tight_layout()%0A%0A%20%20%20%20mo.md(%0A%20%20%20%20%20%20%20%20f%22%22%22%0A%20%20%20%20%20%20%20%20%23%23%23%20Perplexity%20vs%20Order%0A%0A%20%20%20%20%20%20%20%20This%20plot%20shows%20the%20classic%20**overfitting%20pattern**%3A%0A%20%20%20%20%20%20%20%20-%20Train%20perplexity%20keeps%20improving%20(blue%20line%20goes%20down)%0A%20%20%20%20%20%20%20%20-%20Test%20perplexity%20first%20improves%2C%20then%20explodes%20(red%20line)%0A%0A%20%20%20%20%20%20%20%20The%20right%20plot%20shows%20*why*%3A%20the%20state%20space%20grows%20exponentially!%0A%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20)%0A%20%20%20%20return%20fig%2C%20np%2C%20plt%0A%0A%0A%40app.cell%0Adef%20_(fig%2C%20mo)%3A%0A%20%20%20%20mo.center(fig)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Part%206%3A%20Transition%20Matrix%20Visualization%0A%0A%20%20%20%20For%20a%20bigram%20(order-1)%20model%2C%20we%20can%20visualize%20the%20entire%20model%20as%20a%20matrix.%0A%0A%20%20%20%20Each%20cell%20shows%20%24P(%5Ctext%7Bcolumn%7D%20%7C%20%5Ctext%7Brow%7D)%24%20%E2%80%94%20the%20probability%20of%20transitioning%0A%20%20%20%20from%20the%20row%20character%20to%20the%20column%20character.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(MarkovChain%2C%20SAMPLE_TEXT%2C%20mo%2C%20np%2C%20plt)%3A%0A%20%20%20%20%23%20Build%20order-1%20model%20for%20transition%20matrix%0A%20%20%20%20tokens_for_matrix%20%3D%20list(SAMPLE_TEXT.lower())%0A%20%20%20%20bigram_model%20%3D%20MarkovChain(order%3D1)%0A%20%20%20%20bigram_model.train(tokens_for_matrix)%0A%0A%20%20%20%20%23%20Get%20common%20characters%20for%20visualization%0A%20%20%20%20char_counts%20%3D%20%7B%7D%0A%20%20%20%20for%20c%20in%20tokens_for_matrix%3A%0A%20%20%20%20%20%20%20%20char_counts%5Bc%5D%20%3D%20char_counts.get(c%2C%200)%20%2B%201%0A%0A%20%20%20%20%23%20Top%2015%20most%20common%20characters%0A%20%20%20%20common_chars%20%3D%20sorted(char_counts.keys()%2C%20key%3Dlambda%20x%3A%20-char_counts%5Bx%5D)%5B%3A15%5D%0A%0A%20%20%20%20%23%20Build%20transition%20matrix%0A%20%20%20%20n%20%3D%20len(common_chars)%0A%20%20%20%20matrix%20%3D%20np.zeros((n%2C%20n))%0A%0A%20%20%20%20for%20i%2C%20from_char%20in%20enumerate(common_chars)%3A%0A%20%20%20%20%20%20%20%20dist%20%3D%20bigram_model.get_distribution((from_char%2C))%0A%20%20%20%20%20%20%20%20for%20j%2C%20to_char%20in%20enumerate(common_chars)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20matrix%5Bi%2C%20j%5D%20%3D%20dist.get(to_char%2C%200)%0A%0A%20%20%20%20%23%20Plot%0A%20%20%20%20fig2%2C%20ax%20%3D%20plt.subplots(figsize%3D(10%2C%208))%0A%0A%20%20%20%20%23%20Create%20labels%20with%20escape%20sequences%20for%20special%20chars%0A%20%20%20%20labels%20%3D%20%5Brepr(c)%5B1%3A-1%5D%20if%20c%20in%20%22%5Cn%5Ct%20%22%20else%20c%20for%20c%20in%20common_chars%5D%0A%0A%20%20%20%20im%20%3D%20ax.imshow(matrix%2C%20cmap%3D%22YlOrRd%22)%0A%20%20%20%20ax.set_xticks(range(n))%0A%20%20%20%20ax.set_yticks(range(n))%0A%20%20%20%20ax.set_xticklabels(labels%2C%20fontsize%3D10)%0A%20%20%20%20ax.set_yticklabels(labels%2C%20fontsize%3D10)%0A%20%20%20%20ax.set_xlabel(%22Next%20character%22%2C%20fontsize%3D12)%0A%20%20%20%20ax.set_ylabel(%22Current%20character%22%2C%20fontsize%3D12)%0A%20%20%20%20ax.set_title(%22Bigram%20Transition%20Probabilities%22%2C%20fontsize%3D14%2C%20fontweight%3D%22bold%22)%0A%0A%20%20%20%20%23%20Add%20colorbar%0A%20%20%20%20cbar%20%3D%20plt.colorbar(im%2C%20ax%3Dax)%0A%20%20%20%20cbar.set_label(%22Probability%22%2C%20fontsize%3D11)%0A%0A%20%20%20%20plt.tight_layout()%0A%0A%20%20%20%20mo.md(%0A%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20%20%20%20%20%23%23%23%20Transition%20Matrix%20Heatmap%0A%0A%20%20%20%20%20%20%20%20Brighter%20colors%20%3D%20higher%20probability.%20Notice%3A%0A%20%20%20%20%20%20%20%20-%20'e'%20%E2%86%92%20space%20(words%20often%20end%20in%20'e')%0A%20%20%20%20%20%20%20%20-%20't'%20%E2%86%92%20'h'%20(common%20bigram%20'th')%0A%20%20%20%20%20%20%20%20-%20After%20space%2C%20common%20letters%20like%20't'%2C%20'a'%2C%20'o'%20are%20likely%0A%20%20%20%20%20%20%20%20%22%22%22%0A%20%20%20%20)%0A%20%20%20%20return%20(fig2%2C)%0A%0A%0A%40app.cell%0Adef%20_(fig2%2C%20mo)%3A%0A%20%20%20%20mo.center(fig2)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Part%207%3A%20Key%20Insights%0A%0A%20%20%20%20%23%23%23%20Insight%201%3A%20Training%20%3D%20Counting%20%3D%20Maximum%20Likelihood%0A%0A%20%20%20%20Our%20counting%20procedure%20is%20actually%20**maximum%20likelihood%20estimation**%20(MLE).%0A%0A%20%20%20%20For%20a%20bigram%20model%20with%20observations%2C%20the%20log-likelihood%20is%3A%0A%0A%20%20%20%20%24%24%5Clog%20L(%5Ctheta)%20%3D%20%5Csum_%7Ba%2Cb%7D%20%5Ctext%7Bcount%7D(a%2Cb)%20%5Ccdot%20%5Clog%20%5Ctheta_%7Ba%20%5Cto%20b%7D%24%24%0A%0A%20%20%20%20Taking%20derivatives%20and%20using%20Lagrange%20multipliers%20for%20the%20constraint%0A%20%20%20%20%24%5Csum_b%20%5Ctheta_%7Ba%20%5Cto%20b%7D%20%3D%201%24%2C%20we%20get%3A%0A%0A%20%20%20%20%24%24%5Ctheta%5E*_%7Ba%20%5Cto%20b%7D%20%3D%20%5Cfrac%7B%5Ctext%7Bcount%7D(a%2Cb)%7D%7B%5Ctext%7Bcount%7D(a%2C%20%5Ccdot)%7D%24%24%0A%0A%20%20%20%20**Counting%20*is*%20optimization!**%20This%20elegant%20equivalence%20is%20specific%20to%20categorical%0A%20%20%20%20distributions%2C%20but%20the%20principle%20%E2%80%94%20training%20as%20optimization%20%E2%80%94%20carries%20through%20to%0A%20%20%20%20neural%20networks.%0A%0A%20%20%20%20%23%23%23%20Insight%202%3A%20Perplexity%20as%20Branching%20Factor%0A%0A%20%20%20%20Perplexity%20has%20an%20intuitive%20interpretation%3A%0A%0A%20%20%20%20%3E%20If%20perplexity%20%3D%2050%2C%20the%20model%20is%20as%20uncertain%20as%20choosing%20uniformly%20among%2050%20options.%0A%0A%20%20%20%20A%20random%20model%20over%20vocabulary%20of%20size%20%24%7CV%7C%24%20has%20perplexity%20%24%7CV%7C%24.%0A%20%20%20%20A%20perfect%20model%20that%20always%20predicts%20correctly%20has%20perplexity%201.%0A%0A%20%20%20%20%23%23%23%20Insight%203%3A%20The%20Fundamental%20Trade-off%0A%0A%20%20%20%20-%20**More%20context%20%E2%86%92%20better%20predictions**%20(we%20know%20more%20about%20what%20came%20before)%0A%20%20%20%20-%20**More%20context%20%E2%86%92%20sparser%20data**%20(fewer%20examples%20of%20each%20exact%20history)%0A%0A%20%20%20%20This%20tension%20is%20fundamental.%20Neural%20networks%20resolve%20it%20by%20**generalizing**%20%E2%80%94%0A%20%20%20%20similar%20histories%20get%20similar%20predictions%2C%20even%20if%20not%20identical.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20What's%20Next%3F%0A%0A%20%20%20%20We've%20built%20a%20working%20language%20model!%20But%20it%20has%20fundamental%20limitations%3A%0A%0A%20%20%20%201.%20**Fixed%20context**%3A%20Can't%20look%20back%20arbitrarily%20far%0A%20%20%20%202.%20**No%20generalization**%3A%20Exact%20matches%20only%0A%20%20%20%203.%20**Exponential%20state%20space**%3A%20Higher%20orders%20quickly%20become%20impractical%0A%0A%20%20%20%20To%20move%20beyond%20these%20limitations%2C%20we%20need%20a%20way%20to%3A%0A%20%20%20%20-%20Learn%20patterns%20that%20generalize%0A%20%20%20%20-%20Capture%20long-range%20dependencies%0A%20%20%20%20-%20Scale%20efficiently%0A%0A%20%20%20%20**That's%20what%20neural%20networks%20provide.**%0A%0A%20%20%20%20But%20to%20train%20neural%20networks%2C%20we%20need%20gradients.%20And%20to%20compute%20gradients%20efficiently%2C%0A%20%20%20%20we%20need%20**automatic%20differentiation**.%0A%0A%20%20%20%20%E2%86%92%20**Stage%202%3A%20Automatic%20Differentiation**%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(%22%22%22%0A%20%20%20%20---%0A%0A%20%20%20%20%23%23%20Exercises%0A%0A%20%20%20%201.%20**Smoothing**%3A%20What%20happens%20when%20we%20see%20an%20n-gram%20we%20never%20saw%20in%20training%3F%0A%20%20%20%20%20%20%20Implement%20Laplace%20smoothing%3A%20%24P(b%7Ca)%20%3D%20%5Cfrac%7B%5Ctext%7Bcount%7D(a%2Cb)%20%2B%201%7D%7B%5Ctext%7Bcount%7D(a%2C%5Ccdot)%20%2B%20%7CV%7C%7D%24%0A%0A%20%20%20%202.%20**Word-level%20model**%3A%20Modify%20the%20code%20to%20tokenize%20by%20words%20instead%20of%20characters.%0A%20%20%20%20%20%20%20How%20does%20the%20optimal%20order%20change%3F%0A%0A%20%20%20%203.%20**Temperature%20analysis**%3A%20Generate%20samples%20at%20T%3D0.5%2C%201.0%2C%20and%202.0.%0A%20%20%20%20%20%20%20What's%20the%20mathematical%20relationship%20between%20temperature%20and%20entropy%3F%0A%0A%20%20%20%204.%20**Different%20text**%3A%20Try%20training%20on%20different%20texts%20(poetry%2C%20code%2C%20Wikipedia).%0A%20%20%20%20%20%20%20How%20do%20the%20transition%20matrices%20differ%3F%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0Aif%20__name__%20%3D%3D%20%22__main__%22%3A%0A%20%20%20%20app.run()%0A</marimo-code></head>
+  <body>
+    <div id="root"></div>
+    <!-- This is a portal for the data editor to render in -->
+    <div id="portal" data-testid="glide-portal" style="position: fixed; left: 0; top: 0; z-index: 9999"></div>
+    <script data-marimo="true">
+      window.__MARIMO_MOUNT_CONFIG__ = {
+            "filename": "notebook.py",
+            "mode": "read",
+            "version": "0.17.6",
+            "serverToken": "unused",
+            "config": {"ai": {"models": {"custom_models": [], "displayed_models": []}}, "completion": {"activate_on_typing": true, "copilot": false}, "diagnostics": {"sql_linter": true}, "display": {"cell_output": "below", "code_editor_font_size": 14, "dataframes": "rich", "default_table_max_columns": 50, "default_table_page_size": 10, "default_width": "medium", "reference_highlighting": false, "theme": "light"}, "formatting": {"line_length": 79}, "keymap": {"overrides": {}, "preset": "default"}, "language_servers": {"pylsp": {"enable_flake8": false, "enable_mypy": true, "enable_pydocstyle": false, "enable_pyflakes": false, "enable_pylint": false, "enable_ruff": true, "enabled": false}}, "mcp": {"mcpServers": {}, "presets": []}, "package_management": {"manager": "pip"}, "runtime": {"auto_instantiate": false, "auto_reload": "off", "default_sql_output": "auto", "on_cell_change": "autorun", "output_max_bytes": 8000000, "reactive_tests": true, "std_stream_max_bytes": 1000000, "watcher_on_save": "lazy"}, "save": {"autosave": "off", "autosave_delay": 1000, "format_on_save": false}, "server": {"browser": "default", "follow_symlink": false}, "snippets": {"custom_paths": [], "include_default_snippets": true}},
+            "configOverrides": {},
+            "appConfig": {"sql_output": "auto", "width": "medium"},
+            "view": {"showAppCode": true},
+            "notebook": null,
+            "session": null,
+            "runtimeConfig": null,
+        };
+    </script>
+  </body>
+</html>

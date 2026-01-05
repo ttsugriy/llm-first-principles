@@ -2,7 +2,7 @@
 
 A comprehensive educational resource teaching Large Language Model development from absolute first principles, with full mathematical derivations, performance-focused implementation, and systematic trade-off analysis.
 
-**[Read Online →](https://YOUR_USERNAME.github.io/llm-first-principles/)**
+**[Read Online →](https://ttsugriy.github.io/llm-first-principles/)**
 
 **Author:** Taras Tsugrii | [Substack](https://softwarebits.substack.com/)
 
@@ -20,13 +20,13 @@ Every formula is derived. Every algorithm is implemented from scratch. Every des
 
 ### Read Online
 
-Visit the [GitHub Pages site](https://YOUR_USERNAME.github.io/llm-first-principles/) for formatted content.
+Visit the [GitHub Pages site](https://ttsugriy.github.io/llm-first-principles/) for formatted content.
 
 ### Run Locally
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/llm-first-principles.git
+git clone https://github.com/ttsugriy/llm-first-principles.git
 cd llm-first-principles
 
 # Run Stage 1 demo

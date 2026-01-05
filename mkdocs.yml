@@ -70,4 +70,13 @@ nav:
     - 2.5 Forward vs Reverse Mode: stages/stage-02/05-forward-vs-reverse.md
     - 2.6 Building Autograd: stages/stage-02/06-autograd-from-scratch.md
     - 2.7 Testing and Validation: stages/stage-02/07-testing-validation.md
-  - Stage 3 - Coming Soon: stages/stage-03-preview.md
+  - Stage 3 - Neural Language Models:
+    - Overview: stages/stage-03/index.md
+    - 3.1 Why Neural?: stages/stage-03/01-why-neural.md
+    - 3.2 Embeddings: stages/stage-03/02-embeddings.md
+    - 3.3 Feed-Forward Networks: stages/stage-03/03-feed-forward.md
+    - 3.4 Cross-Entropy Loss: stages/stage-03/04-cross-entropy.md
+    - 3.5 Implementation: stages/stage-03/05-implementation.md
+    - 3.6 Training Dynamics: stages/stage-03/06-training-dynamics.md
+    - 3.7 Evaluation: stages/stage-03/07-evaluation.md
+  - Stage 4 - Coming Soon: stages/stage-04-preview.md

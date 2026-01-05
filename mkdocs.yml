@@ -61,4 +61,13 @@ nav:
     - 1.6 Temperature Sampling: stages/stage-01/06-temperature-sampling.md
     - 1.7 Implementation: stages/stage-01/07-implementation.md
     - 1.8 Trade-offs: stages/stage-01/08-trade-offs.md
-  - Stage 2 - Coming Soon: stages/stage-02-preview.md
+  - Stage 2 - Automatic Differentiation:
+    - Overview: stages/stage-02/index.md
+    - 2.1 What is a Derivative?: stages/stage-02/01-what-is-derivative.md
+    - 2.2 Derivative Rules: stages/stage-02/02-derivative-rules.md
+    - 2.3 The Chain Rule: stages/stage-02/03-chain-rule.md
+    - 2.4 Computational Graphs: stages/stage-02/04-computational-graphs.md
+    - 2.5 Forward vs Reverse Mode: stages/stage-02/05-forward-vs-reverse.md
+    - 2.6 Building Autograd: stages/stage-02/06-autograd-from-scratch.md
+    - 2.7 Testing and Validation: stages/stage-02/07-testing-validation.md
+  - Stage 3 - Coming Soon: stages/stage-03-preview.md

@@ -17,7 +17,7 @@ Most LLM tutorials tell you *what* to do. This book shows you *why* it works:
 | Stage | Topic | Status |
 |-------|-------|--------|
 | 1 | [Markov Chains](stages/stage-01/index.md) | ✅ Complete |
-| 2 | Automatic Differentiation | Coming Soon |
+| 2 | [Automatic Differentiation](stages/stage-02/index.md) | ✅ Complete |
 | 3-18 | Neural LMs → Transformers → RLHF | Planned |
 
 ## Prerequisites

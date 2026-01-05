@@ -33,3 +33,6 @@ Thumbs.db
 
 # Local development
 .cache/
+
+# Jupyter Book
+_build/

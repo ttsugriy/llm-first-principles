@@ -1,0 +1,19 @@
+# Table of contents
+format: jb-book
+root: intro
+parts:
+  - caption: Stage 1 - Markov Chains
+    chapters:
+      - file: stages/stage-01/index
+        sections:
+          - file: stages/stage-01/01-probability-foundations
+          - file: stages/stage-01/02-language-modeling-problem
+          - file: stages/stage-01/03-mle-derivation
+          - file: stages/stage-01/04-information-theory
+          - file: stages/stage-01/05-perplexity
+          - file: stages/stage-01/06-temperature-sampling
+          - file: stages/stage-01/07-implementation
+          - file: stages/stage-01/08-trade-offs
+  - caption: Coming Soon
+    chapters:
+      - file: stages/stage-02-preview

@@ -1,0 +1,63 @@
+# Book settings
+title: Building LLMs from First Principles
+author: Taras Tsugrii
+copyright: "2025"
+logo: ""
+
+# Force re-execution of notebooks on each build
+execute:
+  execute_notebooks: auto
+  timeout: 600
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: llm-first-principles.tex
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/ttsugriy/llm-first-principles
+  path_to_book: ""
+  branch: main
+
+# Add GitHub buttons to your book
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: true
+  home_page_in_navbar: false
+  baseurl: https://ttsugriy.github.io/llm-first-principles/
+  extra_footer: |
+    <p>Built with <a href="https://jupyterbook.org">Jupyter Book</a></p>
+
+# Launch button settings
+launch_buttons:
+  notebook_interface: "classic"
+  binderhub_url: ""
+  colab_url: "https://colab.research.google.com"
+  thebe: true
+
+# Math and parsing settings
+parse:
+  myst_enable_extensions:
+    - amsmath
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_admonition
+    - html_image
+    - linkify
+    - replacements
+    - smartquotes
+    - substitution
+    - tasklist
+
+sphinx:
+  config:
+    mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+    html_theme_options:
+      navigation_with_keys: false

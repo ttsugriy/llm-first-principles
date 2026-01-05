@@ -1,0 +1,2043 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-03/01-why-neural/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-embeddings/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>3.1 Why Neural? - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-31-why-neural-the-limits-of-counting" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3.1 Why Neural?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/04-information-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/03-chain-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/04-computational-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/05-forward-vs-reverse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-curse-of-dimensionality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Curse of Dimensionality
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Curse of Dimensionality">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-contexts-are-there" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many Contexts Are There?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-much-data-do-we-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Much Data Do We Have?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-exponential-gap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Exponential Gap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-of-sparsity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem of Sparsity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Problem of Sparsity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens in Practice
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smoothing-helps-but-not-enough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Smoothing Helps, But Not Enough
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-key-insight-contexts-are-not-independent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Key Insight: Contexts Are Not Independent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Key Insight: Contexts Are Not Independent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#an-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        An Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-we-need-generalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Need: Generalization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What We Need: Generalization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#count-based-generalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Count-Based Generalization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-we-want" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Want
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-solution-continuous-representations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Solution: Continuous Representations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Solution: Continuous Representations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#discrete-vs-continuous" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discrete vs Continuous
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-continuous-helps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Continuous Helps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-mathematical-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Mathematical Shift
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameter-efficiency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter Efficiency
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameter Efficiency">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#n-gram-parameter-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        N-gram Parameter Count
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neural-parameter-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neural Parameter Count
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-trade-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Trade-off
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Trade-off">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-we-gain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Gain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-we-lose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Lose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-each-wins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Each Wins
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-concrete-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A Concrete Comparison
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="A Concrete Comparison">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Task
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#n-gram-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        N-gram Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neural-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neural Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-difference-in-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Difference in Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-path-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Path Forward
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-feed-forward/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-cross-entropy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-31-why-neural-the-limits-of-counting">Section 3.1: Why Neural? The Limits of Counting<a class="headerlink" href="#section-31-why-neural-the-limits-of-counting" title="Permanent link">&para;</a></h1>
+<p>In Stage 1, we built language models by counting. Given enough data, counting works perfectly—maximum likelihood estimation gives us optimal probability estimates.</p>
+<p>So why do we need neural networks?</p>
+<p><strong>The answer is simple: we never have enough data.</strong></p>
+<p>This section explores the fundamental limitations of count-based models and why continuous representations offer a solution.</p>
+<h2 id="the-curse-of-dimensionality">The Curse of Dimensionality<a class="headerlink" href="#the-curse-of-dimensionality" title="Permanent link">&para;</a></h2>
+<p>Consider modeling the probability of the next character given the previous 10 characters.</p>
+<h3 id="how-many-contexts-are-there">How Many Contexts Are There?<a class="headerlink" href="#how-many-contexts-are-there" title="Permanent link">&para;</a></h3>
+<p>With a vocabulary of |V| = 100 characters (letters, digits, punctuation, space):</p>
+<div class="arithmatex">\[\text{Number of possible 10-character contexts} = 100^{10} = 10^{20}\]</div>
+<p>That's <strong>100 quintillion</strong> possible contexts.</p>
+<h3 id="how-much-data-do-we-have">How Much Data Do We Have?<a class="headerlink" href="#how-much-data-do-we-have" title="Permanent link">&para;</a></h3>
+<p>Wikipedia contains roughly 4 billion characters. Even if we used all of Wikipedia:
+- We'd see each specific 10-character context at most a few times
+- Most contexts would never appear
+- For unseen contexts, our count-based model gives probability 0 or falls back to shorter contexts</p>
+<h3 id="the-exponential-gap">The Exponential Gap<a class="headerlink" href="#the-exponential-gap" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Context Length</th>
+<th>Possible Contexts</th>
+<th>Data Needed for Coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>10,000</td>
+<td>~10,000</td>
+</tr>
+<tr>
+<td>5</td>
+<td>10^10</td>
+<td>~10^10</td>
+</tr>
+<tr>
+<td>10</td>
+<td>10^20</td>
+<td>~10^20</td>
+</tr>
+<tr>
+<td>20</td>
+<td>10^40</td>
+<td>Impossible</td>
+</tr>
+</tbody>
+</table>
+<p>This is the <strong>curse of dimensionality</strong>: the number of possible configurations grows exponentially with context length, while our data grows at best linearly.</p>
+<h2 id="the-problem-of-sparsity">The Problem of Sparsity<a class="headerlink" href="#the-problem-of-sparsity" title="Permanent link">&para;</a></h2>
+<h3 id="what-happens-in-practice">What Happens in Practice<a class="headerlink" href="#what-happens-in-practice" title="Permanent link">&para;</a></h3>
+<p>Let's revisit our Stage 1 experience:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Order 1 model: Seen most bigrams, works okay
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Order 2 model: Many trigrams unseen
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Order 5 model: Most 6-grams never appear in training
+</code></pre></div>
+<p>For a 5-gram model on typical training data:
+- ~90% of test 5-grams are unseen in training
+- Model must constantly back off to shorter contexts
+- The "5-gram" model effectively becomes a mixture of lower-order models</p>
+<h3 id="smoothing-helps-but-not-enough">Smoothing Helps, But Not Enough<a class="headerlink" href="#smoothing-helps-but-not-enough" title="Permanent link">&para;</a></h3>
+<p>In Stage 1, we applied Laplace smoothing:</p>
+<div class="arithmatex">\[P(w | c) = \frac{\text{count}(c, w) + 1}{\text{count}(c) + |V|}\]</div>
+<p>This prevents zero probabilities, but:
+- Assigns equal probability to all unseen continuations
+- "the cat sat" and "the xyz sat" get the same smoothed probability
+- No notion of similarity between contexts</p>
+<h2 id="the-key-insight-contexts-are-not-independent">The Key Insight: Contexts Are Not Independent<a class="headerlink" href="#the-key-insight-contexts-are-not-independent" title="Permanent link">&para;</a></h2>
+<p>Here's what count-based models miss: <strong>similar contexts should give similar predictions</strong>.</p>
+<h3 id="an-example">An Example<a class="headerlink" href="#an-example" title="Permanent link">&para;</a></h3>
+<p>Consider these contexts:
+1. "the cat sat on the"
+2. "the dog sat on the"
+3. "a cat sat upon the"</p>
+<p>A human knows these should give similar next-character predictions. But to a count-based model:
+- These are three completely independent entries in a lookup table
+- Learning from (1) tells us nothing about (2) or (3)
+- Each must be learned separately</p>
+<h3 id="why-this-matters">Why This Matters<a class="headerlink" href="#why-this-matters" title="Permanent link">&para;</a></h3>
+<p>Real language has structure:
+- "cat" and "dog" are both animals
+- "sat" and "slept" are both past tense verbs
+- "on" and "upon" serve similar grammatical roles</p>
+<p>This structure means we don't need to see every possible combination—we need to learn the underlying patterns.</p>
+<h2 id="what-we-need-generalization">What We Need: Generalization<a class="headerlink" href="#what-we-need-generalization" title="Permanent link">&para;</a></h2>
+<p>The core problem is <strong>generalization</strong>: using what we've learned to handle situations we haven't seen.</p>
+<h3 id="count-based-generalization">Count-Based Generalization<a class="headerlink" href="#count-based-generalization" title="Permanent link">&para;</a></h3>
+<p>N-gram models generalize via:
+1. <strong>Backoff</strong>: If we haven't seen the long context, use a shorter one
+2. <strong>Interpolation</strong>: Mix predictions from different context lengths</p>
+<p>These methods share statistical strength across:
+- "the cat sat" → "the cat" → "cat"</p>
+<p>But NOT across:
+- "the cat" and "the dog" (completely independent)</p>
+<h3 id="what-we-want">What We Want<a class="headerlink" href="#what-we-want" title="Permanent link">&para;</a></h3>
+<p>We want a model where:
+$<span class="arithmatex">\(\text{similarity}(\text{"the cat"}, \text{"the dog"}) &gt; 0\)</span>$</p>
+<p>And this similarity should affect predictions:
+- If we learn that "sat" often follows "the cat"
+- We should automatically infer that "sat" might follow "the dog"</p>
+<h2 id="the-solution-continuous-representations">The Solution: Continuous Representations<a class="headerlink" href="#the-solution-continuous-representations" title="Permanent link">&para;</a></h2>
+<p>The key insight of neural language models:</p>
+<p><strong>Replace discrete symbols with continuous vectors.</strong></p>
+<h3 id="discrete-vs-continuous">Discrete vs Continuous<a class="headerlink" href="#discrete-vs-continuous" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Discrete (N-gram)</th>
+<th>Continuous (Neural)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"cat" = entry #742 in table</td>
+<td>"cat" = [0.2, -0.5, 0.8, ...] ∈ ℝ^d</td>
+</tr>
+<tr>
+<td>Two words: same or different</td>
+<td>Two words: distance in vector space</td>
+</tr>
+<tr>
+<td>Similarity undefined</td>
+<td>Similarity = cosine, Euclidean, etc.</td>
+</tr>
+<tr>
+<td>No interpolation possible</td>
+<td>Smooth interpolation natural</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-continuous-helps">Why Continuous Helps<a class="headerlink" href="#why-continuous-helps" title="Permanent link">&para;</a></h3>
+<p>In a continuous space:
+1. <strong>Similar words → similar vectors</strong>: "cat" and "dog" are nearby
+2. <strong>Similar contexts → similar predictions</strong>: Neural network outputs vary smoothly
+3. <strong>Generalization is automatic</strong>: Learning about nearby points affects the whole region</p>
+<h3 id="the-mathematical-shift">The Mathematical Shift<a class="headerlink" href="#the-mathematical-shift" title="Permanent link">&para;</a></h3>
+<p>N-gram:
+$<span class="arithmatex">\(P(w | c) = \text{table}[c][w]\)</span>$</p>
+<p>Neural:
+$<span class="arithmatex">\(P(w | c) = f_\theta(\text{embed}(c))\)</span>$</p>
+<p>Where:
+- embed(c) maps discrete context to continuous vector
+- f_θ is a smooth function (neural network)
+- θ are learnable parameters</p>
+<h2 id="parameter-efficiency">Parameter Efficiency<a class="headerlink" href="#parameter-efficiency" title="Permanent link">&para;</a></h2>
+<h3 id="n-gram-parameter-count">N-gram Parameter Count<a class="headerlink" href="#n-gram-parameter-count" title="Permanent link">&para;</a></h3>
+<p>For vocabulary |V| and context length k:
+- Need to store P(w | c) for every (c, w) pair
+- Parameters: O(|V|^{k+1})</p>
+<p>For |V| = 10,000 and k = 5: 10,000^6 = 10^24 parameters. Impossible.</p>
+<h3 id="neural-parameter-count">Neural Parameter Count<a class="headerlink" href="#neural-parameter-count" title="Permanent link">&para;</a></h3>
+<p>For embedding dimension d and hidden size h:
+- Embedding matrix: |V| × d
+- Hidden layers: O(h × k × d)
+- Output layer: O(h × |V|)
+- Total: O(|V| × d + h × |V|)</p>
+<p>For |V| = 10,000, d = 256, h = 512:
+- Embeddings: 2.56M
+- Output: 5.12M
+- Hidden: ~0.5M
+- Total: ~8M parameters</p>
+<p><strong>From 10^24 to 8 million</strong>: a reduction by a factor of 10^17!</p>
+<h2 id="the-trade-off">The Trade-off<a class="headerlink" href="#the-trade-off" title="Permanent link">&para;</a></h2>
+<h3 id="what-we-gain">What We Gain<a class="headerlink" href="#what-we-gain" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Massive parameter reduction</li>
+<li>Automatic generalization</li>
+<li>Smooth predictions</li>
+<li>Ability to use long contexts</li>
+</ul>
+<h3 id="what-we-lose">What We Lose<a class="headerlink" href="#what-we-lose" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Exact match: N-gram gives exact counts</li>
+<li>Simplicity: no optimization needed for N-gram</li>
+<li>Interpretability: can inspect count tables directly</li>
+<li>Speed: N-gram lookup is O(1)</li>
+</ul>
+<h3 id="when-each-wins">When Each Wins<a class="headerlink" href="#when-each-wins" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Better Choice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Abundant data, short context</td>
+<td>N-gram</td>
+</tr>
+<tr>
+<td>Limited data, long context</td>
+<td>Neural</td>
+</tr>
+<tr>
+<td>Requires exact memorization</td>
+<td>N-gram</td>
+</tr>
+<tr>
+<td>Requires generalization</td>
+<td>Neural</td>
+</tr>
+<tr>
+<td>Interpretability critical</td>
+<td>N-gram</td>
+</tr>
+<tr>
+<td>Performance critical</td>
+<td>Neural</td>
+</tr>
+</tbody>
+</table>
+<p>In practice, modern language models use neural approaches almost universally—the generalization advantage is too significant.</p>
+<h2 id="a-concrete-comparison">A Concrete Comparison<a class="headerlink" href="#a-concrete-comparison" title="Permanent link">&para;</a></h2>
+<p>Let's quantify the difference with a thought experiment.</p>
+<h3 id="the-task">The Task<a class="headerlink" href="#the-task" title="Permanent link">&para;</a></h3>
+<p>Predict the next character in English text with context length 10.</p>
+<h3 id="n-gram-approach">N-gram Approach<a class="headerlink" href="#n-gram-approach" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Collect all 11-grams from training data</li>
+<li>Compute conditional probabilities</li>
+<li>Apply smoothing</li>
+</ul>
+<p><strong>Result</strong>: Most test 11-grams unseen. Heavy reliance on backoff. Effective context often only 2-3 characters.</p>
+<h3 id="neural-approach">Neural Approach<a class="headerlink" href="#neural-approach" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Learn 10 character embeddings (10 × d parameters)</li>
+<li>Process with neural network</li>
+<li>Output probability over vocabulary</li>
+</ul>
+<p><strong>Result</strong>: Every test context gets a meaningful prediction based on its pattern, not just exact matches.</p>
+<h3 id="the-difference-in-action">The Difference in Action<a class="headerlink" href="#the-difference-in-action" title="Permanent link">&para;</a></h3>
+<p>Training data includes:
+- "the cat sat on the mat"</p>
+<p>Test context:
+- "the dog sat on the "</p>
+<p>N-gram: Never seen "the dog sat on the " → backs off to "the " → poor prediction</p>
+<p>Neural: "dog" embedding ≈ "cat" embedding → similar hidden state → similar prediction to "cat" case → correctly predicts space or common next words</p>
+<h2 id="the-path-forward">The Path Forward<a class="headerlink" href="#the-path-forward" title="Permanent link">&para;</a></h2>
+<p>In the remaining sections of Stage 3, we'll build this from scratch:</p>
+<ol>
+<li><strong>Section 3.2</strong>: Embeddings—how to represent tokens as vectors</li>
+<li><strong>Section 3.3</strong>: Neural networks—the function that maps embeddings to predictions</li>
+<li><strong>Section 3.4</strong>: Cross-entropy loss—how to train the network</li>
+<li><strong>Section 3.5</strong>: Implementation—building it with our Stage 2 autograd</li>
+<li><strong>Section 3.6</strong>: Training dynamics—making it learn effectively</li>
+<li><strong>Section 3.7</strong>: Evaluation—comparing to our Stage 1 baselines</li>
+</ol>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>N-gram Limitation</th>
+<th>Neural Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sparsity</td>
+<td>Most contexts unseen</td>
+<td>Continuous representations</td>
+</tr>
+<tr>
+<td>Generalization</td>
+<td>No similarity notion</td>
+<td>Embeddings capture similarity</td>
+</tr>
+<tr>
+<td>Parameters</td>
+<td>Exponential in context</td>
+<td>Linear in vocabulary</td>
+</tr>
+<tr>
+<td>Long context</td>
+<td>Backs off constantly</td>
+<td>Uses full context</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key insight</strong>: The curse of dimensionality makes count-based models fundamentally limited. Continuous representations offer a way out by enabling generalization: learning from one context transfers to similar contexts.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Count the sparsity</strong>: For a corpus of 1 million characters and vocabulary of 80 characters, estimate what fraction of possible 5-grams appear in the data.</p>
+</li>
+<li>
+<p><strong>Similarity intuition</strong>: List 5 pairs of words that should have similar embeddings and 5 pairs that should have dissimilar embeddings. Explain your reasoning.</p>
+</li>
+<li>
+<p><strong>Parameter comparison</strong>: For vocabulary size V = 50,000, context length k = 10, embedding dimension d = 512, and hidden size h = 1024, calculate the parameter count for both N-gram and neural approaches.</p>
+</li>
+<li>
+<p><strong>Backoff analysis</strong>: If an N-gram model backs off from order 5 to order 3 on average, what effective context length is it using? How does this compare to a neural model?</p>
+</li>
+<li>
+<p><strong>Thought experiment</strong>: Describe a scenario where an N-gram model might outperform a neural model. What properties of the data would make counting more effective than learning?</p>
+</li>
+</ol>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>We've established why we need neural models. The first step is learning how to represent discrete tokens—characters or words—as continuous vectors.</p>
+<p>In Section 3.2, we'll dive deep into <strong>embeddings</strong>: the foundation that makes neural language models possible.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1658 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-01/04-information-theory/">
+      
+      
+        <link rel="prev" href="../03-mle-derivation/">
+      
+      
+        <link rel="next" href="../05-perplexity/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>1.4 Information Theory - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-14-information-theory-foundations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1.4 Information Theory
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-core-question-what-is-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Core Question: What is Information?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deriving-the-information-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deriving the Information Formula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Formula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-bits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Bits?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entropy-average-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entropy: Average Information
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#properties-of-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties of Entropy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-entropy-using-the-wrong-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Entropy: Using the Wrong Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-entropy-for-language-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Entropy for Language Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-connection-to-log-likelihood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Connection to Log-Likelihood
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kl-divergence-the-gap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KL Divergence: The Gap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-we-minimize-cross-entropy-not-kl-divergence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why We Minimize Cross-Entropy, Not KL Divergence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/03-chain-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/04-computational-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/05-forward-vs-reverse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/01-why-neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/02-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/03-feed-forward/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/04-cross-entropy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-14-information-theory-foundations">Section 1.4: Information Theory Foundations<a class="headerlink" href="#section-14-information-theory-foundations" title="Permanent link">&para;</a></h1>
+<p>To properly understand how to measure model quality, we need information theory. This section derives the key concepts from first principles, explaining <em>why</em> logarithms appear everywhere in machine learning.</p>
+<h2 id="the-core-question-what-is-information">The Core Question: What is Information?<a class="headerlink" href="#the-core-question-what-is-information" title="Permanent link">&para;</a></h2>
+<p>Intuitively, information is what reduces uncertainty. When someone tells you something you already knew, you gain no information. When they tell you something surprising, you gain a lot.</p>
+<p><strong>Claude Shannon's insight (1948)</strong>: We can <em>quantify</em> information mathematically.</p>
+<h2 id="deriving-the-information-formula">Deriving the Information Formula<a class="headerlink" href="#deriving-the-information-formula" title="Permanent link">&para;</a></h2>
+<p>Let's derive the formula for information from basic requirements.</p>
+<p><strong>Setup</strong>: An event has probability p. How much information (in some units) do we gain when we learn it occurred?</p>
+<p>Let I(p) denote the information gained from an event with probability p.</p>
+<p><strong>Requirement 1</strong>: Rare events give more information.
+If p₁ &lt; p₂, then I(p₁) &gt; I(p₂).
+Learning something unlikely happened is more informative.</p>
+<p><strong>Requirement 2</strong>: Certain events give no information.
+I(1) = 0.
+If something was guaranteed to happen, learning it happened tells us nothing.</p>
+<p><strong>Requirement 3</strong>: Information from independent events adds.
+If A and B are independent, learning both gives:
+I(P(A and B)) = I(P(A)) + I(P(B))
+For independent events: P(A and B) = P(A) · P(B)
+So: I(P(A) · P(B)) = I(P(A)) + I(P(B))</p>
+<p><strong>The key constraint</strong>: We need a function where f(x·y) = f(x) + f(y).</p>
+<p>What function turns products into sums?</p>
+<p><strong>The logarithm!</strong> log(x·y) = log(x) + log(y)</p>
+<p>So I(p) must be of the form: I(p) = -log(p) × (some constant)</p>
+<p>The negative sign ensures rare events (small p, so log p is negative) give positive information.</p>
+<p><strong>Choosing the constant</strong>: If we use log base 2, the unit is "bits." If base e, "nats." If base 10, "digits."</p>
+<div class="arithmatex">\[\boxed{I(p) = -\log_2(p) = \log_2(1/p)}\]</div>
+<p>This is the <strong>information content</strong> or <strong>surprisal</strong> of an event with probability p.</p>
+<h2 id="understanding-the-formula">Understanding the Formula<a class="headerlink" href="#understanding-the-formula" title="Permanent link">&para;</a></h2>
+<p>Let's verify this makes sense:</p>
+<table>
+<thead>
+<tr>
+<th>Probability</th>
+<th>Information (bits)</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>0</td>
+<td>Certain event, no surprise</td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>1</td>
+<td>Like a coin flip</td>
+</tr>
+<tr>
+<td>0.25</td>
+<td>2</td>
+<td>Like two coin flips</td>
+</tr>
+<tr>
+<td>0.125</td>
+<td>3</td>
+<td>Like three coin flips</td>
+</tr>
+<tr>
+<td>0.01</td>
+<td>6.64</td>
+<td>Quite surprising</td>
+</tr>
+<tr>
+<td>0.001</td>
+<td>9.97</td>
+<td>Very surprising</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The coin flip interpretation</strong>: If an event has probability 1/2ⁿ, learning it occurred gives n bits of information—equivalent to learning the outcomes of n fair coin flips.</p>
+<h2 id="why-bits">Why Bits?<a class="headerlink" href="#why-bits" title="Permanent link">&para;</a></h2>
+<p>The term "bit" (binary digit) comes from a physical interpretation:</p>
+<p>To distinguish between N equally likely possibilities, you need log₂(N) yes/no questions.</p>
+<p><strong>Example</strong>: There are 8 equally likely outcomes. How many bits to identify which occurred?
+- log₂(8) = 3 bits
+- Indeed: "Is it in the first half?" (3 questions distinguish 8 things)</p>
+<p>So -log₂(p) = log₂(1/p) tells us: "How many yes/no questions would it take to identify this outcome among equally-likely alternatives?"</p>
+<h2 id="entropy-average-information">Entropy: Average Information<a class="headerlink" href="#entropy-average-information" title="Permanent link">&para;</a></h2>
+<p>If we have a random variable X with distribution P(X), the <strong>entropy</strong> H(X) is the expected (average) information:</p>
+<div class="arithmatex">\[H(X) = \mathbb{E}[-\log P(X)] = -\sum_x P(x) \log P(x)\]</div>
+<p>Entropy measures the average surprise, or equivalently, the average number of bits needed to encode outcomes of X.</p>
+<p><strong>Example 1: Fair coin</strong>
+P(heads) = P(tails) = 0.5
+$<span class="arithmatex">\(H = -0.5 \log_2(0.5) - 0.5 \log_2(0.5) = -0.5(-1) - 0.5(-1) = 1 \text{ bit}\)</span>$</p>
+<p><strong>Example 2: Biased coin (90% heads)</strong>
+P(heads) = 0.9, P(tails) = 0.1
+$<span class="arithmatex">\(H = -0.9 \log_2(0.9) - 0.1 \log_2(0.1)\)</span>$
+$<span class="arithmatex">\(= -0.9(-0.152) - 0.1(-3.322) = 0.137 + 0.332 = 0.469 \text{ bits}\)</span>$</p>
+<p>The biased coin has lower entropy—it's more predictable.</p>
+<p><strong>Example 3: Certain coin (always heads)</strong>
+P(heads) = 1, P(tails) = 0
+$<span class="arithmatex">\(H = -1 \cdot \log_2(1) - 0 \cdot \log_2(0) = 0 \text{ bits}\)</span>$</p>
+<p>(We define 0 · log(0) = 0 by continuity.)</p>
+<p>No uncertainty, no information needed.</p>
+<h2 id="properties-of-entropy">Properties of Entropy<a class="headerlink" href="#properties-of-entropy" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Non-negative</strong>: H(X) ≥ 0. Entropy is always non-negative.</p>
+</li>
+<li>
+<p><strong>Maximum for uniform distribution</strong>: For a random variable over n outcomes, entropy is maximized when all outcomes are equally likely:
+   $<span class="arithmatex">\(H_{\max} = \log_2(n)\)</span>$</p>
+</li>
+<li>
+<p><strong>Additivity for independent variables</strong>: If X and Y are independent:
+   $<span class="arithmatex">\(H(X, Y) = H(X) + H(Y)\)</span>$</p>
+</li>
+<li>
+<p><strong>Concavity</strong>: Entropy is a concave function of the probability distribution.</p>
+</li>
+</ol>
+<h2 id="cross-entropy-using-the-wrong-model">Cross-Entropy: Using the Wrong Model<a class="headerlink" href="#cross-entropy-using-the-wrong-model" title="Permanent link">&para;</a></h2>
+<p>Now the crucial concept for language modeling.</p>
+<p><strong>Scenario</strong>: The true distribution is P, but we're using a model Q to encode/predict.</p>
+<p>The <strong>cross-entropy</strong> is:
+$<span class="arithmatex">\(H(P, Q) = -\sum_x P(x) \log Q(x) = \mathbb{E}_{x \sim P}[-\log Q(x)]\)</span>$</p>
+<p>This is the average number of bits needed to encode samples from P using a code optimized for Q.</p>
+<p><strong>Key insight</strong>: Cross-entropy is always at least as large as entropy:
+$<span class="arithmatex">\(H(P, Q) \geq H(P)\)</span>$</p>
+<p>with equality if and only if P = Q.</p>
+<p>Using the wrong model (Q ≠ P) always requires more bits on average.</p>
+<h2 id="cross-entropy-for-language-models">Cross-Entropy for Language Models<a class="headerlink" href="#cross-entropy-for-language-models" title="Permanent link">&para;</a></h2>
+<p>For a language model, we're evaluating on a test corpus. Let's connect to our setup:</p>
+<ul>
+<li><strong>True distribution P</strong>: The actual distribution of text (approximated by test data)</li>
+<li><strong>Model distribution Q</strong>: Our Markov model's predictions</li>
+<li><strong>Samples</strong>: The actual tokens in the test corpus</li>
+</ul>
+<p>The cross-entropy of our model on the test data is:
+$<span class="arithmatex">\(H(P, Q) = -\frac{1}{N} \sum_{i=1}^{N} \log Q(x_i | \text{context}_i)\)</span>$</p>
+<p>This is exactly the average negative log-probability of the test tokens under our model!</p>
+<h2 id="the-connection-to-log-likelihood">The Connection to Log-Likelihood<a class="headerlink" href="#the-connection-to-log-likelihood" title="Permanent link">&para;</a></h2>
+<p>Remember from Section 1.3, the log-likelihood was:
+$<span class="arithmatex">\(\ell(\theta) = \sum_i \log P(x_i | \text{context}; \theta)\)</span>$</p>
+<p>Cross-entropy is:
+$<span class="arithmatex">\(H = -\frac{1}{N} \sum_i \log Q(x_i | \text{context})\)</span>$</p>
+<p>So:
+$<span class="arithmatex">\(H = -\frac{\ell}{N}\)</span>$</p>
+<p><strong>Minimizing cross-entropy = Maximizing log-likelihood!</strong></p>
+<p>This is why these objectives are equivalent. MLE is <em>implicitly</em> minimizing the cross-entropy between the empirical data distribution and our model.</p>
+<h2 id="kl-divergence-the-gap">KL Divergence: The Gap<a class="headerlink" href="#kl-divergence-the-gap" title="Permanent link">&para;</a></h2>
+<p>The <strong>Kullback-Leibler divergence</strong> measures how different Q is from P:</p>
+<div class="arithmatex">\[D_{KL}(P || Q) = H(P, Q) - H(P) = \sum_x P(x) \log \frac{P(x)}{Q(x)}\]</div>
+<p><strong>Properties</strong>:
+- D_KL(P || Q) ≥ 0 (always non-negative)
+- D_KL(P || Q) = 0 if and only if P = Q
+- D_KL(P || Q) ≠ D_KL(Q || P) in general (not symmetric!)</p>
+<p><strong>Interpretation</strong>: KL divergence is the extra bits needed when using Q instead of P.</p>
+<p>For language modeling:
+- If our model Q matches the true distribution P: D_KL = 0, cross-entropy = entropy
+- If our model is bad: D_KL is large, cross-entropy &gt;&gt; entropy</p>
+<h2 id="why-we-minimize-cross-entropy-not-kl-divergence">Why We Minimize Cross-Entropy, Not KL Divergence<a class="headerlink" href="#why-we-minimize-cross-entropy-not-kl-divergence" title="Permanent link">&para;</a></h2>
+<p>In practice, we minimize cross-entropy, not KL divergence. Why?</p>
+<div class="arithmatex">\[D_{KL}(P || Q) = H(P, Q) - H(P)\]</div>
+<p>Since H(P) is fixed (determined by the true data distribution), minimizing H(P, Q) is equivalent to minimizing D_KL(P || Q).</p>
+<p>We use cross-entropy because H(P) is unknown (we'd need the true distribution), but H(P, Q) can be estimated from data.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Formula</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Information</td>
+<td>I(p) = -log p</td>
+<td>Surprise of event with probability p</td>
+</tr>
+<tr>
+<td>Entropy</td>
+<td>H(P) = E[-log P(x)]</td>
+<td>Average surprise under P</td>
+</tr>
+<tr>
+<td>Cross-entropy</td>
+<td>H(P,Q) = E_P[-log Q(x)]</td>
+<td>Average surprise using model Q on data from P</td>
+</tr>
+<tr>
+<td>KL divergence</td>
+<td>D_KL(P||Q) = H(P,Q) - H(P)</td>
+<td>Extra bits from using Q instead of P</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The big picture</strong>:
+1. We want a model Q that matches the true distribution P
+2. We measure this by cross-entropy (lower = better)
+3. Minimizing cross-entropy = maximizing likelihood
+4. This is why log-probability appears everywhere in ML</p>
+<p>Next: We'll convert cross-entropy into a more interpretable metric—perplexity.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

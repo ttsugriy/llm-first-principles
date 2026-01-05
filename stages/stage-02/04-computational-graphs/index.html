@@ -1,0 +1,2139 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-02/04-computational-graphs/">
+      
+      
+        <link rel="prev" href="../03-chain-rule/">
+      
+      
+        <link rel="next" href="../05-forward-vs-reverse/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>2.4 Computational Graphs - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-24-computational-graphs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2.4 Computational Graphs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/04-information-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-chain-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-a-computational-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is a Computational Graph?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What is a Computational Graph?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-fx-y-x-y-x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: f(x, y) = (x + y) · x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Terminology
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-computational-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Computational Graph
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Computational Graph">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-fx-sinx2-x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: f(x) = sin(x²) + x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-neural-network-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Neural Network Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-forward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Forward Pass
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Forward Pass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-forward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Forward Pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#topological-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Topological Order
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-backward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Backward Pass
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Backward Pass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-backward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Backward Pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-insight-summing-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Insight: Summing Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storing-information-for-the-backward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storing Information for the Backward Pass
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Storing Information for the Backward Pass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-multiplication-requires-cached-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Multiplication Requires Cached Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-addition-doesnt-need-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Addition Doesn't Need Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-gradients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Gradients
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-complete-walkthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A Complete Walkthrough
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="A Complete Walkthrough">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forward Pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backward Pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graph-representation-in-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Graph Representation in Code
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Graph Representation in Code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-node-class-conceptual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Node Class (Conceptual)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recording-the-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recording the Graph
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-backward-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Backward Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-dags-why-not-trees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why DAGs? Why Not Trees?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-forward-vs-reverse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/01-why-neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/02-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/03-feed-forward/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/04-cross-entropy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-24-computational-graphs">Section 2.4: Computational Graphs<a class="headerlink" href="#section-24-computational-graphs" title="Permanent link">&para;</a></h1>
+<p>The chain rule tells us <em>how</em> to compute derivatives of compositions. But for complex expressions with many operations, we need a systematic way to <em>represent</em> the computation and apply the chain rule.</p>
+<p><strong>Computational graphs</strong> provide this representation. They're the key data structure that makes automatic differentiation possible.</p>
+<h2 id="what-is-a-computational-graph">What is a Computational Graph?<a class="headerlink" href="#what-is-a-computational-graph" title="Permanent link">&para;</a></h2>
+<p>A <strong>computational graph</strong> is a directed acyclic graph (DAG) that represents a mathematical expression:</p>
+<ul>
+<li><strong>Nodes</strong> represent values (inputs, intermediate results, outputs)</li>
+<li><strong>Edges</strong> represent dependencies (which values are used to compute which)</li>
+<li><strong>Operations</strong> are associated with nodes (what function produced this value)</li>
+</ul>
+<h3 id="example-fx-y-x-y-x">Example: f(x, y) = (x + y) · x<a class="headerlink" href="#example-fx-y-x-y-x" title="Permanent link">&para;</a></h3>
+<p>Let's trace through this computation:</p>
+<ol>
+<li>Start with inputs: x, y</li>
+<li>Compute a = x + y</li>
+<li>Compute f = a · x</li>
+</ol>
+<p>The graph:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    x ─────┬─────────┐
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>           │         │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>           ▼         │
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    y ──▶ [+] ──▶ a  │
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                 │   │
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                 ▼   ▼
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                [×] ──▶ f
+</code></pre></div></p>
+<p>Reading the graph:
+- x and y are inputs (no incoming edges)
+- a depends on x and y via addition
+- f depends on a and x via multiplication
+- f is the output</p>
+<h3 id="terminology">Terminology<a class="headerlink" href="#terminology" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leaf node</td>
+<td>Input variable (no incoming edges)</td>
+</tr>
+<tr>
+<td>Internal node</td>
+<td>Intermediate computation</td>
+</tr>
+<tr>
+<td>Root node</td>
+<td>Final output</td>
+</tr>
+<tr>
+<td>Parents of v</td>
+<td>Nodes that v directly depends on</td>
+</tr>
+<tr>
+<td>Children of v</td>
+<td>Nodes that directly depend on v</td>
+</tr>
+</tbody>
+</table>
+<h2 id="building-a-computational-graph">Building a Computational Graph<a class="headerlink" href="#building-a-computational-graph" title="Permanent link">&para;</a></h2>
+<p>Any expression can be decomposed into primitive operations, each becoming a node.</p>
+<h3 id="example-fx-sinx2-x">Example: f(x) = sin(x²) + x<a class="headerlink" href="#example-fx-sinx2-x" title="Permanent link">&para;</a></h3>
+<p>Decomposition:
+1. a = x²
+2. b = sin(a)
+3. f = b + x</p>
+<p>Graph:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>       x ─────┬──────────────┐
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>              │              │
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>              ▼              │
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>            [x²] ──▶ a       │
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>              │              │
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>              ▼              │
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>           [sin] ──▶ b       │
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>              │              │
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>              ▼              ▼
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>             [+] ──────────▶ f
+</code></pre></div></p>
+<h3 id="example-neural-network-layer">Example: Neural Network Layer<a class="headerlink" href="#example-neural-network-layer" title="Permanent link">&para;</a></h3>
+<p>A typical layer computes: y = σ(Wx + b)</p>
+<p>Decomposition:
+1. a = W × x (matrix multiply)
+2. c = a + b (add bias)
+3. y = σ(c) (activation)</p>
+<p>Each of these becomes a node in the graph.</p>
+<h2 id="the-forward-pass">The Forward Pass<a class="headerlink" href="#the-forward-pass" title="Permanent link">&para;</a></h2>
+<p><strong>Forward pass</strong> (or forward propagation): Evaluate the graph from inputs to outputs.</p>
+<p>Algorithm:
+1. Assign values to input nodes
+2. Process nodes in <strong>topological order</strong> (parents before children)
+3. At each node, apply its operation to parent values</p>
+<h3 id="example-forward-pass">Example Forward Pass<a class="headerlink" href="#example-forward-pass" title="Permanent link">&para;</a></h3>
+<p>For f(x, y) = (x + y) · x with x = 3, y = 2:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Node</th>
+<th>Operation</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>x</td>
+<td>input</td>
+<td>3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>y</td>
+<td>input</td>
+<td>2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>a</td>
+<td>x + y</td>
+<td>5</td>
+</tr>
+<tr>
+<td>4</td>
+<td>f</td>
+<td>a × x</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<p>Result: f(3, 2) = 15</p>
+<h3 id="topological-order">Topological Order<a class="headerlink" href="#topological-order" title="Permanent link">&para;</a></h3>
+<p>A topological order ensures we process each node only after all its parents.</p>
+<p>For a DAG, this is always possible. We can use:
+- <strong>Kahn's algorithm</strong>: Repeatedly remove nodes with no incoming edges
+- <strong>DFS</strong>: Post-order traversal gives reverse topological order</p>
+<h2 id="the-backward-pass">The Backward Pass<a class="headerlink" href="#the-backward-pass" title="Permanent link">&para;</a></h2>
+<p><strong>Backward pass</strong> (or backpropagation): Compute gradients from outputs to inputs.</p>
+<p>This is where the chain rule comes in. For each node v:</p>
+<div class="arithmatex">\[\frac{\partial f}{\partial v} = \sum_{c \in \text{children}(v)} \frac{\partial f}{\partial c} \cdot \frac{\partial c}{\partial v}\]</div>
+<p>We sum over all paths from v to the output f.</p>
+<h3 id="algorithm">Algorithm<a class="headerlink" href="#algorithm" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Set ∂f/∂f = 1 (gradient of output with respect to itself)</li>
+<li>Process nodes in <strong>reverse topological order</strong> (children before parents)</li>
+<li>At each node v:</li>
+<li>For each parent p of v:</li>
+<li>Add (∂f/∂v) × (∂v/∂p) to ∂f/∂p</li>
+</ol>
+<h3 id="example-backward-pass">Example Backward Pass<a class="headerlink" href="#example-backward-pass" title="Permanent link">&para;</a></h3>
+<p>For f(x, y) = (x + y) · x, compute ∂f/∂x and ∂f/∂y.</p>
+<p>First, the forward pass gave us: a = 5, f = 15</p>
+<p>Now backward:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Node</th>
+<th>Gradient</th>
+<th>Computation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>f</td>
+<td>∂f/∂f = 1</td>
+<td>(start)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>∂f/∂a = x = 3</td>
+<td>∂(a·x)/∂a = x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>x</td>
+<td>∂f/∂x = ?</td>
+<td>Via a: ∂f/∂a · ∂a/∂x = 3 · 1 = 3</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>Via f: ∂f/∂x · 1 = a = 5</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Total: 3 + 5 = 8</td>
+<td>(sum paths)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>y</td>
+<td>∂f/∂y = 3</td>
+<td>∂f/∂a · ∂a/∂y = 3 · 1 = 3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Verification</strong>: f(x, y) = (x + y) · x = x² + xy</p>
+<p>∂f/∂x = 2x + y = 2(3) + 2 = 8 ✓
+∂f/∂y = x = 3 ✓</p>
+<h3 id="key-insight-summing-paths">Key Insight: Summing Paths<a class="headerlink" href="#key-insight-summing-paths" title="Permanent link">&para;</a></h3>
+<p>When a node contributes to the output through multiple paths, we <strong>sum</strong> the gradients from each path.</p>
+<p>In the example, x contributes to f two ways:
+1. Through a (as part of x + y): contributes gradient 3
+2. Directly (as the second operand of multiplication): contributes gradient 5
+3. Total: 8</p>
+<p>This is the multivariate chain rule in action.</p>
+<h2 id="storing-information-for-the-backward-pass">Storing Information for the Backward Pass<a class="headerlink" href="#storing-information-for-the-backward-pass" title="Permanent link">&para;</a></h2>
+<p>During the forward pass, we need to store information for the backward pass:</p>
+<ol>
+<li><strong>Graph structure</strong>: Which nodes depend on which</li>
+<li><strong>Intermediate values</strong>: Some derivatives need forward pass values</li>
+<li><strong>Gradients</strong>: Accumulated during the backward pass</li>
+</ol>
+<h3 id="example-multiplication-requires-cached-values">Example: Multiplication Requires Cached Values<a class="headerlink" href="#example-multiplication-requires-cached-values" title="Permanent link">&para;</a></h3>
+<p>For z = x · y:
+- ∂z/∂x = y (need the value of y)
+- ∂z/∂y = x (need the value of x)</p>
+<p>So the multiplication node must cache x and y during the forward pass.</p>
+<h3 id="example-addition-doesnt-need-values">Example: Addition Doesn't Need Values<a class="headerlink" href="#example-addition-doesnt-need-values" title="Permanent link">&para;</a></h3>
+<p>For z = x + y:
+- ∂z/∂x = 1
+- ∂z/∂y = 1</p>
+<p>These are constants—no need to cache x or y.</p>
+<h2 id="local-gradients">Local Gradients<a class="headerlink" href="#local-gradients" title="Permanent link">&para;</a></h2>
+<p>Each operation has a <strong>local gradient</strong>: the derivative of its output with respect to each input.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>z =</th>
+<th>∂z/∂x</th>
+<th>∂z/∂y</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add</td>
+<td>x + y</td>
+<td>1</td>
+<td>1</td>
+<td>Constant</td>
+</tr>
+<tr>
+<td>Subtract</td>
+<td>x - y</td>
+<td>1</td>
+<td>-1</td>
+<td>Constant</td>
+</tr>
+<tr>
+<td>Multiply</td>
+<td>x · y</td>
+<td>y</td>
+<td>x</td>
+<td>Need cached values</td>
+</tr>
+<tr>
+<td>Divide</td>
+<td>x / y</td>
+<td>1/y</td>
+<td>-x/y²</td>
+<td>Need cached values</td>
+</tr>
+<tr>
+<td>Power</td>
+<td>x^n</td>
+<td>n·x^{n-1}</td>
+<td>-</td>
+<td>Need cached value</td>
+</tr>
+<tr>
+<td>Exp</td>
+<td>e^x</td>
+<td>e^x</td>
+<td>-</td>
+<td>Can use output z</td>
+</tr>
+<tr>
+<td>Log</td>
+<td>ln(x)</td>
+<td>1/x</td>
+<td>-</td>
+<td>Need cached value</td>
+</tr>
+<tr>
+<td>Sin</td>
+<td>sin(x)</td>
+<td>cos(x)</td>
+<td>-</td>
+<td>Need cached value</td>
+</tr>
+<tr>
+<td>ReLU</td>
+<td>max(0,x)</td>
+<td>1 if x&gt;0, else 0</td>
+<td>-</td>
+<td>Need sign of x</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: For exp, we can use the output: ∂(e^x)/∂x = e^x = z. This saves memory.</p>
+<h2 id="a-complete-walkthrough">A Complete Walkthrough<a class="headerlink" href="#a-complete-walkthrough" title="Permanent link">&para;</a></h2>
+<p>Let's trace f(x) = sin(x²) for x = √(π/2).</p>
+<h3 id="forward-pass">Forward Pass<a class="headerlink" href="#forward-pass" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Expression</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x</td>
+<td>input</td>
+<td>√(π/2) ≈ 1.253</td>
+</tr>
+<tr>
+<td>a</td>
+<td>x²</td>
+<td>π/2 ≈ 1.571</td>
+</tr>
+<tr>
+<td>f</td>
+<td>sin(a)</td>
+<td>sin(π/2) = 1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="backward-pass">Backward Pass<a class="headerlink" href="#backward-pass" title="Permanent link">&para;</a></h3>
+<p>Start with ∂f/∂f = 1.</p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Local gradient</th>
+<th>Chain rule</th>
+<th>Gradient</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td>∂(sin a)/∂a = cos(a)</td>
+<td>1 · cos(π/2)</td>
+<td>0</td>
+</tr>
+<tr>
+<td>x</td>
+<td>∂(x²)/∂x = 2x</td>
+<td>0 · 2(1.253)</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>So ∂f/∂x = 0 at x = √(π/2).</p>
+<p><strong>Check</strong>: f(x) = sin(x²), so f'(x) = cos(x²) · 2x.
+At x = √(π/2): f'(x) = cos(π/2) · 2√(π/2) = 0 · 2.51 = 0 ✓</p>
+<h2 id="graph-representation-in-code">Graph Representation in Code<a class="headerlink" href="#graph-representation-in-code" title="Permanent link">&para;</a></h2>
+<p>How do we represent a computational graph in code?</p>
+<h3 id="the-node-class-conceptual">The Node Class (Conceptual)<a class="headerlink" href="#the-node-class-conceptual" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>           <span class="c1"># Forward pass result</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="mf">0.0</span>              <span class="c1"># Accumulated gradient</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parents</span> <span class="o">=</span> <span class="n">parents</span> <span class="ow">or</span> <span class="p">[]</span> <span class="c1"># Input nodes</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>   <span class="c1"># How this node was computed</span>
+</code></pre></div>
+<h3 id="recording-the-graph">Recording the Graph<a class="headerlink" href="#recording-the-graph" title="Permanent link">&para;</a></h3>
+<p>When we compute z = x * y:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">z</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">value</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">operation</span><span class="o">=</span><span class="s1">&#39;mul&#39;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="the-backward-function">The Backward Function<a class="headerlink" href="#the-backward-function" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="c1"># Topological sort in reverse</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">topo_order</span> <span class="o">=</span> <span class="n">reverse_topological_sort</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">node</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># df/df = 1</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">topo_order</span><span class="p">:</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        <span class="k">for</span> <span class="n">parent</span><span class="p">,</span> <span class="n">local_grad</span> <span class="ow">in</span> <span class="n">n</span><span class="o">.</span><span class="n">get_local_gradients</span><span class="p">():</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>            <span class="n">parent</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">grad</span> <span class="o">*</span> <span class="n">local_grad</span>
+</code></pre></div>
+<p>We'll implement this fully in Section 2.6.</p>
+<h2 id="why-dags-why-not-trees">Why DAGs? Why Not Trees?<a class="headerlink" href="#why-dags-why-not-trees" title="Permanent link">&para;</a></h2>
+<p>Some expressions share subexpressions:</p>
+<p>f(x) = x² + sin(x²)</p>
+<p>The term x² appears twice. With a tree, we'd compute it twice. With a DAG, we compute it once and reuse.</p>
+<p>In neural networks, weight matrices are used in the forward pass and needed in the backward pass. DAGs naturally handle this sharing.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Computational graph</td>
+<td>DAG representing computation</td>
+</tr>
+<tr>
+<td>Forward pass</td>
+<td>Evaluate graph, cache intermediates</td>
+</tr>
+<tr>
+<td>Backward pass</td>
+<td>Apply chain rule in reverse order</td>
+</tr>
+<tr>
+<td>Local gradient</td>
+<td>∂(output)/∂(input) for one operation</td>
+</tr>
+<tr>
+<td>Gradient accumulation</td>
+<td>Sum gradients from multiple paths</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key insight</strong>: The computational graph makes the chain rule mechanical. Given local gradients for each primitive operation, we can differentiate any composition automatically.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Draw the graph</strong>: For f(x) = (x - 1)(x + 1), draw the computational graph and verify ∂f/∂x by the backward pass.</p>
+</li>
+<li>
+<p><strong>Multiple uses</strong>: For f(x) = x · x, draw the graph. Why is ∂f/∂x = 2x (not x)?</p>
+</li>
+<li>
+<p><strong>Three variables</strong>: For f(x,y,z) = (x + y) · z, compute all three partial derivatives using backward pass.</p>
+</li>
+<li>
+<p><strong>Graph for neural layer</strong>: Draw the computational graph for y = relu(w·x + b) where relu(t) = max(0, t).</p>
+</li>
+<li>
+<p><strong>Memory analysis</strong>: Which operations need to cache their inputs? Which can compute local gradients from their output?</p>
+</li>
+</ol>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>We've seen how to represent computation as a graph and apply the chain rule systematically. But there are two fundamentally different ways to traverse the graph:</p>
+<ul>
+<li><strong>Forward mode</strong>: Compute ∂(everything)/∂(one input)</li>
+<li><strong>Reverse mode</strong>: Compute ∂(one output)/∂(everything)</li>
+</ul>
+<p>For machine learning, reverse mode is dramatically more efficient. Section 2.5 explains why.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2173 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-03/04-cross-entropy/">
+      
+      
+        <link rel="prev" href="../03-feed-forward/">
+      
+      
+        <link rel="next" href="../05-implementation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>3.4 Cross-Entropy Loss - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-34-cross-entropy-loss-and-maximum-likelihood" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3.4 Cross-Entropy Loss
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/04-information-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/03-chain-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/04-computational-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/05-forward-vs-reverse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-why-neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-feed-forward/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-training-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Training Problem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Training Problem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-we-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Have
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-we-want" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What We Want
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-fundamental-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Fundamental Question
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximum-likelihood-the-principled-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maximum Likelihood: The Principled Approach
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Maximum Likelihood: The Principled Approach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-stage-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Stage 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-neural-language-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Neural Language Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log-likelihood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log-Likelihood
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-maximization-to-minimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Maximization to Minimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#average-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Average Loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-entropy-the-information-theory-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Entropy: The Information Theory View
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cross-Entropy: The Information Theory View">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cross-entropy-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Entropy Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-language-modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Language Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-equivalence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Equivalence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-cross-entropy-is-the-right-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Cross-Entropy Is the Right Loss
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Cross-Entropy Is the Right Loss">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reason-1-maximum-likelihood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reason 1: Maximum Likelihood
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reason-2-proper-scoring-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reason 2: Proper Scoring Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reason-3-information-theoretic-interpretation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reason 3: Information-Theoretic Interpretation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reason-4-gradient-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reason 4: Gradient Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-loss-function-explicitly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Loss Function Explicitly
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Loss Function Explicitly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-a-single-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For a Single Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplifying" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simplifying
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-a-batch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For a Batch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#computing-the-gradient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Computing the Gradient
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Computing the Gradient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-we-need-the-gradient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why We Need the Gradient
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gradient-wrt-logits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gradient w.r.t. Logits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-beautiful-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Beautiful Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-is-beautiful" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Is Beautiful
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deriving-the-softmax-crossentropy-gradient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deriving the Softmax-CrossEntropy Gradient
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deriving the Softmax-CrossEntropy Gradient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#derivative-of-partition-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Derivative of Partition Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#derivative-of-loss-wrt-z_y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Derivative of Loss w.r.t. z_y
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#derivative-wrt-other-logits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Derivative w.r.t. Other Logits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combined-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combined Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connection-to-perplexity-from-stage-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection to Perplexity (from Stage 1)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Connection to Perplexity (from Stage 1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recall-perplexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recall Perplexity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-relationship" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Relationship
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpreting-the-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpreting the Loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-cross-entropy-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing Cross-Entropy Loss
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing Cross-Entropy Loss">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-logsumexp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why LogSumExp?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiple-examples-batch-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple Examples: Batch Loss
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-34-cross-entropy-loss-and-maximum-likelihood">Section 3.4: Cross-Entropy Loss and Maximum Likelihood<a class="headerlink" href="#section-34-cross-entropy-loss-and-maximum-likelihood" title="Permanent link">&para;</a></h1>
+<p>We have a neural network that outputs a probability distribution. But how do we train it?</p>
+<p><strong>Cross-entropy loss</strong> is the answer. In this section, we'll derive it from first principles and prove it's equivalent to maximum likelihood estimation—connecting back to Stage 1.</p>
+<h2 id="the-training-problem">The Training Problem<a class="headerlink" href="#the-training-problem" title="Permanent link">&para;</a></h2>
+<h3 id="what-we-have">What We Have<a class="headerlink" href="#what-we-have" title="Permanent link">&para;</a></h3>
+<p>A neural language model that computes:</p>
+<div class="arithmatex">\[\hat{P}(c_t | c_{t-k:t-1}; \theta)\]</div>
+<p>Where:
+- <span class="arithmatex">\(c_{t-k:t-1}\)</span> is the context (previous k characters)
+- <span class="arithmatex">\(c_t\)</span> is the next character
+- θ are all the model parameters (embeddings, weights, biases)
+- <span class="arithmatex">\(\hat{P}\)</span> is the model's predicted probability distribution</p>
+<h3 id="what-we-want">What We Want<a class="headerlink" href="#what-we-want" title="Permanent link">&para;</a></h3>
+<p>Parameters θ* that make the model's predictions match the true data distribution as closely as possible.</p>
+<h3 id="the-fundamental-question">The Fundamental Question<a class="headerlink" href="#the-fundamental-question" title="Permanent link">&para;</a></h3>
+<p>How do we measure "how wrong" the model's predictions are?</p>
+<h2 id="maximum-likelihood-the-principled-approach">Maximum Likelihood: The Principled Approach<a class="headerlink" href="#maximum-likelihood-the-principled-approach" title="Permanent link">&para;</a></h2>
+<h3 id="from-stage-1">From Stage 1<a class="headerlink" href="#from-stage-1" title="Permanent link">&para;</a></h3>
+<p>In Stage 1, we derived maximum likelihood estimation for n-gram models:</p>
+<div class="arithmatex">\[\theta^* = \arg\max_\theta P(\text{data} | \theta)\]</div>
+<p>The optimal parameters are those that maximize the probability of the observed data.</p>
+<h3 id="for-neural-language-models">For Neural Language Models<a class="headerlink" href="#for-neural-language-models" title="Permanent link">&para;</a></h3>
+<p>The principle is exactly the same!</p>
+<p>Given training data <span class="arithmatex">\(D = \{(x_1, y_1), ..., (x_N, y_N)\}\)</span> where:
+- <span class="arithmatex">\(x_i\)</span> is the i-th context
+- <span class="arithmatex">\(y_i\)</span> is the true next character</p>
+<p>The likelihood is:</p>
+<div class="arithmatex">\[P(D | \theta) = \prod_{i=1}^{N} P(y_i | x_i; \theta)\]</div>
+<p>(Assuming independence between examples.)</p>
+<h3 id="log-likelihood">Log-Likelihood<a class="headerlink" href="#log-likelihood" title="Permanent link">&para;</a></h3>
+<p>Products are numerically unstable and hard to differentiate. Take logarithms:</p>
+<div class="arithmatex">\[\log P(D | \theta) = \sum_{i=1}^{N} \log P(y_i | x_i; \theta)\]</div>
+<p>This is the <strong>log-likelihood</strong>.</p>
+<h3 id="from-maximization-to-minimization">From Maximization to Minimization<a class="headerlink" href="#from-maximization-to-minimization" title="Permanent link">&para;</a></h3>
+<p>ML practitioners prefer <strong>minimizing</strong> a <strong>loss</strong>. Negating:</p>
+<div class="arithmatex">\[L(\theta) = -\log P(D | \theta) = -\sum_{i=1}^{N} \log P(y_i | x_i; \theta)\]</div>
+<p>This is the <strong>negative log-likelihood</strong>.</p>
+<p><strong>Minimizing NLL = Maximizing likelihood.</strong></p>
+<h3 id="average-loss">Average Loss<a class="headerlink" href="#average-loss" title="Permanent link">&para;</a></h3>
+<p>For numerical stability and comparison across dataset sizes, use the average:</p>
+<div class="arithmatex">\[L(\theta) = -\frac{1}{N}\sum_{i=1}^{N} \log P(y_i | x_i; \theta)\]</div>
+<p>This is our training objective.</p>
+<h2 id="cross-entropy-the-information-theory-view">Cross-Entropy: The Information Theory View<a class="headerlink" href="#cross-entropy-the-information-theory-view" title="Permanent link">&para;</a></h2>
+<h3 id="cross-entropy-definition">Cross-Entropy Definition<a class="headerlink" href="#cross-entropy-definition" title="Permanent link">&para;</a></h3>
+<p>Given true distribution p and model distribution q, the <strong>cross-entropy</strong> is:</p>
+<div class="arithmatex">\[H(p, q) = -\sum_{x} p(x) \log q(x)\]</div>
+<p>It measures the expected number of bits needed to encode samples from p using a code optimized for q.</p>
+<h3 id="for-language-modeling">For Language Modeling<a class="headerlink" href="#for-language-modeling" title="Permanent link">&para;</a></h3>
+<p>At each position in our data:
+- True distribution: p(c_t | context) = 1 if c_t is the actual next character, else 0 (one-hot)
+- Model distribution: <span class="arithmatex">\(q(c) = \hat{P}(c | \text{context}; \theta)\)</span></p>
+<p>The cross-entropy at this position:</p>
+<div class="arithmatex">\[H(p, q) = -\sum_{c} p(c) \log q(c)\]</div>
+<p>Since p(c) = 1 for c = y (the true character) and 0 otherwise:</p>
+<div class="arithmatex">\[H(p, q) = -1 \cdot \log q(y) + \sum_{c \neq y} 0 \cdot \log q(c) = -\log q(y)\]</div>
+<p>This is exactly the negative log-probability!</p>
+<h3 id="the-equivalence">The Equivalence<a class="headerlink" href="#the-equivalence" title="Permanent link">&para;</a></h3>
+<p>Cross-entropy loss per example = Negative log-likelihood per example.</p>
+<p>For the dataset:</p>
+<div class="arithmatex">\[\text{Cross-Entropy Loss} = -\frac{1}{N}\sum_{i=1}^{N} \log \hat{P}(y_i | x_i; \theta)\]</div>
+<p><strong>This is the same as average NLL!</strong></p>
+<h2 id="why-cross-entropy-is-the-right-loss">Why Cross-Entropy Is the Right Loss<a class="headerlink" href="#why-cross-entropy-is-the-right-loss" title="Permanent link">&para;</a></h2>
+<h3 id="reason-1-maximum-likelihood">Reason 1: Maximum Likelihood<a class="headerlink" href="#reason-1-maximum-likelihood" title="Permanent link">&para;</a></h3>
+<p>As shown, minimizing cross-entropy = maximizing likelihood.</p>
+<p>MLE has strong theoretical justification:
+- Consistent (converges to true parameters with infinite data)
+- Asymptotically efficient (lowest variance among consistent estimators)
+- Invariant under reparametrization</p>
+<h3 id="reason-2-proper-scoring-rule">Reason 2: Proper Scoring Rule<a class="headerlink" href="#reason-2-proper-scoring-rule" title="Permanent link">&para;</a></h3>
+<p>A scoring rule S(q, y) is <strong>proper</strong> if:</p>
+<div class="arithmatex">\[\mathbb{E}_{y \sim p}[S(p, y)] \leq \mathbb{E}_{y \sim p}[S(q, y)]\]</div>
+<p>For any distribution q. That is, the best expected score is achieved when q = p.</p>
+<p><strong>Cross-entropy is proper.</strong></p>
+<p><strong>Proof</strong>:</p>
+<p>Expected cross-entropy when true distribution is p:</p>
+<div class="arithmatex">\[\mathbb{E}_{y \sim p}[H(p, q)] = \sum_y p(y) H(p, q) = -\sum_y p(y) \log q(y)\]</div>
+<p>This is minimized when q = p, giving the entropy H(p):</p>
+<div class="arithmatex">\[H(p, p) = -\sum_y p(y) \log p(y) = H(p)\]</div>
+<p>For any q ≠ p, we have H(p, q) &gt; H(p, p) by Gibbs' inequality.</p>
+<h3 id="reason-3-information-theoretic-interpretation">Reason 3: Information-Theoretic Interpretation<a class="headerlink" href="#reason-3-information-theoretic-interpretation" title="Permanent link">&para;</a></h3>
+<p>Cross-entropy H(p, q) measures the inefficiency of using code for q when the true distribution is p.</p>
+<p>Minimizing cross-entropy = finding the most efficient encoding of the data.</p>
+<h3 id="reason-4-gradient-properties">Reason 4: Gradient Properties<a class="headerlink" href="#reason-4-gradient-properties" title="Permanent link">&para;</a></h3>
+<p>We'll see shortly that cross-entropy combined with softmax has remarkably clean gradients.</p>
+<h2 id="the-loss-function-explicitly">The Loss Function Explicitly<a class="headerlink" href="#the-loss-function-explicitly" title="Permanent link">&para;</a></h2>
+<h3 id="for-a-single-example">For a Single Example<a class="headerlink" href="#for-a-single-example" title="Permanent link">&para;</a></h3>
+<p>Given context x and true next character y:</p>
+<div class="arithmatex">\[L = -\log \hat{P}(y | x; \theta)\]</div>
+<p>Recall that the model computes:</p>
+<div class="arithmatex">\[\hat{P}(c | x; \theta) = \text{softmax}(\text{logits})_c = \frac{e^{z_c}}{\sum_{c'} e^{z_{c'}}}\]</div>
+<p>Where z are the logits (outputs of the final linear layer).</p>
+<p>Substituting:</p>
+<div class="arithmatex">\[L = -\log \frac{e^{z_y}}{\sum_c e^{z_c}}\]</div>
+<h3 id="simplifying">Simplifying<a class="headerlink" href="#simplifying" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[L = -\log e^{z_y} + \log \sum_c e^{z_c}\]</div>
+<div class="arithmatex">\[L = -z_y + \log \sum_c e^{z_c}\]</div>
+<p>This is the <strong>softmax log-likelihood formula</strong>.</p>
+<p>The second term is the <strong>log-sum-exp</strong> (LSE) function:</p>
+<div class="arithmatex">\[\text{LSE}(z) = \log \sum_c e^{z_c}\]</div>
+<h3 id="for-a-batch">For a Batch<a class="headerlink" href="#for-a-batch" title="Permanent link">&para;</a></h3>
+<p>For N examples:</p>
+<div class="arithmatex">\[L = \frac{1}{N}\sum_{i=1}^{N} \left( -z_{y_i}^{(i)} + \text{LSE}(z^{(i)}) \right)\]</div>
+<p>Where <span class="arithmatex">\(z^{(i)}\)</span> are the logits for example i, and <span class="arithmatex">\(y_i\)</span> is the true character index.</p>
+<h2 id="computing-the-gradient">Computing the Gradient<a class="headerlink" href="#computing-the-gradient" title="Permanent link">&para;</a></h2>
+<h3 id="why-we-need-the-gradient">Why We Need the Gradient<a class="headerlink" href="#why-we-need-the-gradient" title="Permanent link">&para;</a></h3>
+<p>To train via gradient descent, we need:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial \theta}\]</div>
+<p>For every parameter θ. Our Stage 2 autograd will compute this automatically, but understanding the gradient structure is valuable.</p>
+<h3 id="gradient-wrt-logits">Gradient w.r.t. Logits<a class="headerlink" href="#gradient-wrt-logits" title="Permanent link">&para;</a></h3>
+<p>The most important gradient: ∂L/∂z.</p>
+<p>For a single example with true class y:</p>
+<div class="arithmatex">\[L = -z_y + \log \sum_c e^{z_c}\]</div>
+<p>For the logit of the true class:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial z_y} = -1 + \frac{e^{z_y}}{\sum_c e^{z_c}} = -1 + \hat{P}(y | x)\]</div>
+<p>For any other logit <span class="arithmatex">\(z_c\)</span> where c ≠ y:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial z_c} = 0 + \frac{e^{z_c}}{\sum_c e^{z_c}} = \hat{P}(c | x)\]</div>
+<h3 id="the-beautiful-result">The Beautiful Result<a class="headerlink" href="#the-beautiful-result" title="Permanent link">&para;</a></h3>
+<p>For all classes c:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial z_c} = \hat{P}(c | x) - \delta_{cy}\]</div>
+<p>Where <span class="arithmatex">\(\delta_{cy}\)</span> is 1 if c = y (the true class), else 0.</p>
+<p>In vector form:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial z} = \hat{p} - y_{\text{one-hot}}\]</div>
+<p>The gradient is simply: <strong>predicted probability minus true probability!</strong></p>
+<h3 id="why-this-is-beautiful">Why This Is Beautiful<a class="headerlink" href="#why-this-is-beautiful" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Magnitude of gradient = how wrong the prediction is</li>
+<li>If <span class="arithmatex">\(\hat{P}(y) = 1\)</span>: gradient is 0 (perfect prediction)</li>
+<li>If <span class="arithmatex">\(\hat{P}(y) = 0\)</span>: gradient is -1 (maximally wrong)</li>
+<li>Automatically scaled by confidence</li>
+</ul>
+<p>This natural weighting makes gradient descent effective.</p>
+<h2 id="deriving-the-softmax-crossentropy-gradient">Deriving the Softmax-CrossEntropy Gradient<a class="headerlink" href="#deriving-the-softmax-crossentropy-gradient" title="Permanent link">&para;</a></h2>
+<p>Let's prove the result rigorously.</p>
+<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
+<p>Given logits <span class="arithmatex">\(z \in \mathbb{R}^{|V|}\)</span> and true class y:</p>
+<div class="arithmatex">\[\hat{P}(c | x) = \frac{e^{z_c}}{\sum_{c'} e^{z_{c'}}} = \frac{e^{z_c}}{Z}\]</div>
+<p>Where <span class="arithmatex">\(Z = \sum_c e^{z_c}\)</span> (partition function).</p>
+<p>Loss:
+$<span class="arithmatex">\(L = -\log \hat{P}(y | x) = -\log e^{z_y} + \log Z = -z_y + \log Z\)</span>$</p>
+<h3 id="derivative-of-partition-function">Derivative of Partition Function<a class="headerlink" href="#derivative-of-partition-function" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[\frac{\partial}{\partial z_c} \log Z = \frac{1}{Z} \frac{\partial Z}{\partial z_c} = \frac{1}{Z} e^{z_c} = \hat{P}(c | x)\]</div>
+<h3 id="derivative-of-loss-wrt-z_y">Derivative of Loss w.r.t. z_y<a class="headerlink" href="#derivative-of-loss-wrt-z_y" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[\frac{\partial L}{\partial z_y} = -1 + \frac{\partial \log Z}{\partial z_y} = -1 + \hat{P}(y | x)\]</div>
+<h3 id="derivative-wrt-other-logits">Derivative w.r.t. Other Logits<a class="headerlink" href="#derivative-wrt-other-logits" title="Permanent link">&para;</a></h3>
+<p>For c ≠ y:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial z_c} = 0 + \frac{\partial \log Z}{\partial z_c} = \hat{P}(c | x)\]</div>
+<h3 id="combined-result">Combined Result<a class="headerlink" href="#combined-result" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[\frac{\partial L}{\partial z_c} = \begin{cases} \hat{P}(y | x) - 1 &amp; \text{if } c = y \\ \hat{P}(c | x) &amp; \text{if } c \neq y \end{cases}\]</div>
+<p>Which is exactly:
+$<span class="arithmatex">\(\frac{\partial L}{\partial z_c} = \hat{P}(c | x) - \delta_{cy}\)</span>$</p>
+<p><strong>QED.</strong></p>
+<h2 id="connection-to-perplexity-from-stage-1">Connection to Perplexity (from Stage 1)<a class="headerlink" href="#connection-to-perplexity-from-stage-1" title="Permanent link">&para;</a></h2>
+<h3 id="recall-perplexity">Recall Perplexity<a class="headerlink" href="#recall-perplexity" title="Permanent link">&para;</a></h3>
+<p>In Stage 1, we defined perplexity as:</p>
+<div class="arithmatex">\[\text{PPL} = \exp\left( -\frac{1}{N}\sum_{i=1}^{N} \log P(w_i | w_{&lt;i}) \right)\]</div>
+<h3 id="the-relationship">The Relationship<a class="headerlink" href="#the-relationship" title="Permanent link">&para;</a></h3>
+<p>The exponent is exactly the average cross-entropy loss!</p>
+<div class="arithmatex">\[\text{PPL} = \exp(L)\]</div>
+<p>Where L is the cross-entropy loss.</p>
+<h3 id="why-this-matters">Why This Matters<a class="headerlink" href="#why-this-matters" title="Permanent link">&para;</a></h3>
+<p>Training: minimize L (cross-entropy)</p>
+<p>Evaluation: report exp(L) (perplexity)</p>
+<p>Same underlying metric, different presentations:
+- L ∈ [0, ∞): additive, for optimization
+- PPL ∈ [1, ∞): interpretable, for humans</p>
+<h3 id="interpreting-the-loss">Interpreting the Loss<a class="headerlink" href="#interpreting-the-loss" title="Permanent link">&para;</a></h3>
+<p>If L = 2.3:
+- PPL = exp(2.3) ≈ 10
+- Model is "as uncertain as picking uniformly among 10 options"
+- Lower is better</p>
+<h2 id="implementing-cross-entropy-loss">Implementing Cross-Entropy Loss<a class="headerlink" href="#implementing-cross-entropy-loss" title="Permanent link">&para;</a></h2>
+<p>Using our Stage 2 autograd:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">cross_entropy_loss</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target_idx</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="sd">    logits: list of Value objects (unnormalized scores)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="sd">    target_idx: int (index of true class)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="sd">    Returns: Value (scalar loss)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="c1"># Log-sum-exp for numerical stability</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">max_logit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">logits</span><span class="p">)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="c1"># Subtract max for stability (doesn&#39;t change result)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">shifted</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">-</span> <span class="n">max_logit</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">logits</span><span class="p">]</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="c1"># exp of shifted logits</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">exp_logits</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">shifted</span><span class="p">]</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="c1"># Sum</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">sum_exp</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">exp_logits</span><span class="p">,</span> <span class="n">Value</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="c1"># Log-sum-exp</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">lse</span> <span class="o">=</span> <span class="n">sum_exp</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="o">+</span> <span class="n">max_logit</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    <span class="c1"># Loss = -logit[target] + lse</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    <span class="n">loss</span> <span class="o">=</span> <span class="n">lse</span> <span class="o">-</span> <span class="n">logits</span><span class="p">[</span><span class="n">target_idx</span><span class="p">]</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    <span class="k">return</span> <span class="n">loss</span>
+</code></pre></div>
+<h3 id="why-logsumexp">Why LogSumExp?<a class="headerlink" href="#why-logsumexp" title="Permanent link">&para;</a></h3>
+<p>Direct computation <span class="arithmatex">\(\log(\sum e^{z_i})\)</span> can overflow/underflow.</p>
+<p>Using LSE trick:</p>
+<div class="arithmatex">\[\log \sum_i e^{z_i} = \max(z) + \log \sum_i e^{z_i - \max(z)}\]</div>
+<p>After subtracting max, all exponents are ≤ 0, preventing overflow.</p>
+<h2 id="multiple-examples-batch-loss">Multiple Examples: Batch Loss<a class="headerlink" href="#multiple-examples-batch-loss" title="Permanent link">&para;</a></h2>
+<p>For a batch of N examples:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">batch_cross_entropy</span><span class="p">(</span><span class="n">batch_logits</span><span class="p">,</span> <span class="n">batch_targets</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="sd">    batch_logits: list of lists of Values</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="sd">    batch_targets: list of target indices</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="sd">    Returns: Value (average loss)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">losses</span> <span class="o">=</span> <span class="p">[</span><span class="n">cross_entropy_loss</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>              <span class="k">for</span> <span class="n">logits</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch_logits</span><span class="p">,</span> <span class="n">batch_targets</span><span class="p">)]</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="c1"># Average</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="n">Value</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Formula</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MLE objective</td>
+<td>max log P(data|θ)</td>
+<td>Most likely parameters</td>
+</tr>
+<tr>
+<td>NLL loss</td>
+<td>-log P(data|θ)</td>
+<td>Minimize to maximize likelihood</td>
+</tr>
+<tr>
+<td>Cross-entropy</td>
+<td>-Σ p log q</td>
+<td>Expected bits using wrong code</td>
+</tr>
+<tr>
+<td>Per-example loss</td>
+<td>-log P(y|x)</td>
+<td>Surprise at true outcome</td>
+</tr>
+<tr>
+<td>Softmax gradient</td>
+<td><span class="arithmatex">\(\hat{p} - p\)</span></td>
+<td>Predicted - true</td>
+</tr>
+<tr>
+<td>Perplexity</td>
+<td>exp(loss)</td>
+<td>Interpretable uncertainty</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key insights</strong>:</p>
+<ol>
+<li><strong>Cross-entropy = MLE</strong>: Same theoretical foundation as Stage 1</li>
+<li><strong>Proper scoring rule</strong>: Best achievable when q = p</li>
+<li><strong>Beautiful gradient</strong>: <span class="arithmatex">\(\hat{p} - p\)</span> is simple and effective</li>
+<li><strong>Connection to perplexity</strong>: exp(loss) gives interpretable metric</li>
+</ol>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Verify equivalence</strong>: Show that for one-hot true distribution, H(p,q) = -log q(y).</p>
+</li>
+<li>
+<p><strong>Compute loss</strong>: Given logits [2.0, 1.0, 3.0] and true class 2, compute the cross-entropy loss by hand.</p>
+</li>
+<li>
+<p><strong>Gradient check</strong>: For the same logits and true class, compute ∂L/∂z for each logit. Verify the formula.</p>
+</li>
+<li>
+<p><strong>Perplexity</strong>: If cross-entropy loss is 1.5, what is the perplexity?</p>
+</li>
+<li>
+<p><strong>Softmax temperature</strong>: What happens to the loss if we compute softmax(z/T) for T → 0? For T → ∞?</p>
+</li>
+</ol>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>We have:
+- Embeddings (Section 3.2)
+- Feed-forward networks (Section 3.3)
+- Cross-entropy loss (Section 3.4)</p>
+<p>Time to put it all together!</p>
+<p>In Section 3.5, we'll <strong>implement a complete character-level neural language model</strong> using our Stage 2 autograd system.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1784 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-02/03-chain-rule/">
+      
+      
+        <link rel="prev" href="../02-derivative-rules/">
+      
+      
+        <link rel="next" href="../04-computational-graphs/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>2.3 The Chain Rule - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-23-the-chain-rule-the-heart-of-backpropagation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2.3 The Chain Rule
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/04-information-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-nested-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem: Nested Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intuition-rates-of-change-multiply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intuition: Rates of Change Multiply
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-chain-rule-formal-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Chain Rule: Formal Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proof-of-the-chain-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proof of the Chain Rule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-hx-x2-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: h(x) = (x² + 1)³
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#more-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        More Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="More Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-e-x2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: e^{-x²}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-sin3x-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: sin(3x + 2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-lnx2-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: ln(x² + 1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-4-triple-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 4: Triple Composition
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-chain-rule-for-multiple-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Chain Rule for Multiple Variables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Chain Rule for Multiple Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scalar-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalar Case
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#general-case-multiple-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General Case: Multiple Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-multivariate-chain-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Multivariate Chain Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-matters-for-neural-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Matters for Neural Networks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-chain-rule-as-a-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Chain Rule as a Graph
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-longer-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A Longer Chain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-key-insight-for-autodiff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Key Insight for Autodiff
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-computational-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-forward-vs-reverse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/01-why-neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/02-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/03-feed-forward/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/04-cross-entropy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-23-the-chain-rule-the-heart-of-backpropagation">Section 2.3: The Chain Rule — The Heart of Backpropagation<a class="headerlink" href="#section-23-the-chain-rule-the-heart-of-backpropagation" title="Permanent link">&para;</a></h1>
+<p>The chain rule is the single most important derivative rule for machine learning. Neural networks are compositions of functions, and the chain rule tells us how to differentiate compositions.</p>
+<p><strong>This section is the mathematical foundation of backpropagation.</strong></p>
+<h2 id="the-problem-nested-functions">The Problem: Nested Functions<a class="headerlink" href="#the-problem-nested-functions" title="Permanent link">&para;</a></h2>
+<p>Consider h(x) = (x² + 1)³.</p>
+<p>This isn't a simple polynomial or product. It's a <strong>composition</strong>: the cube function applied to (x² + 1).</p>
+<p>If we write:
+- g(x) = x² + 1 (inner function)
+- f(u) = u³ (outer function)</p>
+<p>Then h(x) = f(g(x)) = (g(x))³.</p>
+<p>How do we find h'(x)?</p>
+<h2 id="intuition-rates-of-change-multiply">Intuition: Rates of Change Multiply<a class="headerlink" href="#intuition-rates-of-change-multiply" title="Permanent link">&para;</a></h2>
+<p>Suppose:
+- x changes by a small amount Δx
+- This causes g(x) to change by Δg
+- Which causes f(g(x)) to change by Δf</p>
+<p>The rate of change of f with respect to x is:</p>
+<div class="arithmatex">\[\frac{\Delta f}{\Delta x} = \frac{\Delta f}{\Delta g} \cdot \frac{\Delta g}{\Delta x}\]</div>
+<p>The rates multiply!</p>
+<p>If g is 3 times as sensitive to x as f is to g, then f is 3 times as sensitive to x overall.</p>
+<h2 id="the-chain-rule-formal-statement">The Chain Rule: Formal Statement<a class="headerlink" href="#the-chain-rule-formal-statement" title="Permanent link">&para;</a></h2>
+<p>For h(x) = f(g(x)), if g is differentiable at x and f is differentiable at g(x):</p>
+<div class="arithmatex">\[h'(x) = f'(g(x)) \cdot g'(x)\]</div>
+<p>Or in Leibniz notation, if y = f(u) and u = g(x):</p>
+<div class="arithmatex">\[\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}\]</div>
+<p>The derivatives "chain" together—hence the name.</p>
+<h2 id="proof-of-the-chain-rule">Proof of the Chain Rule<a class="headerlink" href="#proof-of-the-chain-rule" title="Permanent link">&para;</a></h2>
+<p><strong>Setup</strong>: Let h(x) = f(g(x)). We want to show h'(x) = f'(g(x)) · g'(x).</p>
+<p><strong>Step 1</strong>: Write the difference quotient for h.</p>
+<div class="arithmatex">\[h'(x) = \lim_{k \to 0} \frac{f(g(x+k)) - f(g(x))}{k}\]</div>
+<p><strong>Step 2</strong>: Let Δg = g(x+k) - g(x).</p>
+<p>As k → 0, we have Δg → 0 (since g is continuous).</p>
+<p><strong>Step 3</strong>: Multiply and divide by Δg (when Δg ≠ 0).</p>
+<div class="arithmatex">\[\frac{f(g(x+k)) - f(g(x))}{k} = \frac{f(g(x) + \Delta g) - f(g(x))}{\Delta g} \cdot \frac{\Delta g}{k}\]</div>
+<div class="arithmatex">\[= \frac{f(g(x) + \Delta g) - f(g(x))}{\Delta g} \cdot \frac{g(x+k) - g(x)}{k}\]</div>
+<p><strong>Step 4</strong>: Take limits.</p>
+<p>As k → 0:
+- The first factor → f'(g(x)) (definition of derivative of f at g(x))
+- The second factor → g'(x) (definition of derivative of g at x)</p>
+<p>Therefore:
+$<span class="arithmatex">\(h'(x) = f'(g(x)) \cdot g'(x) \quad \blacksquare\)</span>$</p>
+<p><em>Technical note</em>: The proof needs care when Δg = 0 for some k ≠ 0. A rigorous proof handles this with a modified definition. The intuition above captures the essence.</p>
+<h2 id="example-hx-x2-13">Example: h(x) = (x² + 1)³<a class="headerlink" href="#example-hx-x2-13" title="Permanent link">&para;</a></h2>
+<p><strong>Identify the parts</strong>:
+- Inner: g(x) = x² + 1, so g'(x) = 2x
+- Outer: f(u) = u³, so f'(u) = 3u²</p>
+<p><strong>Apply chain rule</strong>:
+$<span class="arithmatex">\(h'(x) = f'(g(x)) \cdot g'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2\)</span>$</p>
+<p><strong>Verification</strong>: Let's expand and differentiate directly (painful but correct).</p>
+<p><span class="arithmatex">\((x^2 + 1)^3 = x^6 + 3x^4 + 3x^2 + 1\)</span></p>
+<p><span class="arithmatex">\(\frac{d}{dx}(x^6 + 3x^4 + 3x^2 + 1) = 6x^5 + 12x^3 + 6x = 6x(x^4 + 2x^2 + 1) = 6x(x^2 + 1)^2\)</span> ✓</p>
+<h2 id="more-examples">More Examples<a class="headerlink" href="#more-examples" title="Permanent link">&para;</a></h2>
+<h3 id="example-1-e-x2">Example 1: e^{-x²}<a class="headerlink" href="#example-1-e-x2" title="Permanent link">&para;</a></h3>
+<p>This is exp(u) where u = -x².</p>
+<ul>
+<li>u = -x², so du/dx = -2x</li>
+<li>y = e^u, so dy/du = e^u</li>
+</ul>
+<div class="arithmatex">\[\frac{dy}{dx} = e^{-x^2} \cdot (-2x) = -2x e^{-x^2}\]</div>
+<h3 id="example-2-sin3x-2">Example 2: sin(3x + 2)<a class="headerlink" href="#example-2-sin3x-2" title="Permanent link">&para;</a></h3>
+<p>This is sin(u) where u = 3x + 2.</p>
+<ul>
+<li>du/dx = 3</li>
+<li>d(sin u)/du = cos(u)</li>
+</ul>
+<div class="arithmatex">\[\frac{d}{dx}\sin(3x+2) = \cos(3x+2) \cdot 3 = 3\cos(3x+2)\]</div>
+<h3 id="example-3-lnx2-1">Example 3: ln(x² + 1)<a class="headerlink" href="#example-3-lnx2-1" title="Permanent link">&para;</a></h3>
+<p>This is ln(u) where u = x² + 1.</p>
+<ul>
+<li>du/dx = 2x</li>
+<li>d(ln u)/du = 1/u</li>
+</ul>
+<div class="arithmatex">\[\frac{d}{dx}\ln(x^2+1) = \frac{1}{x^2+1} \cdot 2x = \frac{2x}{x^2+1}\]</div>
+<h3 id="example-4-triple-composition">Example 4: Triple Composition<a class="headerlink" href="#example-4-triple-composition" title="Permanent link">&para;</a></h3>
+<p>Let h(x) = sin(e^{x²}).</p>
+<p>Break it down:
+- Innermost: a = x², so da/dx = 2x
+- Middle: b = e^a, so db/da = e^a
+- Outer: y = sin(b), so dy/db = cos(b)</p>
+<p>Chain them all:
+$<span class="arithmatex">\(\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos(e^{x^2}) \cdot e^{x^2} \cdot 2x\)</span>$</p>
+<h2 id="the-chain-rule-for-multiple-variables">The Chain Rule for Multiple Variables<a class="headerlink" href="#the-chain-rule-for-multiple-variables" title="Permanent link">&para;</a></h2>
+<p>In machine learning, we typically have functions of many variables. The chain rule generalizes.</p>
+<h3 id="scalar-case">Scalar Case<a class="headerlink" href="#scalar-case" title="Permanent link">&para;</a></h3>
+<p>If z = f(y) and y = g(x₁, x₂, ..., xₙ):</p>
+<div class="arithmatex">\[\frac{\partial z}{\partial x_i} = \frac{dz}{dy} \cdot \frac{\partial y}{\partial x_i}\]</div>
+<h3 id="general-case-multiple-paths">General Case: Multiple Paths<a class="headerlink" href="#general-case-multiple-paths" title="Permanent link">&para;</a></h3>
+<p>If z depends on y₁ and y₂, which both depend on x:</p>
+<div class="arithmatex">\[\frac{\partial z}{\partial x} = \frac{\partial z}{\partial y_1} \cdot \frac{\partial y_1}{\partial x} + \frac{\partial z}{\partial y_2} \cdot \frac{\partial y_2}{\partial x}\]</div>
+<p>We <strong>sum over all paths</strong> from z to x.</p>
+<h3 id="example-multivariate-chain-rule">Example: Multivariate Chain Rule<a class="headerlink" href="#example-multivariate-chain-rule" title="Permanent link">&para;</a></h3>
+<p>Let z = x·y where x = s² and y = s³.</p>
+<p>By the chain rule:
+$<span class="arithmatex">\(\frac{dz}{ds} = \frac{\partial z}{\partial x}\frac{dx}{ds} + \frac{\partial z}{\partial y}\frac{dy}{ds}\)</span>$</p>
+<div class="arithmatex">\[= y \cdot 2s + x \cdot 3s^2 = s^3 \cdot 2s + s^2 \cdot 3s^2 = 2s^4 + 3s^4 = 5s^4\]</div>
+<p><strong>Verification</strong>: z = x·y = s²·s³ = s⁵, so dz/ds = 5s⁴ ✓</p>
+<h2 id="why-this-matters-for-neural-networks">Why This Matters for Neural Networks<a class="headerlink" href="#why-this-matters-for-neural-networks" title="Permanent link">&para;</a></h2>
+<p>A neural network is a composition of layers:</p>
+<div class="arithmatex">\[\text{output} = f_L(f_{L-1}(\cdots f_2(f_1(x))\cdots))\]</div>
+<p>Each layer f_i transforms its input, and the chain rule tells us:</p>
+<div class="arithmatex">\[\frac{\partial \text{loss}}{\partial \text{parameters of layer } i} = \frac{\partial \text{loss}}{\partial \text{output of layer } i} \cdot \frac{\partial \text{output of layer } i}{\partial \text{parameters of layer } i}\]</div>
+<p>The "gradient of loss with respect to output" flows backward through the network, getting multiplied by local gradients at each layer.</p>
+<p>This is <strong>backpropagation</strong>—it's just the chain rule applied systematically from output to input.</p>
+<h2 id="the-chain-rule-as-a-graph">The Chain Rule as a Graph<a class="headerlink" href="#the-chain-rule-as-a-graph" title="Permanent link">&para;</a></h2>
+<p>We can visualize the chain rule as flow through a computation graph:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>x → [g] → g(x) → [f] → f(g(x)) = h(x)
+</code></pre></div>
+<ul>
+<li>Forward pass: compute values left to right</li>
+<li>Backward pass: compute gradients right to left</li>
+<li>Start with ∂h/∂h = 1</li>
+<li>At f: multiply by f'(g(x))</li>
+<li>At g: multiply by g'(x)</li>
+<li>Result: h'(x) = f'(g(x)) · g'(x)</li>
+</ul>
+<p>This graph perspective leads directly to automatic differentiation.</p>
+<h2 id="a-longer-chain">A Longer Chain<a class="headerlink" href="#a-longer-chain" title="Permanent link">&para;</a></h2>
+<p>Consider:
+$<span class="arithmatex">\(y = \sin(\ln(x^2 + 1))\)</span>$</p>
+<p>Let's trace through step by step:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Expression</th>
+<th>Derivative w.r.t. previous</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td>x² + 1</td>
+<td>da/dx = 2x</td>
+</tr>
+<tr>
+<td>b</td>
+<td>ln(a)</td>
+<td>db/da = 1/a</td>
+</tr>
+<tr>
+<td>y</td>
+<td>sin(b)</td>
+<td>dy/db = cos(b)</td>
+</tr>
+</tbody>
+</table>
+<p>By chain rule:
+$<span class="arithmatex">\(\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos(\ln(x^2+1)) \cdot \frac{1}{x^2+1} \cdot 2x\)</span>$</p>
+<div class="arithmatex">\[= \frac{2x \cos(\ln(x^2+1))}{x^2+1}\]</div>
+<h2 id="the-key-insight-for-autodiff">The Key Insight for Autodiff<a class="headerlink" href="#the-key-insight-for-autodiff" title="Permanent link">&para;</a></h2>
+<p>Notice the pattern:
+1. Forward pass: compute intermediate values (a, b, y)
+2. Backward pass: multiply derivatives in reverse order</p>
+<p>We don't need to derive a formula for the overall derivative. We just need:
+- The derivative of each primitive operation (sin, ln, +, ×, etc.)
+- A systematic way to apply the chain rule</p>
+<p>This is automatic differentiation. We'll implement it in Section 2.6.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Basic chain rule</strong>: Find d/dx of:</li>
+<li>(3x + 1)⁵</li>
+<li>e^{2x}</li>
+<li>ln(x³)</li>
+<li>
+<p>√(1 + x²)</p>
+</li>
+<li>
+<p><strong>Multiple applications</strong>: Find the derivative of sin(cos(x²)).</p>
+</li>
+<li>
+<p><strong>Verify by expansion</strong>: For (x+1)², compute the derivative using:</p>
+</li>
+<li>The chain rule</li>
+<li>Expanding to x² + 2x + 1 and differentiating</li>
+<li>
+<p>Check they match.</p>
+</li>
+<li>
+<p><strong>Multivariate</strong>: If f(x,y) = x²y³, x = t², y = t³, find df/dt two ways:</p>
+</li>
+<li>Substitute and differentiate directly</li>
+<li>
+<p>Use the multivariate chain rule</p>
+</li>
+<li>
+<p><strong>Neural network layer</strong>: A layer computes y = σ(Wx + b) where σ is an activation function. If L is a loss depending on y, express ∂L/∂W using the chain rule.</p>
+</li>
+</ol>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Formula</th>
+<th>Intuition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chain rule (single)</td>
+<td>(f∘g)' = f'(g) · g'</td>
+<td>Rates multiply</td>
+</tr>
+<tr>
+<td>Chain rule (multi)</td>
+<td>∂z/∂x = Σ (∂z/∂yᵢ)(∂yᵢ/∂x)</td>
+<td>Sum over paths</td>
+</tr>
+<tr>
+<td>Leibniz notation</td>
+<td>dy/dx = (dy/du)(du/dx)</td>
+<td>"Cancel" the du</td>
+</tr>
+<tr>
+<td>Backprop</td>
+<td>Gradients flow backward</td>
+<td>Local gradients multiply</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key insight</strong>: The chain rule turns differentiation of complex expressions into local operations connected by multiplication. This locality is what makes automatic differentiation possible and efficient.</p>
+<p>Next: We'll represent computations as graphs and see how the chain rule applies to them systematically.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

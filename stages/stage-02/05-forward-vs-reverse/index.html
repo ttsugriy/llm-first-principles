@@ -1,0 +1,1896 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-02/05-forward-vs-reverse/">
+      
+      
+        <link rel="prev" href="../04-computational-graphs/">
+      
+      
+        <link rel="next" href="../06-autograd-from-scratch/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>2.5 Forward vs Reverse Mode - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-25-forward-mode-vs-reverse-mode" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2.5 Forward vs Reverse Mode
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/04-information-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-chain-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-computational-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-two-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Two Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#forward-mode-intuition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forward Mode: Intuition
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#forward-mode-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forward Mode: Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#forward-mode-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forward Mode: Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dual-numbers-the-math-of-forward-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dual Numbers: The Math of Forward Mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverse-mode-intuition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Mode: Intuition
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverse-mode-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Mode: Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverse-mode-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Mode: Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complexity-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complexity Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-jacobian-perspective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Jacobian Perspective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-each-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use Each Mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vector-jacobian-products-vjp-vs-jacobian-vector-products-jvp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vector-Jacobian Products (VJP) vs Jacobian-Vector Products (JVP)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Trade-offs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-larger-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A Larger Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-adjoint-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Adjoint Method
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/01-why-neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/02-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/03-feed-forward/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/04-cross-entropy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-03/07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-25-forward-mode-vs-reverse-mode">Section 2.5: Forward Mode vs Reverse Mode<a class="headerlink" href="#section-25-forward-mode-vs-reverse-mode" title="Permanent link">&para;</a></h1>
+<p>There are two fundamentally different ways to apply the chain rule through a computational graph. The choice between them has massive implications for efficiency.</p>
+<p><strong>Bottom line</strong>: For neural networks (many inputs, one output), reverse mode is exponentially faster. This is why backpropagation works.</p>
+<h2 id="the-two-modes">The Two Modes<a class="headerlink" href="#the-two-modes" title="Permanent link">&para;</a></h2>
+<p>Both modes compute exact derivatives. They differ in <em>direction</em>:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Computes</th>
+<th>Direction</th>
+<th>Efficient when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Forward</td>
+<td>∂(all outputs)/∂(one input)</td>
+<td>input → output</td>
+<td>few inputs</td>
+</tr>
+<tr>
+<td>Reverse</td>
+<td>∂(one output)/∂(all inputs)</td>
+<td>output → input</td>
+<td>few outputs</td>
+</tr>
+</tbody>
+</table>
+<h2 id="forward-mode-intuition">Forward Mode: Intuition<a class="headerlink" href="#forward-mode-intuition" title="Permanent link">&para;</a></h2>
+<p>In forward mode, we pick one input xᵢ and compute how it affects everything downstream.</p>
+<p>We propagate <strong>derivatives</strong> forward alongside values:
+- Each node stores: (value, ∂value/∂xᵢ)
+- This pair flows through the graph
+- At the end, we have ∂output/∂xᵢ</p>
+<p>To get derivatives with respect to <em>all</em> inputs, we need <em>n</em> forward passes (one per input).</p>
+<h2 id="forward-mode-algorithm">Forward Mode: Algorithm<a class="headerlink" href="#forward-mode-algorithm" title="Permanent link">&para;</a></h2>
+<p><strong>Input</strong>: Computational graph, input values, index i of input to differentiate</p>
+<p><strong>Process</strong>:
+1. Set derivative of xᵢ to 1, all other inputs to 0
+2. For each node v in topological order:
+   - Compute v's value from parents (standard forward pass)
+   - Compute ∂v/∂xᵢ using chain rule:
+     $<span class="arithmatex">\(\frac{\partial v}{\partial x_i} = \sum_{p \in \text{parents}(v)} \frac{\partial v}{\partial p} \cdot \frac{\partial p}{\partial x_i}\)</span>$</p>
+<p><strong>Output</strong>: ∂output/∂xᵢ</p>
+<h2 id="forward-mode-example">Forward Mode: Example<a class="headerlink" href="#forward-mode-example" title="Permanent link">&para;</a></h2>
+<p>Consider f(x₁, x₂) = x₁·x₂ + sin(x₁).</p>
+<p>Let x₁ = 2, x₂ = 3. Let's compute ∂f/∂x₁.</p>
+<p><strong>Graph</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>x₁ ──┬──────▶ [×] ──▶ a ──┐
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>     │         ▲          │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     │         │          ▼
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>     │        x₂         [+] ──▶ f
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>     │                    ▲
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>     └──▶ [sin] ──▶ b ────┘
+</code></pre></div></p>
+<p><strong>Forward pass with derivatives</strong> (dx means ∂/∂x₁):</p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Value</th>
+<th>Derivative ∂·/∂x₁</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x₁</td>
+<td>2</td>
+<td>1 (seed)</td>
+</tr>
+<tr>
+<td>x₂</td>
+<td>3</td>
+<td>0</td>
+</tr>
+<tr>
+<td>a = x₁·x₂</td>
+<td>6</td>
+<td>x₂·1 + x₁·0 = 3</td>
+</tr>
+<tr>
+<td>b = sin(x₁)</td>
+<td>sin(2) ≈ 0.91</td>
+<td>cos(x₁)·1 = cos(2) ≈ -0.42</td>
+</tr>
+<tr>
+<td>f = a + b</td>
+<td>6.91</td>
+<td>3 + (-0.42) = 2.58</td>
+</tr>
+</tbody>
+</table>
+<p>So ∂f/∂x₁ ≈ 2.58.</p>
+<p><strong>To get ∂f/∂x₂</strong>, we need another forward pass with seed (0, 1).</p>
+<h2 id="dual-numbers-the-math-of-forward-mode">Dual Numbers: The Math of Forward Mode<a class="headerlink" href="#dual-numbers-the-math-of-forward-mode" title="Permanent link">&para;</a></h2>
+<p>Forward mode has an elegant mathematical formulation using <strong>dual numbers</strong>.</p>
+<p>A dual number has the form: a + bε where ε² = 0 but ε ≠ 0.</p>
+<p>This is like complex numbers but with ε² = 0 instead of i² = -1.</p>
+<p><strong>Key property</strong>: f(a + bε) = f(a) + f'(a)·b·ε</p>
+<p>The ε coefficient automatically carries the derivative!</p>
+<p><strong>Example</strong>: (2 + 1·ε)² = 4 + 4ε + ε² = 4 + 4ε (since ε² = 0)</p>
+<p>This matches: d/dx(x²) at x=2 is 2·2 = 4.</p>
+<h2 id="reverse-mode-intuition">Reverse Mode: Intuition<a class="headerlink" href="#reverse-mode-intuition" title="Permanent link">&para;</a></h2>
+<p>In reverse mode, we pick one output and compute how <em>all</em> inputs affect it.</p>
+<p>We propagate <strong>gradients</strong> backward from output to inputs:
+- Start with ∂output/∂output = 1
+- Work backward through the graph
+- Accumulate ∂output/∂v for each node v</p>
+<p>One backward pass gives derivatives with respect to <em>all</em> inputs!</p>
+<h2 id="reverse-mode-algorithm">Reverse Mode: Algorithm<a class="headerlink" href="#reverse-mode-algorithm" title="Permanent link">&para;</a></h2>
+<p><strong>Input</strong>: Computational graph (already evaluated), output node</p>
+<p><strong>Process</strong>:
+1. Forward pass: compute all values
+2. Set gradient of output to 1
+3. For each node v in reverse topological order:
+   - For each parent p of v:
+     $<span class="arithmatex">\(\frac{\partial \text{output}}{\partial p} \mathrel{+}= \frac{\partial \text{output}}{\partial v} \cdot \frac{\partial v}{\partial p}\)</span>$</p>
+<p><strong>Output</strong>: ∂output/∂(all inputs)</p>
+<h2 id="reverse-mode-example">Reverse Mode: Example<a class="headerlink" href="#reverse-mode-example" title="Permanent link">&para;</a></h2>
+<p>Same function: f(x₁, x₂) = x₁·x₂ + sin(x₁), with x₁ = 2, x₂ = 3.</p>
+<p><strong>Forward pass</strong> (compute values):
+- a = x₁·x₂ = 6
+- b = sin(x₁) = sin(2) ≈ 0.91
+- f = a + b ≈ 6.91</p>
+<p><strong>Backward pass</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Node</th>
+<th>Gradient ∂f/∂·</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>f</td>
+<td>1</td>
+<td>seed</td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>1</td>
+<td>∂f/∂a = 1 (from addition)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>b</td>
+<td>1</td>
+<td>∂f/∂b = 1 (from addition)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>x₁ (via a)</td>
+<td>x₂ = 3</td>
+<td>∂f/∂a · ∂a/∂x₁ = 1 · 3</td>
+</tr>
+<tr>
+<td>5</td>
+<td>x₂ (via a)</td>
+<td>x₁ = 2</td>
+<td>∂f/∂a · ∂a/∂x₂ = 1 · 2</td>
+</tr>
+<tr>
+<td>6</td>
+<td>x₁ (via b)</td>
+<td>cos(2) ≈ -0.42</td>
+<td>∂f/∂b · ∂b/∂x₁ = 1 · cos(2)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>x₁ (total)</td>
+<td>3 + (-0.42) ≈ 2.58</td>
+<td>sum both paths</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Results from ONE backward pass</strong>:
+- ∂f/∂x₁ ≈ 2.58
+- ∂f/∂x₂ = 2</p>
+<h2 id="complexity-comparison">Complexity Comparison<a class="headerlink" href="#complexity-comparison" title="Permanent link">&para;</a></h2>
+<p>Consider a function f: ℝⁿ → ℝᵐ (n inputs, m outputs).</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Passes needed</th>
+<th>Total work</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Forward</td>
+<td>n passes</td>
+<td>O(n · graph size)</td>
+</tr>
+<tr>
+<td>Reverse</td>
+<td>m passes</td>
+<td>O(m · graph size)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>For neural networks</strong>:
+- n = millions of parameters
+- m = 1 (scalar loss)
+- Forward mode: millions of passes
+- Reverse mode: ONE pass</p>
+<p><strong>Reverse mode wins by a factor of n!</strong></p>
+<p>This is why backpropagation (reverse mode autodiff) is the standard for training neural networks.</p>
+<h2 id="the-jacobian-perspective">The Jacobian Perspective<a class="headerlink" href="#the-jacobian-perspective" title="Permanent link">&para;</a></h2>
+<p>For f: ℝⁿ → ℝᵐ, the Jacobian is an m × n matrix:</p>
+<div class="arithmatex">\[J_{ij} = \frac{\partial f_i}{\partial x_j}\]</div>
+<ul>
+<li><strong>Forward mode</strong>: Computes one <em>column</em> of J per pass (how one input affects all outputs)</li>
+<li><strong>Reverse mode</strong>: Computes one <em>row</em> of J per pass (how all inputs affect one output)</li>
+</ul>
+<p>For a loss function L: ℝⁿ → ℝ, the Jacobian is 1 × n (a row vector = the gradient).
+Reverse mode computes the entire gradient in one pass.</p>
+<h2 id="when-to-use-each-mode">When to Use Each Mode<a class="headerlink" href="#when-to-use-each-mode" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>n (inputs)</th>
+<th>m (outputs)</th>
+<th>Best mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Neural network training</td>
+<td>millions</td>
+<td>1</td>
+<td>Reverse</td>
+</tr>
+<tr>
+<td>Sensitivity analysis</td>
+<td>few</td>
+<td>many</td>
+<td>Forward</td>
+</tr>
+<tr>
+<td>Jacobian-vector product</td>
+<td>any</td>
+<td>any</td>
+<td>Depends on direction</td>
+</tr>
+<tr>
+<td>Scientific computing</td>
+<td>varies</td>
+<td>varies</td>
+<td>Often forward</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Machine learning almost always uses reverse mode</strong> because we have one scalar loss.</p>
+<h2 id="vector-jacobian-products-vjp-vs-jacobian-vector-products-jvp">Vector-Jacobian Products (VJP) vs Jacobian-Vector Products (JVP)<a class="headerlink" href="#vector-jacobian-products-vjp-vs-jacobian-vector-products-jvp" title="Permanent link">&para;</a></h2>
+<p>The two modes can be understood as different matrix-vector products:</p>
+<p><strong>Forward mode (JVP)</strong>: Given vector v (tangent), compute J·v
+- "If inputs change by v, how do outputs change?"</p>
+<p><strong>Reverse mode (VJP)</strong>: Given vector u (cotangent), compute uᵀ·J
+- "To change output by u, how much does each input contribute?"</p>
+<p>For scalar loss with u = 1:
+- VJP gives the full gradient
+- This is exactly what we need for gradient descent</p>
+<h2 id="memory-trade-offs">Memory Trade-offs<a class="headerlink" href="#memory-trade-offs" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Memory requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Forward</td>
+<td>O(1) extra (just carry derivatives)</td>
+</tr>
+<tr>
+<td>Reverse</td>
+<td>O(graph size) (must cache forward pass values)</td>
+</tr>
+</tbody>
+</table>
+<p>Reverse mode needs to store intermediate values for the backward pass. For deep networks, this can be significant.</p>
+<p><strong>Techniques to reduce memory</strong>:
+- Gradient checkpointing: Recompute some values instead of storing
+- Trading compute for memory</p>
+<h2 id="a-larger-example">A Larger Example<a class="headerlink" href="#a-larger-example" title="Permanent link">&para;</a></h2>
+<p>Consider a 3-layer neural network:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>x → [W₁] → relu → [W₂] → relu → [W₃] → y → [loss] → L
+</code></pre></div></p>
+<p>Parameters: W₁, W₂, W₃ (possibly millions of numbers)
+Output: L (scalar)</p>
+<p><strong>Forward mode</strong>: To get ∂L/∂Wᵢⱼ for each weight, we need one pass per weight. With 1 million weights = 1 million forward passes.</p>
+<p><strong>Reverse mode</strong>: One forward pass + one backward pass = 2 total passes. Done.</p>
+<h2 id="the-adjoint-method">The Adjoint Method<a class="headerlink" href="#the-adjoint-method" title="Permanent link">&para;</a></h2>
+<p>Reverse mode is also called the <strong>adjoint method</strong> in scientific computing.</p>
+<p>The key insight: instead of propagating "how does this input affect output" forward, propagate "how does output depend on this intermediate value" backward.</p>
+<p>This is a duality—both compute the same derivatives, just in different orders.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Forward Mode</th>
+<th>Reverse Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Direction</td>
+<td>Input → Output</td>
+<td>Output → Input</td>
+</tr>
+<tr>
+<td>Computes</td>
+<td>∂(all)/∂(one input)</td>
+<td>∂(one output)/∂(all)</td>
+</tr>
+<tr>
+<td>Passes for ℝⁿ→ℝ</td>
+<td>n</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>Low</td>
+<td>Must cache forward pass</td>
+</tr>
+<tr>
+<td>Math</td>
+<td>Dual numbers</td>
+<td>Adjoint method</td>
+</tr>
+<tr>
+<td>Used in</td>
+<td>Sensitivity analysis</td>
+<td>Deep learning</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The key insight</strong>: Neural network training involves computing ∂(scalar loss)/∂(all parameters). Reverse mode does this in O(1) passes; forward mode takes O(parameters) passes. This makes reverse mode essential for deep learning.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Forward vs reverse count</strong>: For f: ℝ¹⁰⁰ → ℝ¹⁰, how many passes does each mode need to compute the full Jacobian?</p>
+</li>
+<li>
+<p><strong>Dual numbers</strong>: Using dual numbers, compute d/dx(x³) at x = 2 by evaluating (2 + ε)³.</p>
+</li>
+<li>
+<p><strong>Memory analysis</strong>: In a 100-layer network, roughly how many intermediate values need to be cached for reverse mode?</p>
+</li>
+<li>
+<p><strong>When forward wins</strong>: Give an example where forward mode is more efficient than reverse mode.</p>
+</li>
+<li>
+<p><strong>Thinking question</strong>: If we have f: ℝⁿ → ℝⁿ and need the full Jacobian, which mode is better? Can we do better than n passes?</p>
+</li>
+</ol>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>We understand the theory. Now let's build it.</p>
+<p>In Section 2.6, we'll implement a complete automatic differentiation system from scratch—supporting forward pass recording and reverse mode gradient computation.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

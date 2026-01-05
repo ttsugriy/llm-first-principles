@@ -1,0 +1,2164 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-03/02-embeddings/">
+      
+      
+        <link rel="prev" href="../01-why-neural/">
+      
+      
+        <link rel="next" href="../03-feed-forward/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>3.2 Embeddings - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-32-embeddings-from-discrete-to-continuous" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3.2 Embeddings
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/04-information-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/03-chain-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/04-computational-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/05-forward-vs-reverse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-why-neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-with-discrete-representations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem with Discrete Representations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Problem with Discrete Representations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-hot-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-Hot Encoding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-one-hot-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why One-Hot Fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-geometric-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Geometric View
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-embedding-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Embedding Solution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Embedding Solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-key-idea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Key Idea
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changes?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mathematical-formulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mathematical Formulation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mathematical Formulation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#embeddings-as-matrix-lookup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embeddings as Matrix Lookup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-matters-for-backpropagation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Matters for Backpropagation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#efficient-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Efficient Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-embeddings-enable-generalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Embeddings Enable Generalization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Embeddings Enable Generalization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-distributional-hypothesis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Distributional Hypothesis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-training-enforces-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Training Enforces This
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formal-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formal Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-geometry-of-embedding-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Geometry of Embedding Space
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Geometry of Embedding Space">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distances-encode-relationships" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distances Encode Relationships
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-emerges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Emerges
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#embedding-dimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embedding Dimensions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Embedding Dimensions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-many-dimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many Dimensions?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trade-offs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-right-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Right Number
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context-representation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Representation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Context Representation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#concatenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concatenation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-concatenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Concatenation?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alternative-addition-not-for-us" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternative: Addition (Not for Us)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-embeddings-with-autograd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing Embeddings with Autograd
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing Embeddings with Autograd">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gradient-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gradient Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-embedding-matrix-as-a-learned-dictionary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Embedding Matrix as a Learned Dictionary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initialization-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization Matters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initialization Matters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Initialization?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-initializations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Initializations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#our-choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Our Choice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-feed-forward/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-cross-entropy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-32-embeddings-from-discrete-to-continuous">Section 3.2: Embeddings — From Discrete to Continuous<a class="headerlink" href="#section-32-embeddings-from-discrete-to-continuous" title="Permanent link">&para;</a></h1>
+<p>The fundamental problem: language is made of discrete symbols (characters, words), but neural networks operate on continuous vectors.</p>
+<p><strong>Embeddings</strong> bridge this gap. They convert discrete tokens into continuous representations that capture meaning.</p>
+<p>This section derives embeddings from first principles and shows why they're the key to neural language modeling.</p>
+<h2 id="the-problem-with-discrete-representations">The Problem with Discrete Representations<a class="headerlink" href="#the-problem-with-discrete-representations" title="Permanent link">&para;</a></h2>
+<h3 id="one-hot-encoding">One-Hot Encoding<a class="headerlink" href="#one-hot-encoding" title="Permanent link">&para;</a></h3>
+<p>The naive way to represent tokens: one-hot vectors.</p>
+<p>For vocabulary {a, b, c, d} with |V| = 4:</p>
+<div class="arithmatex">\[\text{one\_hot}(a) = [1, 0, 0, 0]$$
+$$\text{one\_hot}(b) = [0, 1, 0, 0]$$
+$$\text{one\_hot}(c) = [0, 0, 1, 0]$$
+$$\text{one\_hot}(d) = [0, 0, 0, 1]\]</div>
+<p>Each token gets a unique position; all other entries are zero.</p>
+<h3 id="why-one-hot-fails">Why One-Hot Fails<a class="headerlink" href="#why-one-hot-fails" title="Permanent link">&para;</a></h3>
+<p><strong>Problem 1: No Similarity</strong></p>
+<p>For any two different tokens i ≠ j:
+$<span class="arithmatex">\(\text{one\_hot}(i) \cdot \text{one\_hot}(j) = 0\)</span>$</p>
+<p>All tokens are orthogonal. "a" and "b" are as dissimilar as "a" and "7".</p>
+<p><strong>Problem 2: Dimensionality</strong></p>
+<p>Vector size = vocabulary size.</p>
+<p>For characters: manageable (~100 dimensions)
+For words: massive (~50,000+ dimensions)</p>
+<p><strong>Problem 3: No Generalization</strong></p>
+<p>A weight connecting to one-hot position i affects ONLY token i.</p>
+<p>Learning about "cat" provides zero information about "dog".</p>
+<h3 id="the-geometric-view">The Geometric View<a class="headerlink" href="#the-geometric-view" title="Permanent link">&para;</a></h3>
+<p>In one-hot space:
+- All vectors have length 1
+- All pairs are distance √2 apart (since ||e_i - e_j||² = 2 for i ≠ j)
+- No structure, no clusters, no relationships</p>
+<p>This is a failure of representation, not of the neural network itself.</p>
+<h2 id="the-embedding-solution">The Embedding Solution<a class="headerlink" href="#the-embedding-solution" title="Permanent link">&para;</a></h2>
+<h3 id="the-key-idea">The Key Idea<a class="headerlink" href="#the-key-idea" title="Permanent link">&para;</a></h3>
+<p>Instead of one-hot vectors, represent each token as a <strong>learned dense vector</strong>.</p>
+<p>For vocabulary size |V| and embedding dimension d (where d &lt;&lt; |V|):</p>
+<div class="arithmatex">\[E \in \mathbb{R}^{|V| \times d}\]</div>
+<p>Each row of E is the embedding for one token:
+$<span class="arithmatex">\(\text{embed}(i) = E[i, :] \in \mathbb{R}^d\)</span>$</p>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<p>For vocabulary {a, b, c, d} with d = 3:</p>
+<div class="arithmatex">\[E = \begin{bmatrix} 0.2 &amp; -0.5 &amp; 0.1 \\ 0.3 &amp; -0.4 &amp; 0.2 \\ -0.1 &amp; 0.8 &amp; 0.3 \\ 0.5 &amp; 0.2 &amp; -0.7 \end{bmatrix}\]</div>
+<p>Then:
+- embed(a) = [0.2, -0.5, 0.1]
+- embed(b) = [0.3, -0.4, 0.2]
+- embed(c) = [-0.1, 0.8, 0.3]
+- embed(d) = [0.5, 0.2, -0.7]</p>
+<h3 id="what-changes">What Changes?<a class="headerlink" href="#what-changes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>One-Hot</th>
+<th>Embedding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dimension</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>Similarity</td>
+<td>All orthogonal</td>
+<td>Learned from data</td>
+</tr>
+<tr>
+<td>Parameters</td>
+<td>0 (fixed)</td>
+<td></td>
+</tr>
+<tr>
+<td>Structure</td>
+<td>None</td>
+<td>Emerges from training</td>
+</tr>
+</tbody>
+</table>
+<h2 id="mathematical-formulation">Mathematical Formulation<a class="headerlink" href="#mathematical-formulation" title="Permanent link">&para;</a></h2>
+<h3 id="embeddings-as-matrix-lookup">Embeddings as Matrix Lookup<a class="headerlink" href="#embeddings-as-matrix-lookup" title="Permanent link">&para;</a></h3>
+<p>The embedding operation is mathematically simple:</p>
+<div class="arithmatex">\[\text{embed}(i) = E[i, :]\]</div>
+<p>This is equivalent to:
+$<span class="arithmatex">\(\text{embed}(i) = \text{one\_hot}(i) \cdot E\)</span>$</p>
+<p><strong>Proof</strong>:</p>
+<p>Let e_i = one_hot(i) be the i-th standard basis vector.</p>
+<div class="arithmatex">\[e_i \cdot E = [0, ..., 1, ..., 0] \cdot E = \text{i-th row of } E = E[i, :]\]</div>
+<p>The one-hot vector "selects" the corresponding row of E.</p>
+<h3 id="why-this-matters-for-backpropagation">Why This Matters for Backpropagation<a class="headerlink" href="#why-this-matters-for-backpropagation" title="Permanent link">&para;</a></h3>
+<p>During training, we need gradients of the loss with respect to E.</p>
+<p>If the loss is L and we used embedding E[i, :] in the forward pass:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial E[i, :]} = \frac{\partial L}{\partial \text{embed}(i)}\]</div>
+<p>Only the i-th row of E gets a gradient—the rows for tokens not used in this example get zero gradient.</p>
+<p>This is <strong>sparse gradient updates</strong>: each training example only modifies the embeddings of tokens it contains.</p>
+<h3 id="efficient-implementation">Efficient Implementation<a class="headerlink" href="#efficient-implementation" title="Permanent link">&para;</a></h3>
+<p>Although mathematically equivalent to matrix multiplication, we implement embeddings as <strong>table lookup</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Embedding</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">):</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="c1"># Initialize randomly</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="p">[[</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">embed_dim</span><span class="p">)]</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                       <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">)]</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_idx</span><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="c1"># O(1) lookup, not O(vocab_size) multiplication</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">token_idx</span><span class="p">]</span>
+</code></pre></div>
+<p>This is O(d) instead of O(|V| × d)—a massive speedup.</p>
+<h2 id="why-embeddings-enable-generalization">Why Embeddings Enable Generalization<a class="headerlink" href="#why-embeddings-enable-generalization" title="Permanent link">&para;</a></h2>
+<h3 id="the-distributional-hypothesis">The Distributional Hypothesis<a class="headerlink" href="#the-distributional-hypothesis" title="Permanent link">&para;</a></h3>
+<p>Linguist J.R. Firth (1957):</p>
+<blockquote>
+<p>"You shall know a word by the company it keeps."</p>
+</blockquote>
+<p>Tokens that appear in similar contexts should have similar meanings.</p>
+<h3 id="how-training-enforces-this">How Training Enforces This<a class="headerlink" href="#how-training-enforces-this" title="Permanent link">&para;</a></h3>
+<p>Consider training on:
+- "the <strong>cat</strong> sat on the mat"
+- "the <strong>dog</strong> sat on the rug"</p>
+<p>Both "cat" and "dog":
+1. Follow "the"
+2. Precede "sat"
+3. Appear in similar grammatical positions</p>
+<p>During training:
+- Both receive gradients pushing them to predict "sat"
+- Both receive gradients from "the" predictions
+- These similar gradient signals push them toward similar embeddings</p>
+<p><strong>Result</strong>: embed("cat") ≈ embed("dog") emerges automatically!</p>
+<h3 id="formal-statement">Formal Statement<a class="headerlink" href="#formal-statement" title="Permanent link">&para;</a></h3>
+<p>If two tokens t₁ and t₂ appear in similar contexts:</p>
+<div class="arithmatex">\[P(\text{context} | t_1) \approx P(\text{context} | t_2)\]</div>
+<p>Then training will push their embeddings together:</p>
+<div class="arithmatex">\[\text{embed}(t_1) \approx \text{embed}(t_2)\]</div>
+<p>This is not programmed—it's a consequence of the optimization objective.</p>
+<h2 id="the-geometry-of-embedding-space">The Geometry of Embedding Space<a class="headerlink" href="#the-geometry-of-embedding-space" title="Permanent link">&para;</a></h2>
+<h3 id="distances-encode-relationships">Distances Encode Relationships<a class="headerlink" href="#distances-encode-relationships" title="Permanent link">&para;</a></h3>
+<p>In a trained embedding space:</p>
+<p><strong>Cosine Similarity</strong>:
+$<span class="arithmatex">\(\text{sim}(u, v) = \frac{u \cdot v}{||u|| \cdot ||v||}\)</span>$</p>
+<p>Ranges from -1 (opposite) to +1 (identical direction).</p>
+<p><strong>Euclidean Distance</strong>:
+$<span class="arithmatex">\(d(u, v) = ||u - v||_2\)</span>$</p>
+<p>Small distance = similar tokens.</p>
+<h3 id="what-emerges">What Emerges<a class="headerlink" href="#what-emerges" title="Permanent link">&para;</a></h3>
+<p>After training on language data, embedding spaces exhibit:</p>
+<ol>
+<li><strong>Clusters</strong>: Similar tokens group together</li>
+<li>Vowels cluster, consonants cluster</li>
+<li>Digits cluster together</li>
+<li>
+<p>Punctuation forms its own region</p>
+</li>
+<li>
+<p><strong>Directions</strong>: Some directions encode specific properties</p>
+</li>
+<li>Moving in one direction might shift from "noun-like" to "verb-like"</li>
+<li>
+<p>Another direction might encode frequency</p>
+</li>
+<li>
+<p><strong>Linear Relationships</strong> (for word embeddings):</p>
+</li>
+<li>king - man + woman ≈ queen</li>
+<li>Paris - France + Italy ≈ Rome</li>
+</ol>
+<p>For character-level models, the structure is simpler but still meaningful.</p>
+<h2 id="embedding-dimensions">Embedding Dimensions<a class="headerlink" href="#embedding-dimensions" title="Permanent link">&para;</a></h2>
+<h3 id="how-many-dimensions">How Many Dimensions?<a class="headerlink" href="#how-many-dimensions" title="Permanent link">&para;</a></h3>
+<p>This is a hyperparameter choice. Common values:</p>
+<table>
+<thead>
+<tr>
+<th>Token Type</th>
+<th>Vocabulary Size</th>
+<th>Typical Embedding Dim</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Characters</td>
+<td>50-100</td>
+<td>16-64</td>
+</tr>
+<tr>
+<td>Subwords</td>
+<td>30,000-50,000</td>
+<td>256-768</td>
+</tr>
+<tr>
+<td>Words</td>
+<td>50,000-100,000</td>
+<td>100-300</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trade-offs">Trade-offs<a class="headerlink" href="#trade-offs" title="Permanent link">&para;</a></h3>
+<p><strong>Too few dimensions</strong> (d too small):
+- Can't capture all distinctions
+- Different tokens forced to share representation
+- Underfitting</p>
+<p><strong>Too many dimensions</strong> (d too large):
+- More parameters to learn
+- Risk of overfitting
+- Diminishing returns</p>
+<h3 id="the-right-number">The Right Number<a class="headerlink" href="#the-right-number" title="Permanent link">&para;</a></h3>
+<p>Rule of thumb: d should be large enough to express the meaningful distinctions in your vocabulary.</p>
+<p>For characters (~100 tokens): d = 32-64 usually sufficient
+For words (~50,000 tokens): d = 256-512 often needed</p>
+<p>A common heuristic: d ≈ |V|^{1/4} (fourth root of vocabulary size).</p>
+<h2 id="context-representation">Context Representation<a class="headerlink" href="#context-representation" title="Permanent link">&para;</a></h2>
+<p>For language modeling, we need to represent not just one token, but a sequence of context tokens.</p>
+<h3 id="concatenation">Concatenation<a class="headerlink" href="#concatenation" title="Permanent link">&para;</a></h3>
+<p>The simplest approach: concatenate embeddings.</p>
+<p>For context [t₁, t₂, t₃] with embedding dimension d:</p>
+<div class="arithmatex">\[x = [\text{embed}(t_1); \text{embed}(t_2); \text{embed}(t_3)] \in \mathbb{R}^{3d}\]</div>
+<p>This preserves position information:
+- Dimensions [0:d] represent first position
+- Dimensions [d:2d] represent second position
+- Dimensions [2d:3d] represent third position</p>
+<h3 id="why-concatenation">Why Concatenation?<a class="headerlink" href="#why-concatenation" title="Permanent link">&para;</a></h3>
+<p>Position matters in language:
+- "dog bites man" ≠ "man bites dog"</p>
+<p>Concatenation lets the network learn position-specific patterns.</p>
+<h3 id="alternative-addition-not-for-us">Alternative: Addition (Not for Us)<a class="headerlink" href="#alternative-addition-not-for-us" title="Permanent link">&para;</a></h3>
+<p>Some architectures add embeddings instead:</p>
+<div class="arithmatex">\[x = \text{embed}(t_1) + \text{embed}(t_2) + \text{embed}(t_3)\]</div>
+<p>This loses position information but reduces dimensionality.</p>
+<p>We'll revisit this trade-off when we study attention mechanisms in Stage 7.</p>
+<h2 id="implementing-embeddings-with-autograd">Implementing Embeddings with Autograd<a class="headerlink" href="#implementing-embeddings-with-autograd" title="Permanent link">&para;</a></h2>
+<p>Using our Stage 2 Value class, here's a simple embedding layer:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Embedding</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">):</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        <span class="c1"># Each row is a token&#39;s embedding</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>            <span class="p">[</span><span class="n">Value</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">embed_dim</span><span class="p">)]</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="p">]</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_idx</span><span class="p">):</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the embedding for token_idx.&quot;&quot;&quot;</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">token_idx</span><span class="p">]</span>  <span class="c1"># List of Value objects</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all learnable parameters.&quot;&quot;&quot;</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="gradient-flow">Gradient Flow<a class="headerlink" href="#gradient-flow" title="Permanent link">&para;</a></h3>
+<p>When we use an embedding in a forward pass:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Get embedding for token 5</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">emb</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># List of Value objects</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Use in computation</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">hidden</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">e</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">emb</span><span class="p">))</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">loss</span> <span class="o">=</span> <span class="o">...</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># Now embedding.weight[5] has gradients!</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">5</span><span class="p">]):</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gradient for dim </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The gradient flows from the loss back through the computation to the specific embedding row that was used.</p>
+<h2 id="the-embedding-matrix-as-a-learned-dictionary">The Embedding Matrix as a Learned Dictionary<a class="headerlink" href="#the-embedding-matrix-as-a-learned-dictionary" title="Permanent link">&para;</a></h2>
+<p>Another perspective: the embedding matrix E is a <strong>dictionary</strong> mapping tokens to their "meanings" (as vectors).</p>
+<table>
+<thead>
+<tr>
+<th>Token Index</th>
+<th>Traditional Dictionary</th>
+<th>Embedding "Dictionary"</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 ('a')</td>
+<td>"First letter of alphabet"</td>
+<td>[0.23, -0.15, 0.82, ...]</td>
+</tr>
+<tr>
+<td>1 ('b')</td>
+<td>"Second letter"</td>
+<td>[0.31, -0.22, 0.71, ...]</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+</tbody>
+</table>
+<p>The difference: the vector "definitions" are:
+- Learned from data, not written by humans
+- Optimized for the prediction task
+- Capture statistical patterns, not explicit semantics</p>
+<h2 id="initialization-matters">Initialization Matters<a class="headerlink" href="#initialization-matters" title="Permanent link">&para;</a></h2>
+<h3 id="why-initialization">Why Initialization?<a class="headerlink" href="#why-initialization" title="Permanent link">&para;</a></h3>
+<p>Before training, embeddings must start somewhere. The initialization affects:
+- How quickly training converges
+- Whether training gets stuck in poor local minima
+- The scale of activations in early layers</p>
+<h3 id="common-initializations">Common Initializations<a class="headerlink" href="#common-initializations" title="Permanent link">&para;</a></h3>
+<p><strong>Random Normal</strong>:
+$<span class="arithmatex">\(E[i,j] \sim \mathcal{N}(0, \sigma^2)\)</span>$</p>
+<p>With σ typically 0.01 to 0.1.</p>
+<p><strong>Uniform</strong>:
+$<span class="arithmatex">\(E[i,j] \sim \text{Uniform}(-a, a)\)</span>$</p>
+<p>With a typically 0.05 to 0.5.</p>
+<p><strong>Xavier/Glorot</strong> (common for neural networks):
+$<span class="arithmatex">\(E[i,j] \sim \mathcal{N}\left(0, \frac{1}{d}\right)\)</span>$</p>
+<p>This keeps variance stable across layers.</p>
+<h3 id="our-choice">Our Choice<a class="headerlink" href="#our-choice" title="Permanent link">&para;</a></h3>
+<p>For character embeddings with d = 32:</p>
+<div class="arithmatex">\[E[i,j] \sim \mathcal{N}\left(0, 0.1\right)\]</div>
+<p>Small random values that will be refined by training.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One-hot</td>
+<td>Sparse, high-dimensional, no similarity</td>
+</tr>
+<tr>
+<td>Embedding</td>
+<td>Dense, low-dimensional, learned similarity</td>
+</tr>
+<tr>
+<td>Embedding matrix</td>
+<td>E ∈ ℝ^{</td>
+</tr>
+<tr>
+<td>Lookup operation</td>
+<td>embed(i) = E[i,:], O(d) not O(</td>
+</tr>
+<tr>
+<td>Why it works</td>
+<td>Similar contexts → similar gradients → similar embeddings</td>
+</tr>
+<tr>
+<td>Geometry</td>
+<td>Clusters, directions, linear relationships</td>
+</tr>
+<tr>
+<td>Context representation</td>
+<td>Concatenate embeddings, preserves position</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key insight</strong>: Embeddings convert the discrete symbol problem into a continuous optimization problem. Similar tokens end up with similar embeddings because they receive similar training signals. This is the foundation of neural language modeling.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>One-hot distances</strong>: Prove that for any two different one-hot vectors, the Euclidean distance is √2.</p>
+</li>
+<li>
+<p><strong>Embedding equivalence</strong>: Show that one_hot(i) · E = E[i,:] by writing out the matrix multiplication explicitly for a 3×2 embedding matrix.</p>
+</li>
+<li>
+<p><strong>Parameter count</strong>: For a vocabulary of 10,000 tokens and embedding dimension 256, how many parameters are in the embedding layer? How does this compare to one-hot dimension?</p>
+</li>
+<li>
+<p><strong>Gradient sparsity</strong>: If a training batch contains 32 examples, each with 10 tokens, at most how many rows of the embedding matrix receive non-zero gradients?</p>
+</li>
+<li>
+<p><strong>Similarity emergence</strong>: Describe a minimal training scenario (contexts and next tokens) that would cause embeddings for 'x' and 'y' to become similar.</p>
+</li>
+</ol>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>We can now represent tokens as continuous vectors. But how do we use these vectors to predict the next token?</p>
+<p>In Section 3.3, we'll build <strong>feed-forward neural networks</strong> that transform embedded contexts into probability distributions over the vocabulary.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

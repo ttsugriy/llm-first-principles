@@ -1,0 +1,2232 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A rigorous, bottom-up approach to understanding language models">
+      
+      
+        <meta name="author" content="Taras Tsugrii">
+      
+      
+        <link rel="canonical" href="https://ttsugriy.github.io/llm-first-principles/stages/stage-03/03-feed-forward/">
+      
+      
+        <link rel="prev" href="../02-embeddings/">
+      
+      
+        <link rel="next" href="../04-cross-entropy/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>3.3 Feed-Forward Networks - Building LLMs from First Principles</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#section-33-feed-forward-neural-networks" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-header__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Building LLMs from First Principles
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3.3 Feed-Forward Networks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Building LLMs from First Principles" class="md-nav__button md-logo" aria-label="Building LLMs from First Principles" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Building LLMs from First Principles
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ttsugriy/llm-first-principles" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ttsugriy/llm-first-principles
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 1 - Markov Chains
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 1 - Markov Chains
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/01-probability-foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.1 Probability Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/02-language-modeling-problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2 Language Modeling Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/03-mle-derivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.3 MLE Derivation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/04-information-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.4 Information Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/05-perplexity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.5 Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/06-temperature-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6 Temperature Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/07-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.7 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-01/08-trade-offs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.8 Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 2 - Automatic Differentiation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 2 - Automatic Differentiation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/01-what-is-derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.1 What is a Derivative?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/02-derivative-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.2 Derivative Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/03-chain-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.3 The Chain Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/04-computational-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.4 Computational Graphs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/05-forward-vs-reverse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.5 Forward vs Reverse Mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/06-autograd-from-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.6 Building Autograd
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-02/07-testing-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2.7 Testing and Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 3 - Neural Language Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Stage 3 - Neural Language Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-why-neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.1 Why Neural?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.2 Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.3 Feed-Forward Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-basic-unit-a-linear-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Basic Unit: A Linear Layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Basic Unit: A Linear Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mathematical-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mathematical Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-computes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Computes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geometric-interpretation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geometric Interpretation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-linear-functions-are-limited" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem: Linear Functions Are Limited
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Problem: Linear Functions Are Limited">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composition-of-linear-functions-is-linear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composition of Linear Functions is Linear
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-is-a-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Is a Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-solution-nonlinear-activation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Solution: Nonlinear Activation Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Solution: Nonlinear Activation Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-activation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Activation Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relu-a-closer-look" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ReLU: A Closer Look
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-deep-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building Deep Networks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building Deep Networks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stacking-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stacking Layers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-depth-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Depth Matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#width-vs-depth-trade-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Width vs Depth Trade-off
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-universal-approximation-theorem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Universal Approximation Theorem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Universal Approximation Theorem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-means" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Means
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-doesnt-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Doesn't Mean
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intuition-via-relu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intuition via ReLU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-output-layer-for-language-modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Output Layer for Language Modeling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Output Layer for Language Modeling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-softmax-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Softmax Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties-of-softmax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties of Softmax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-complete-output-stage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Complete Output Stage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#putting-it-together-the-full-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Putting It Together: The Full Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Putting It Together: The Full Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forward Pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter Count
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-a-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing a Layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing a Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relu-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ReLU Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#softmax-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Softmax Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#numerical-stability-the-log-sum-exp-trick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Numerical Stability: The Log-Sum-Exp Trick
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Numerical Stability: The Log-Sum-Exp Trick">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-log-probabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Log Probabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#information-flow-in-the-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Information Flow in the Network
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Information Flow in the Network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forward-pass_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forward Pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backward-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backward Pass
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-chain-rule-at-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Chain Rule at Work
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-cross-entropy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.4 Cross-Entropy Loss
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.5 Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-training-dynamics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.6 Training Dynamics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3.7 Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stage-04-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stage 4 - Coming Soon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="section-33-feed-forward-neural-networks">Section 3.3: Feed-Forward Neural Networks<a class="headerlink" href="#section-33-feed-forward-neural-networks" title="Permanent link">&para;</a></h1>
+<p>We can now represent tokens as continuous vectors. The next step: build a function that transforms these vectors into predictions.</p>
+<p><strong>Feed-forward neural networks</strong> (also called multi-layer perceptrons or MLPs) are the simplest such functions. They're the building blocks of all modern deep learning.</p>
+<p>This section derives neural networks from first principles and explains what makes them powerful.</p>
+<h2 id="the-basic-unit-a-linear-layer">The Basic Unit: A Linear Layer<a class="headerlink" href="#the-basic-unit-a-linear-layer" title="Permanent link">&para;</a></h2>
+<h3 id="mathematical-definition">Mathematical Definition<a class="headerlink" href="#mathematical-definition" title="Permanent link">&para;</a></h3>
+<p>A linear layer transforms an input vector x ∈ ℝⁿ into an output vector y ∈ ℝᵐ:</p>
+<div class="arithmatex">\[y = Wx + b\]</div>
+<p>Where:
+- W ∈ ℝᵐˣⁿ is the <strong>weight matrix</strong>
+- b ∈ ℝᵐ is the <strong>bias vector</strong>
+- x ∈ ℝⁿ is the input
+- y ∈ ℝᵐ is the output</p>
+<h3 id="what-it-computes">What It Computes<a class="headerlink" href="#what-it-computes" title="Permanent link">&para;</a></h3>
+<p>Each output component yᵢ is a weighted sum of inputs plus a bias:</p>
+<div class="arithmatex">\[y_i = \sum_{j=1}^{n} W_{ij} x_j + b_i\]</div>
+<p>This is a <strong>linear combination</strong> of the inputs.</p>
+<h3 id="geometric-interpretation">Geometric Interpretation<a class="headerlink" href="#geometric-interpretation" title="Permanent link">&para;</a></h3>
+<p>A linear layer performs:
+1. <strong>Rotation/scaling</strong>: W rotates and scales the input space
+2. <strong>Translation</strong>: b shifts the result</p>
+<p>It maps the input space to a new space with potentially different dimensionality.</p>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<p>Input: x = [2, 3] (n = 2)
+Output dimension: m = 3</p>
+<div class="arithmatex">\[W = \begin{bmatrix} 1 &amp; 0 \\ 0 &amp; 1 \\ 1 &amp; 1 \end{bmatrix}, \quad b = \begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}\]</div>
+<div class="arithmatex">\[y = \begin{bmatrix} 1·2 + 0·3 + 0 \\ 0·2 + 1·3 + 1 \\ 1·2 + 1·3 - 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 4 \\ 4 \end{bmatrix}\]</div>
+<h2 id="the-problem-linear-functions-are-limited">The Problem: Linear Functions Are Limited<a class="headerlink" href="#the-problem-linear-functions-are-limited" title="Permanent link">&para;</a></h2>
+<h3 id="composition-of-linear-functions-is-linear">Composition of Linear Functions is Linear<a class="headerlink" href="#composition-of-linear-functions-is-linear" title="Permanent link">&para;</a></h3>
+<p>If f(x) = W₁x + b₁ and g(x) = W₂x + b₂, then:</p>
+<div class="arithmatex">\[g(f(x)) = W_2(W_1 x + b_1) + b_2 = W_2 W_1 x + (W_2 b_1 + b_2)\]</div>
+<p>This is still a linear function! Let W' = W₂W₁ and b' = W₂b₁ + b₂:</p>
+<div class="arithmatex">\[g(f(x)) = W' x + b'\]</div>
+<p><strong>No matter how many linear layers we stack, we get a linear function.</strong></p>
+<h3 id="why-this-is-a-problem">Why This Is a Problem<a class="headerlink" href="#why-this-is-a-problem" title="Permanent link">&para;</a></h3>
+<p>Linear functions can only:
+- Draw straight decision boundaries
+- Compute linear combinations</p>
+<p>They cannot:
+- Compute XOR (or any non-linearly-separable function)
+- Model complex patterns
+- Learn hierarchical features</p>
+<h2 id="the-solution-nonlinear-activation-functions">The Solution: Nonlinear Activation Functions<a class="headerlink" href="#the-solution-nonlinear-activation-functions" title="Permanent link">&para;</a></h2>
+<p>To break linearity, we apply a <strong>nonlinear function</strong> after each linear layer.</p>
+<h3 id="the-pattern">The Pattern<a class="headerlink" href="#the-pattern" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[h = \sigma(Wx + b)\]</div>
+<p>Where σ is a nonlinear <strong>activation function</strong> applied element-wise.</p>
+<h3 id="common-activation-functions">Common Activation Functions<a class="headerlink" href="#common-activation-functions" title="Permanent link">&para;</a></h3>
+<p><strong>ReLU (Rectified Linear Unit)</strong>:
+$<span class="arithmatex">\(\text{ReLU}(x) = \max(0, x)\)</span>$</p>
+<ul>
+<li>Simple and fast</li>
+<li>Derivative: 1 if x &gt; 0, else 0</li>
+<li>Most popular for hidden layers</li>
+</ul>
+<p><strong>Sigmoid</strong>:
+$<span class="arithmatex">\(\sigma(x) = \frac{1}{1 + e^{-x}}\)</span>$</p>
+<ul>
+<li>Outputs between 0 and 1</li>
+<li>Historically popular, less used now (vanishing gradients)</li>
+</ul>
+<p><strong>Tanh</strong>:
+$<span class="arithmatex">\(\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\)</span>$</p>
+<ul>
+<li>Outputs between -1 and 1</li>
+<li>Zero-centered (better than sigmoid)</li>
+</ul>
+<p><strong>GELU (Gaussian Error Linear Unit)</strong>:
+$<span class="arithmatex">\(\text{GELU}(x) = x \cdot \Phi(x)\)</span>$</p>
+<p>Where Φ is the standard normal CDF. Approximation:
+$<span class="arithmatex">\(\text{GELU}(x) \approx 0.5x(1 + \tanh[\sqrt{2/\pi}(x + 0.044715x^3)])\)</span>$</p>
+<ul>
+<li>Used in transformers</li>
+<li>Smooth version of ReLU</li>
+</ul>
+<h3 id="relu-a-closer-look">ReLU: A Closer Look<a class="headerlink" href="#relu-a-closer-look" title="Permanent link">&para;</a></h3>
+<p>ReLU is piecewise linear:
+- For x ≤ 0: output = 0
+- For x &gt; 0: output = x</p>
+<p>This simple nonlinearity is enough to enable universal approximation.</p>
+<p><strong>Derivative</strong>:
+$<span class="arithmatex">\(\frac{d}{dx}\text{ReLU}(x) = \begin{cases} 1 &amp; \text{if } x &gt; 0 \\ 0 &amp; \text{if } x &lt; 0 \\ \text{undefined} &amp; \text{if } x = 0 \end{cases}\)</span>$</p>
+<p>At x = 0, we use the subgradient 0.</p>
+<h2 id="building-deep-networks">Building Deep Networks<a class="headerlink" href="#building-deep-networks" title="Permanent link">&para;</a></h2>
+<h3 id="stacking-layers">Stacking Layers<a class="headerlink" href="#stacking-layers" title="Permanent link">&para;</a></h3>
+<p>A deep network is a composition of layers:</p>
+<div class="arithmatex">\[h_1 = \sigma(W_1 x + b_1)$$
+$$h_2 = \sigma(W_2 h_1 + b_2)$$
+$$h_3 = \sigma(W_3 h_2 + b_3)$$
+$$\vdots$$
+$$y = W_L h_{L-1} + b_L\]</div>
+<p>Note: The last layer often has no activation (for regression) or a special activation (softmax for classification).</p>
+<h3 id="why-depth-matters">Why Depth Matters<a class="headerlink" href="#why-depth-matters" title="Permanent link">&para;</a></h3>
+<p>Each layer can learn increasingly abstract features:</p>
+<ul>
+<li><strong>Layer 1</strong>: Low-level patterns (character combinations)</li>
+<li><strong>Layer 2</strong>: Mid-level patterns (syllables, common sequences)</li>
+<li><strong>Layer 3</strong>: High-level patterns (word-like structures)</li>
+</ul>
+<p>Deep networks can express functions that would require exponentially wide shallow networks.</p>
+<h3 id="width-vs-depth-trade-off">Width vs Depth Trade-off<a class="headerlink" href="#width-vs-depth-trade-off" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Architecture</th>
+<th>Advantages</th>
+<th>Disadvantages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wide + Shallow</td>
+<td>Easy to train, stable</td>
+<td>Many parameters, limited abstraction</td>
+</tr>
+<tr>
+<td>Narrow + Deep</td>
+<td>Parameter efficient, hierarchical</td>
+<td>Harder to train, vanishing gradients</td>
+</tr>
+</tbody>
+</table>
+<p>In practice, moderate depth (2-4 layers for character LM) works well.</p>
+<h2 id="the-universal-approximation-theorem">The Universal Approximation Theorem<a class="headerlink" href="#the-universal-approximation-theorem" title="Permanent link">&para;</a></h2>
+<h3 id="statement">Statement<a class="headerlink" href="#statement" title="Permanent link">&para;</a></h3>
+<p>A feed-forward network with:
+- One hidden layer
+- Sufficient width (number of neurons)
+- Nonlinear activation</p>
+<p>Can approximate any continuous function on a compact domain to arbitrary precision.</p>
+<h3 id="what-this-means">What This Means<a class="headerlink" href="#what-this-means" title="Permanent link">&para;</a></h3>
+<p>Neural networks are <strong>universal function approximators</strong>. Given enough neurons, they can learn any reasonable input-output mapping.</p>
+<h3 id="what-this-doesnt-mean">What This Doesn't Mean<a class="headerlink" href="#what-this-doesnt-mean" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Doesn't say how many neurons needed (could be enormous)</li>
+<li>Doesn't say the function is easy to find (optimization might fail)</li>
+<li>Doesn't guarantee generalization (might overfit)</li>
+</ul>
+<h3 id="intuition-via-relu">Intuition via ReLU<a class="headerlink" href="#intuition-via-relu" title="Permanent link">&para;</a></h3>
+<p>A ReLU network creates a <strong>piecewise linear function</strong>:</p>
+<ul>
+<li>Each neuron contributes a "hinge" point</li>
+<li>With enough hinges, any continuous curve can be approximated</li>
+<li>More neurons = finer approximation</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>                      /\
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                     /  \
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        /\          /    \
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>       /  \        /      \___
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    __/    \______/
+</code></pre></div>
+<p>Each change in slope corresponds to a neuron "turning on" or "off".</p>
+<h2 id="the-output-layer-for-language-modeling">The Output Layer for Language Modeling<a class="headerlink" href="#the-output-layer-for-language-modeling" title="Permanent link">&para;</a></h2>
+<p>For language modeling, we need to output a probability distribution over the vocabulary.</p>
+<h3 id="the-softmax-function">The Softmax Function<a class="headerlink" href="#the-softmax-function" title="Permanent link">&para;</a></h3>
+<p>Given logits z ∈ ℝ^|V|, softmax converts to probabilities:</p>
+<div class="arithmatex">\[\text{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{|V|} e^{z_j}}\]</div>
+<h3 id="properties-of-softmax">Properties of Softmax<a class="headerlink" href="#properties-of-softmax" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Valid probability distribution</strong>:
+   $<span class="arithmatex">\(\sum_i \text{softmax}(z)_i = 1\)</span>$</p>
+</li>
+<li>
+<p><strong>All positive</strong>:
+   $<span class="arithmatex">\(\text{softmax}(z)_i &gt; 0 \quad \forall i\)</span>$</p>
+</li>
+<li>
+<p><strong>Monotonic</strong>:
+   Higher logit → higher probability</p>
+</li>
+<li>
+<p><strong>Differentiable</strong>:
+   Smooth gradients everywhere</p>
+</li>
+</ol>
+<h3 id="the-complete-output-stage">The Complete Output Stage<a class="headerlink" href="#the-complete-output-stage" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[\text{logits} = W_{\text{out}} h_L + b_{\text{out}}$$
+$$P(\text{token} | \text{context}) = \text{softmax}(\text{logits})\]</div>
+<p>Where:
+- h_L ∈ ℝ^h is the final hidden state
+- W_out ∈ ℝ^{|V|×h} projects to vocabulary size
+- logits ∈ ℝ^|V| are unnormalized scores
+- softmax normalizes to probabilities</p>
+<h2 id="putting-it-together-the-full-architecture">Putting It Together: The Full Architecture<a class="headerlink" href="#putting-it-together-the-full-architecture" title="Permanent link">&para;</a></h2>
+<p>For a character-level language model:</p>
+<h3 id="forward-pass">Forward Pass<a class="headerlink" href="#forward-pass" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Input: context = [c_{t-k}, ..., c_{t-1}]  (k previous characters)
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>1. EMBED: For each position i:
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>   e_i = E[c_{t-k+i}]  ∈ ℝ^d
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>2. CONCATENATE:
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>   x = [e_0; e_1; ...; e_{k-1}]  ∈ ℝ^{k·d}
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>3. HIDDEN LAYER 1:
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>   h_1 = ReLU(W_1 x + b_1)  ∈ ℝ^{h_1}
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>4. HIDDEN LAYER 2:
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>   h_2 = ReLU(W_2 h_1 + b_2)  ∈ ℝ^{h_2}
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>5. OUTPUT:
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>   logits = W_out h_2 + b_out  ∈ ℝ^{|V|}
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>6. SOFTMAX:
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>   P(c_t | context) = softmax(logits)  ∈ ℝ^{|V|}
+</code></pre></div>
+<h3 id="parameter-count">Parameter Count<a class="headerlink" href="#parameter-count" title="Permanent link">&para;</a></h3>
+<p>For context length k, embedding dim d, hidden sizes h₁ and h₂, vocabulary |V|:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Embedding</td>
+<td></td>
+</tr>
+<tr>
+<td>Layer 1</td>
+<td>(k·d) × h₁ + h₁</td>
+</tr>
+<tr>
+<td>Layer 2</td>
+<td>h₁ × h₂ + h₂</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>h₂ ×</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong>: |V| = 80, d = 32, k = 8, h₁ = h₂ = 128</p>
+<ul>
+<li>Embedding: 80 × 32 = 2,560</li>
+<li>Layer 1: 256 × 128 + 128 = 32,896</li>
+<li>Layer 2: 128 × 128 + 128 = 16,512</li>
+<li>Output: 128 × 80 + 80 = 10,320</li>
+</ul>
+<p><strong>Total: ~62,000 parameters</strong></p>
+<p>Compare to 5-gram: 80^6 ≈ 262 billion parameters. Neural wins by a factor of 4 million!</p>
+<h2 id="implementing-a-layer">Implementing a Layer<a class="headerlink" href="#implementing-a-layer" title="Permanent link">&para;</a></h2>
+<p>Using our Stage 2 autograd:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Linear</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A linear layer: y = Wx + b&quot;&quot;&quot;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">):</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="c1"># Xavier initialization</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">in_features</span> <span class="o">+</span> <span class="n">out_features</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="p">[[</span><span class="n">Value</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>                   <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">in_features</span><span class="p">)]</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>                  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">out_features</span><span class="p">)]</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">Value</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">out_features</span><span class="p">)]</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;x is a list of Values, returns list of Values.&quot;&quot;&quot;</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)):</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>            <span class="c1"># Compute W[i] · x + b[i]</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>            <span class="n">activation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>                <span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="k">return</span> <span class="n">out</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+</code></pre></div>
+<h3 id="relu-layer">ReLU Layer<a class="headerlink" href="#relu-layer" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply ReLU to a list of Values.&quot;&quot;&quot;</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">relu</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="softmax-layer">Softmax Layer<a class="headerlink" href="#softmax-layer" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert logits to probabilities.&quot;&quot;&quot;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="c1"># For numerical stability, subtract max</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">max_logit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">logits</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">exp_logits</span> <span class="o">=</span> <span class="p">[(</span><span class="n">v</span> <span class="o">-</span> <span class="n">max_logit</span><span class="p">)</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">logits</span><span class="p">]</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">sum_exp</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">exp_logits</span><span class="p">,</span> <span class="n">Value</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="k">return</span> <span class="p">[</span><span class="n">e</span> <span class="o">/</span> <span class="n">sum_exp</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exp_logits</span><span class="p">]</span>
+</code></pre></div>
+<h2 id="numerical-stability-the-log-sum-exp-trick">Numerical Stability: The Log-Sum-Exp Trick<a class="headerlink" href="#numerical-stability-the-log-sum-exp-trick" title="Permanent link">&para;</a></h2>
+<h3 id="the-problem">The Problem<a class="headerlink" href="#the-problem" title="Permanent link">&para;</a></h3>
+<p>Softmax involves exponentials. For large logits:</p>
+<p>$<span class="arithmatex">\(e^{100} \approx 2.7 \times 10^{43}\)</span>$ (overflow!)
+$<span class="arithmatex">\(e^{-100} \approx 3.7 \times 10^{-44}\)</span>$ (underflow!)</p>
+<h3 id="the-solution">The Solution<a class="headerlink" href="#the-solution" title="Permanent link">&para;</a></h3>
+<p>Softmax is invariant to constant shifts:</p>
+<div class="arithmatex">\[\text{softmax}(z - c) = \text{softmax}(z)\]</div>
+<p><strong>Proof</strong>:
+$<span class="arithmatex">\(\frac{e^{z_i - c}}{\sum_j e^{z_j - c}} = \frac{e^{z_i} e^{-c}}{\sum_j e^{z_j} e^{-c}} = \frac{e^{z_i}}{\sum_j e^{z_j}}\)</span>$</p>
+<p>So we compute:
+$<span class="arithmatex">\(\text{softmax}(z)_i = \frac{e^{z_i - \max(z)}}{\sum_j e^{z_j - \max(z)}}\)</span>$</p>
+<p>After subtracting max, all exponents are ≤ 0, preventing overflow.</p>
+<h3 id="for-log-probabilities">For Log Probabilities<a class="headerlink" href="#for-log-probabilities" title="Permanent link">&para;</a></h3>
+<p>We often need log softmax:</p>
+<div class="arithmatex">\[\log \text{softmax}(z)_i = z_i - \log\sum_j e^{z_j}\]</div>
+<p>The log-sum-exp (LSE) function:
+$<span class="arithmatex">\(\text{LSE}(z) = \log\sum_j e^{z_j} = \max(z) + \log\sum_j e^{z_j - \max(z)}\)</span>$</p>
+<p>This is numerically stable.</p>
+<h2 id="information-flow-in-the-network">Information Flow in the Network<a class="headerlink" href="#information-flow-in-the-network" title="Permanent link">&para;</a></h2>
+<h3 id="forward-pass_1">Forward Pass<a class="headerlink" href="#forward-pass_1" title="Permanent link">&para;</a></h3>
+<p>Information flows from input to output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Context → Embeddings → Concatenate → Hidden₁ → Hidden₂ → Logits → Softmax
+</code></pre></div>
+<p>Each layer transforms representations, adding capacity to model complex patterns.</p>
+<h3 id="backward-pass">Backward Pass<a class="headerlink" href="#backward-pass" title="Permanent link">&para;</a></h3>
+<p>Gradients flow from output to input (via backpropagation):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Loss → ∂/∂Softmax → ∂/∂Logits → ∂/∂Hidden₂ → ∂/∂Hidden₁ → ∂/∂Embeddings
+</code></pre></div>
+<p>Every parameter receives a gradient signal indicating how to change to reduce loss.</p>
+<h3 id="the-chain-rule-at-work">The Chain Rule at Work<a class="headerlink" href="#the-chain-rule-at-work" title="Permanent link">&para;</a></h3>
+<p>For a parameter W₁[i,j] in the first layer:</p>
+<div class="arithmatex">\[\frac{\partial L}{\partial W_1[i,j]} = \frac{\partial L}{\partial h_1[i]} \cdot \frac{\partial h_1[i]}{\partial W_1[i,j]}\]</div>
+<p>The gradient "chains" through all intermediate layers—exactly what we built in Stage 2.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linear layer</td>
+<td>y = Wx + b, affine transformation</td>
+</tr>
+<tr>
+<td>Activation</td>
+<td>Nonlinear function (ReLU, tanh, etc.)</td>
+</tr>
+<tr>
+<td>Deep network</td>
+<td>Composition of linear + activation</td>
+</tr>
+<tr>
+<td>Universal approximation</td>
+<td>Any function can be approximated</td>
+</tr>
+<tr>
+<td>Softmax</td>
+<td>Converts logits to probability distribution</td>
+</tr>
+<tr>
+<td>Log-sum-exp trick</td>
+<td>Numerically stable softmax computation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key insight</strong>: A neural network is a composition of simple functions (linear + nonlinear). Each layer transforms representations, and the composition can approximate any function. Training adjusts the parameters so this composition predicts well.</p>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Linearity proof</strong>: Show that composing two linear functions y = Ax + a and z = By + b gives z = Cx + c where C = BA and c = Ba + b.</p>
+</li>
+<li>
+<p><strong>ReLU universality</strong>: Sketch how a ReLU network with 4 neurons could approximate f(x) = |x| on [-1, 1].</p>
+</li>
+<li>
+<p><strong>Parameter counting</strong>: For a network with input 256, hidden layers [512, 256, 128], and output 100, calculate the total number of parameters.</p>
+</li>
+<li>
+<p><strong>Softmax verification</strong>: Verify that softmax([2, 1, 0]) sums to 1 by computing it explicitly.</p>
+</li>
+<li>
+<p><strong>Stability test</strong>: Compute softmax([1000, 1001, 1002]) directly and with the max-subtraction trick. What happens in each case?</p>
+</li>
+</ol>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>We have the architecture. But how do we train it?</p>
+<p>In Section 3.4, we'll derive the <strong>cross-entropy loss function</strong>—the objective that tells the network how wrong its predictions are and how to improve.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

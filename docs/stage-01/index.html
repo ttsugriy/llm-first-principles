@@ -181,128 +181,160 @@
             <a href="../stage-01-interactive/">Launch the interactive notebook</a> — adjust parameters with sliders, see live visualizations, and explore Markov chains hands-on in your browser.
         </div>
 
-        <h2>Overview</h2>
-        <p>
-            We start with the simplest possible language model: one that predicts the next
-            character based only on counting what came before. This humble model introduces
-            concepts that echo through every modern LLM:
-        </p>
-        <ul>
-            <li><strong>Autoregressive generation</strong>: predicting one token at a time</li>
-            <li><strong>Training = optimization</strong>: learning from data</li>
-            <li><strong>Perplexity</strong>: measuring how "surprised" a model is</li>
-            <li><strong>Temperature</strong>: controlling randomness in generation</li>
-        </ul>
-
-        <h2>What is Language Modeling?</h2>
-        <p>
-            Given the text "The cat sat on the", what word comes next? A <strong>language model</strong>
-            assigns probabilities to text. Formally, it learns:
-        </p>
-        <p>$$P(x_1, x_2, \ldots, x_n)$$</p>
-        <p>
-            The probability of an entire sequence. But sequences can be arbitrarily long!
-            With vocabulary size $|V|$ and sequence length $n$, there are $|V|^n$ possible
-            sequences. That's impossibly large.
-        </p>
-
-        <h3>The Chain Rule to the Rescue</h3>
-        <p>The chain rule of probability lets us factorize:</p>
-        <p>$$P(x_1, x_2, x_3) = P(x_1) \cdot P(x_2 | x_1) \cdot P(x_3 | x_1, x_2)$$</p>
-        <p>In general:</p>
-        <p>$$P(x_1, \ldots, x_n) = \prod_{i=1}^{n} P(x_i | x_1, \ldots, x_{i-1})$$</p>
-        <p>
-            Now we've converted one impossible distribution into $n$ conditional distributions.
-            But each conditional still depends on <em>all</em> previous tokens!
-        </p>
-
-        <h3>The Markov Assumption</h3>
-        <p><strong>Simplifying assumption</strong>: The future depends only on the <em>recent</em> past.</p>
-        <ul>
-            <li><strong>Order-1 (bigram)</strong>: $P(x_i | x_1, \ldots, x_{i-1}) \approx P(x_i | x_{i-1})$</li>
-            <li><strong>Order-k</strong>: $P(x_i | x_1, \ldots, x_{i-1}) \approx P(x_i | x_{i-k}, \ldots, x_{i-1})$</li>
-        </ul>
-        <p>
-            This is <em>wrong</em> for language — "The cat that sat on the mat next to the dog ... <strong>was</strong> sleeping"
-            has long-range dependencies. But wrong assumptions can still be useful!
-        </p>
-
-        <h2>Implementation</h2>
-        <p>The training algorithm is beautifully simple: <strong>just count</strong>.</p>
-
-<pre><code class="language-python">class MarkovChain:
-    def __init__(self, order: int = 1):
-        self.order = order
-        self.counts = defaultdict(Counter)
-        self.totals = defaultdict(int)
-
-    def train(self, tokens: list[str]) -> None:
-        padded = ['&lt;START&gt;'] * self.order + tokens + ['&lt;END&gt;']
-
-        for i in range(len(padded) - self.order):
-            history = tuple(padded[i:i + self.order])
-            next_token = padded[i + self.order]
-
-            self.counts[history][next_token] += 1
-            self.totals[history] += 1
-
-    def probability(self, history: tuple, next_token: str) -> float:
-        if history not in self.counts:
-            return 0.0
-        return self.counts[history][next_token] / self.totals[history]</code></pre>
-
-        <h2>The Fundamental Trade-off</h2>
-        <p>Watch what happens as you increase the order:</p>
-
-        <table>
-            <tr><th>Order</th><th>Train Perplexity</th><th>Test Perplexity</th><th>States</th></tr>
-            <tr><td>1</td><td>~6.5</td><td>~7</td><td>32</td></tr>
-            <tr><td>2</td><td>~2.1</td><td>~3</td><td>185</td></tr>
-            <tr><td>3</td><td>~1.3</td><td>∞</td><td>329</td></tr>
-            <tr><td>5</td><td>~1.1</td><td>∞</td><td>435</td></tr>
-        </table>
-
         <div class="callout">
-            <div class="callout-title">The trade-off:</div>
-            <p><strong>More context → better predictions</strong><br>
-            <strong>More context → sparser observations</strong></p>
-            <p>This is why we need neural networks: they can <em>generalize</em> from similar patterns.</p>
+            <div class="callout-title">📖 Full Content Available</div>
+            <p>
+                The complete Stage 1 content with full derivations is available on GitHub:<br>
+                <a href="https://github.com/ttsugriy/llm-first-principles/blob/main/stages/stage-01-complete.md" target="_blank">View Full Stage 1 Content (1800+ lines)</a>
+            </p>
         </div>
 
-        <h2>Key Insight: Training = Counting = MLE</h2>
+        <h2>Overview</h2>
         <p>
-            Our counting procedure is actually <strong>maximum likelihood estimation</strong>.
-            For a bigram model, the log-likelihood is:
-        </p>
-        <p>$$\log L(\theta) = \sum_{a,b} \text{count}(a,b) \cdot \log \theta_{a \to b}$$</p>
-        <p>Taking derivatives and using Lagrange multipliers, we get:</p>
-        <p>$$\theta^*_{a \to b} = \frac{\text{count}(a,b)}{\text{count}(a, \cdot)}$$</p>
-        <p><strong>Counting <em>is</em> optimization!</strong></p>
-
-        <h2>Perplexity</h2>
-        <p>$$\text{Perplexity} = \exp\left(-\frac{1}{N} \sum_{i=1}^{N} \log P(x_i | \text{context})\right)$$</p>
-        <p>
-            <strong>Intuition:</strong> If perplexity = 50, the model is as uncertain as choosing
-            uniformly among 50 equally likely options at each position.
+            This stage builds a language model from absolute first principles. <strong>Every concept is derived.</strong>
+            No "it's well known that..." hand-waving. By the end, you'll understand not just <em>what</em> language models do,
+            but <em>why</em> they work mathematically.
         </p>
 
-        <h2>Temperature Sampling</h2>
-        <p>Temperature controls the "randomness" of sampling:</p>
-        <p>$$P'(x) = \frac{\exp(\log P(x) / T)}{\sum_y \exp(\log P(y) / T)}$$</p>
+        <p><strong>Reading time:</strong> 60-90 minutes | <strong>Prerequisites:</strong> Basic Python, high school algebra</p>
+
+        <h2>What You'll Learn</h2>
+
+        <h3>Section 1.1: Probability Foundations</h3>
         <ul>
-            <li><strong>T &lt; 1</strong>: Distribution becomes <em>sharper</em> (more deterministic)</li>
-            <li><strong>T = 1</strong>: Original distribution</li>
-            <li><strong>T &gt; 1</strong>: Distribution becomes <em>flatter</em> (more random)</li>
+            <li>The three axioms of probability (Kolmogorov)</li>
+            <li>Conditional probability derived from first principles</li>
+            <li>The chain rule: full proof by induction</li>
+            <li>Why this matters for language modeling</li>
         </ul>
+
+        <h3>Section 1.2: The Language Modeling Problem</h3>
+        <ul>
+            <li>Formal definition of a language model</li>
+            <li>Why the exponential space problem ($|V|^n$ sequences) is fundamental</li>
+            <li>Autoregressive factorization using the chain rule</li>
+            <li>The Markov assumption: why it helps and why it's wrong</li>
+            <li>Quantitative analysis of context vs. vocabulary size</li>
+        </ul>
+
+        <h3>Section 1.3: Maximum Likelihood Estimation</h3>
+        <ul>
+            <li>What is a parameter? What is likelihood?</li>
+            <li>Why logarithms: the log-likelihood trick</li>
+            <li><strong>Full derivation:</strong> MLE for bigram models using Lagrange multipliers</li>
+            <li>The beautiful result: counting = optimization (proven rigorously)</li>
+            <li>Handling zero probabilities</li>
+        </ul>
+
+        <h3>Section 1.4: Information Theory</h3>
+        <ul>
+            <li>Deriving $I(p) = -\log p$ from axioms (surprise, additivity)</li>
+            <li>Entropy: expected information</li>
+            <li>Cross-entropy: using the wrong model</li>
+            <li>KL divergence: the gap between distributions</li>
+            <li>Why minimizing cross-entropy = maximizing likelihood</li>
+        </ul>
+
+        <h3>Section 1.5: Perplexity</h3>
+        <ul>
+            <li>Deriving perplexity from cross-entropy</li>
+            <li>The "effective vocabulary size" interpretation (proven)</li>
+            <li>Computing perplexity: worked examples</li>
+            <li>Why perplexity is better than accuracy</li>
+            <li>Train vs. test perplexity: detecting overfitting</li>
+        </ul>
+
+        <h3>Section 1.6: Temperature Sampling</h3>
+        <ul>
+            <li>Greedy decoding and its problems</li>
+            <li>Ancestral sampling: the theoretically correct approach</li>
+            <li>Temperature: derivation from softmax</li>
+            <li>Connection to statistical mechanics (Boltzmann distribution)</li>
+            <li>Limit behavior: $T \to 0$ (greedy), $T \to \infty$ (uniform)</li>
+            <li>Top-k and nucleus sampling</li>
+        </ul>
+
+        <h3>Section 1.7: Implementation</h3>
+        <ul>
+            <li>Complete 150-line implementation with detailed annotations</li>
+            <li>Every design decision explained (defaultdict, tuples, caching)</li>
+            <li>Training, probability queries, generation, evaluation</li>
+            <li>Time and space complexity analysis</li>
+        </ul>
+
+        <h3>Section 1.8: The Fundamental Trade-offs</h3>
+        <ul>
+            <li>The context-sparsity trade-off (with data)</li>
+            <li>State space explosion: why it's unavoidable</li>
+            <li>Long-range dependencies: examples of failure modes</li>
+            <li>What carries forward to modern LLMs</li>
+            <li>Preview: why neural networks solve these problems</li>
+        </ul>
+
+        <h2>Key Concepts</h2>
+
+        <table>
+            <tr><th>Concept</th><th>Formula</th><th>Intuition</th></tr>
+            <tr>
+                <td>Chain Rule</td>
+                <td>$P(x_{1:n}) = \prod_i P(x_i | x_{&lt;i})$</td>
+                <td>Factor into conditionals</td>
+            </tr>
+            <tr>
+                <td>MLE</td>
+                <td>$P(b|a) = \frac{\text{count}(a,b)}{\text{count}(a,\cdot)}$</td>
+                <td>Counting is optimal</td>
+            </tr>
+            <tr>
+                <td>Cross-entropy</td>
+                <td>$H(P,Q) = -\mathbb{E}_P[\log Q]$</td>
+                <td>Average surprise</td>
+            </tr>
+            <tr>
+                <td>Perplexity</td>
+                <td>$\exp(H)$</td>
+                <td>Effective vocabulary</td>
+            </tr>
+            <tr>
+                <td>Temperature</td>
+                <td>$P'(x) \propto P(x)^{1/T}$</td>
+                <td>Control randomness</td>
+            </tr>
+        </table>
+
+        <h2>What Makes This Different</h2>
+
+        <p>This isn't a "here's the formula" tutorial. Every claim is proven:</p>
+
+        <ul>
+            <li>✓ Chain rule derived by induction, not stated</li>
+            <li>✓ MLE solution found using calculus (Lagrangian, full derivation)</li>
+            <li>✓ Information theory built from axioms</li>
+            <li>✓ Every code design choice explained</li>
+            <li>✓ Complexity analysis included</li>
+        </ul>
+
+        <div class="callout">
+            <div class="callout-title">The Fundamental Trade-off</div>
+            <p><strong>More context → better predictions</strong><br>
+            <strong>More context → sparser observations</strong></p>
+            <p>
+                We prove this quantitatively and show experimental data. This limitation is why we need
+                neural networks: they can <em>generalize</em> from similar patterns rather than requiring exact matches.
+            </p>
+        </div>
 
         <h2>What's Next?</h2>
         <p>
-            We've built a working language model! But it can't generalize — it only works with
-            exact pattern matches. To move beyond these limitations, we need neural networks.
-            But to train neural networks, we need gradients.
+            We've built a working language model and proven its optimality. But it has fundamental limitations:
+            no generalization, exponential state space, fixed context windows.
         </p>
         <p>
-            <strong>→ Stage 2: Automatic Differentiation</strong>
+            To build models that generalize, we need to learn representations. That requires gradients.
+            And computing gradients efficiently requires <strong>automatic differentiation</strong>.
+        </p>
+        <p>
+            <strong>→ Stage 2: Automatic Differentiation</strong> (Coming soon)
         </p>
     </main>
 

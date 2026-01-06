@@ -15,6 +15,7 @@ Or equivalently, if using natural logarithms:
 
 $$\text{Perplexity} = \exp\left(-\frac{1}{N}\sum_i \ln Q(x_i | \text{context})\right)$$
 
+**Note on logarithm base**: Both formulas give the same perplexity value! With log₂, we exponentiate with base 2. With ln, we use exp (base e). The choice only affects the intermediate cross-entropy value, not the final perplexity. In code, ln is typically used for numerical convenience.
 
 **Why exponentiate?** To return from log-space to probability-space, giving us an interpretable number.
 

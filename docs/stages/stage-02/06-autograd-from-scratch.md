@@ -196,6 +196,7 @@ def __sub__(self, other):
     return self + (-other)
 
 def __rsub__(self, other):  # other - self
+    other = other if isinstance(other, Value) else Value(other)
     return other + (-self)
 ```
 
@@ -207,6 +208,7 @@ For z = x / y = x × y⁻¹:
 
 ```python
 def __truediv__(self, other):
+    other = other if isinstance(other, Value) else Value(other)
     return self * other**-1
 ```
 
@@ -402,15 +404,18 @@ class Value:
         return self * other
 
     def __rsub__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         return other + (-self)
 
     def __rtruediv__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         return other * (self ** -1)
 
     # Activation functions
     def relu(self):
         out = Value(max(0, self.data), (self,), 'relu')
         def _backward():
+            # Derivative is 1 if x > 0, else 0 (using subgradient 0 at x=0)
             self.grad += out.grad * (1.0 if self.data > 0 else 0.0)
         out._backward = _backward
         return out

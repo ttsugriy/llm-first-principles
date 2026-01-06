@@ -257,14 +257,13 @@ $$\text{Var}(y_j) = n_{\text{in}} \cdot \frac{2}{n_{\text{in}} + n_{\text{out}}}
 
 ### He Initialization
 
-For ReLU activations, Xavier underestimates because ReLU zeros half the values.
+For ReLU activations, Xavier underestimates because ReLU zeros out approximately half the neurons (those with negative input), effectively halving the variance of activations.
 
-He initialization:
+He initialization compensates for this:
 
 $$W_{ij} \sim \mathcal{N}\left(0, \frac{2}{n_{\text{in}}}\right)$$
 
-
-The factor of 2 compensates for ReLU.
+The factor of 2 (compared to 1/n_in) compensates for ReLU zeroing half the activations, maintaining proper variance flow through the network.
 
 ### Our Implementation
 

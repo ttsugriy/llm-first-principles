@@ -195,7 +195,9 @@ $$D_{KL}(P || Q) = H(P, Q) - H(P) = \sum_x P(x) \log \frac{P(x)}{Q(x)}$$
 - D_KL(P || Q) = 0 if and only if P = Q
 - D_KL(P || Q) ≠ D_KL(Q || P) in general (not symmetric!)
 
-**Interpretation**: KL divergence is the extra bits needed when using Q instead of P.
+**Why asymmetric?** D_KL(P || Q) measures "how surprised we are using model Q when the truth is P", while D_KL(Q || P) measures "how surprised we are using model P when the truth is Q". These are different questions! In machine learning, we typically use D_KL(P || Q) where P is the data distribution and Q is our model.
+
+**Interpretation**: KL divergence is the extra bits needed (on average) when using code Q instead of the optimal code P. It's always non-negative because the optimal code for P is always at least as good as any other code.
 
 For language modeling:
 - If our model Q matches the true distribution P: D_KL = 0, cross-entropy = entropy

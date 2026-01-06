@@ -45,6 +45,46 @@ Here's what happens with a typical corpus (100,000 characters of English text):
 2. Test perplexity improves, then explodes (overfitting)
 3. Eventually, test perplexity becomes infinite (unseen n-grams)
 
+## Classical Solutions: Smoothing Techniques
+
+The infinite test perplexity at high orders is caused by assigning probability 0 to unseen n-grams. Several classical solutions exist:
+
+### Laplace (Add-One) Smoothing
+
+Pretend we saw every n-gram one additional time:
+
+$$P(x_i | c) = \frac{\text{count}(c, x_i) + 1}{\text{count}(c) + |V|}$$
+
+**Effect**: No probability is ever zero, but adds bias (assumes all unseen n-grams are equally likely).
+
+### Add-k Smoothing
+
+Generalization with tunable parameter k < 1:
+
+$$P(x_i | c) = \frac{\text{count}(c, x_i) + k}{\text{count}(c) + k \cdot |V|}$$
+
+**Effect**: Less bias than Laplace when k < 1, but k must be tuned on held-out data.
+
+### Backoff (Katz Backoff)
+
+Use lower-order model when higher-order has no data:
+
+$$P(x_i | c) = \begin{cases} \frac{\text{count}(c, x_i)}{\text{count}(c)} & \text{if count}(c, x_i) > 0 \\ \alpha(c) \cdot P(x_i | c_{\text{shorter}}) & \text{otherwise} \end{cases}$$
+
+where α(c) is a normalization factor to ensure probabilities sum to 1.
+
+### Interpolation (Jelinek-Mercer)
+
+Weighted combination of all orders:
+
+$$P(x_i | c) = \lambda_k P_k(x_i | c) + \lambda_{k-1} P_{k-1}(x_i | c) + \ldots + \lambda_0 P_0(x_i)$$
+
+where Σλᵢ = 1 and Pₖ is the k-th order model.
+
+### Why These Don't Fully Solve the Problem
+
+Smoothing techniques help with the zero-probability problem, but they don't address the fundamental issue: **no notion of similarity**. "The cat sat" and "the dog sat" remain completely independent—learning from one doesn't help predict the other. This is what neural networks fundamentally fix.
+
 ## Why This Is Fundamental
 
 This isn't a bug in our implementation—it's a fundamental limitation of the approach.

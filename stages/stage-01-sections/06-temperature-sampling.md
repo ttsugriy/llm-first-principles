@@ -30,11 +30,13 @@ $$x_t = \arg\max_{x} P(x | \text{context})$$
 
 3. **Misses good sequences**: The most likely sequence isn't always found by greedily picking most likely tokens.
 
-**Example**: Consider two paths:
-- Greedy: "The cat" (P=0.3 × 0.2 = 0.06)
-- Alternative: "A dog" (P=0.2 × 0.5 = 0.10)
+**Example**: Suppose at position t we can choose:
+- "The" with P("The") = 0.3, and after "The", the best continuation has P = 0.2
+  - Path probability: 0.3 × 0.2 = 0.06
+- "A" with P("A") = 0.2, and after "A", the best continuation has P = 0.5
+  - Path probability: 0.2 × 0.5 = 0.10
 
-Greedy picks "The" (0.3 > 0.2) but the full sequence is less likely!
+Greedy picks "The" at the first step (since 0.3 > 0.2), but the complete sequence starting with "A" has higher probability (0.10 > 0.06)! This is why greedy decoding doesn't guarantee finding the globally most likely sequence.
 
 ## Ancestral Sampling: The Theoretically Correct Approach
 

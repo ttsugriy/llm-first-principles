@@ -130,7 +130,7 @@ class MarkovModel:
         vocab_size = len(self.vocab)
 
         # Laplace smoothing
-        return (count + self.smoothing) / (total + smoothing * vocab_size)
+        return (count + self.smoothing) / (total + self.smoothing * vocab_size)
 
     def perplexity(self, text):
         """Compute perplexity on text."""

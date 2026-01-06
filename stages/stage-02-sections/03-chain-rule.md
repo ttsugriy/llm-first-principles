@@ -29,6 +29,7 @@ The rate of change of f with respect to x is:
 
 $$\frac{\Delta f}{\Delta x} = \frac{\Delta f}{\Delta g} \cdot \frac{\Delta g}{\Delta x}$$
 
+
 The rates multiply!
 
 If g is 3 times as sensitive to x as f is to g, then f is 3 times as sensitive to x overall.
@@ -39,9 +40,11 @@ For h(x) = f(g(x)), if g is differentiable at x and f is differentiable at g(x):
 
 $$h'(x) = f'(g(x)) \cdot g'(x)$$
 
+
 Or in Leibniz notation, if y = f(u) and u = g(x):
 
 $$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$$
+
 
 The derivatives "chain" together—hence the name.
 
@@ -53,6 +56,7 @@ The derivatives "chain" together—hence the name.
 
 $$h'(x) = \lim_{k \to 0} \frac{f(g(x+k)) - f(g(x))}{k}$$
 
+
 **Step 2**: Let Δg = g(x+k) - g(x).
 
 As k → 0, we have Δg → 0 (since g is continuous).
@@ -61,7 +65,9 @@ As k → 0, we have Δg → 0 (since g is continuous).
 
 $$\frac{f(g(x+k)) - f(g(x))}{k} = \frac{f(g(x) + \Delta g) - f(g(x))}{\Delta g} \cdot \frac{\Delta g}{k}$$
 
+
 $$= \frac{f(g(x) + \Delta g) - f(g(x))}{\Delta g} \cdot \frac{g(x+k) - g(x)}{k}$$
+
 
 **Step 4**: Take limits.
 
@@ -70,7 +76,9 @@ As k → 0:
 - The second factor → g'(x) (definition of derivative of g at x)
 
 Therefore:
+
 $$h'(x) = f'(g(x)) \cdot g'(x) \quad \blacksquare$$
+
 
 *Technical note*: The proof needs care when Δg = 0 for some k ≠ 0. A rigorous proof handles this with a modified definition. The intuition above captures the essence.
 
@@ -81,7 +89,9 @@ $$h'(x) = f'(g(x)) \cdot g'(x) \quad \blacksquare$$
 - Outer: f(u) = u³, so f'(u) = 3u²
 
 **Apply chain rule**:
+
 $$h'(x) = f'(g(x)) \cdot g'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$$
+
 
 **Verification**: Let's expand and differentiate directly (painful but correct).
 
@@ -100,6 +110,7 @@ This is exp(u) where u = -x².
 
 $$\frac{dy}{dx} = e^{-x^2} \cdot (-2x) = -2x e^{-x^2}$$
 
+
 ### Example 2: sin(3x + 2)
 
 This is sin(u) where u = 3x + 2.
@@ -109,6 +120,7 @@ This is sin(u) where u = 3x + 2.
 
 $$\frac{d}{dx}\sin(3x+2) = \cos(3x+2) \cdot 3 = 3\cos(3x+2)$$
 
+
 ### Example 3: ln(x² + 1)
 
 This is ln(u) where u = x² + 1.
@@ -117,6 +129,7 @@ This is ln(u) where u = x² + 1.
 - d(ln u)/du = 1/u
 
 $$\frac{d}{dx}\ln(x^2+1) = \frac{1}{x^2+1} \cdot 2x = \frac{2x}{x^2+1}$$
+
 
 ### Example 4: Triple Composition
 
@@ -128,7 +141,9 @@ Break it down:
 - Outer: y = sin(b), so dy/db = cos(b)
 
 Chain them all:
+
 $$\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos(e^{x^2}) \cdot e^{x^2} \cdot 2x$$
+
 
 ## The Chain Rule for Multiple Variables
 
@@ -140,11 +155,13 @@ If z = f(y) and y = g(x₁, x₂, ..., xₙ):
 
 $$\frac{\partial z}{\partial x_i} = \frac{dz}{dy} \cdot \frac{\partial y}{\partial x_i}$$
 
+
 ### General Case: Multiple Paths
 
 If z depends on y₁ and y₂, which both depend on x:
 
 $$\frac{\partial z}{\partial x} = \frac{\partial z}{\partial y_1} \cdot \frac{\partial y_1}{\partial x} + \frac{\partial z}{\partial y_2} \cdot \frac{\partial y_2}{\partial x}$$
+
 
 We **sum over all paths** from z to x.
 
@@ -153,9 +170,12 @@ We **sum over all paths** from z to x.
 Let z = x·y where x = s² and y = s³.
 
 By the chain rule:
+
 $$\frac{dz}{ds} = \frac{\partial z}{\partial x}\frac{dx}{ds} + \frac{\partial z}{\partial y}\frac{dy}{ds}$$
 
+
 $$= y \cdot 2s + x \cdot 3s^2 = s^3 \cdot 2s + s^2 \cdot 3s^2 = 2s^4 + 3s^4 = 5s^4$$
+
 
 **Verification**: z = x·y = s²·s³ = s⁵, so dz/ds = 5s⁴ ✓
 
@@ -165,9 +185,11 @@ A neural network is a composition of layers:
 
 $$\text{output} = f_L(f_{L-1}(\cdots f_2(f_1(x))\cdots))$$
 
+
 Each layer f_i transforms its input, and the chain rule tells us:
 
 $$\frac{\partial \text{loss}}{\partial \text{parameters of layer } i} = \frac{\partial \text{loss}}{\partial \text{output of layer } i} \cdot \frac{\partial \text{output of layer } i}{\partial \text{parameters of layer } i}$$
+
 
 The "gradient of loss with respect to output" flows backward through the network, getting multiplied by local gradients at each layer.
 
@@ -193,7 +215,9 @@ This graph perspective leads directly to automatic differentiation.
 ## A Longer Chain
 
 Consider:
+
 $$y = \sin(\ln(x^2 + 1))$$
+
 
 Let's trace through step by step:
 
@@ -204,9 +228,12 @@ Let's trace through step by step:
 | y | sin(b) | dy/db = cos(b) |
 
 By chain rule:
+
 $$\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos(\ln(x^2+1)) \cdot \frac{1}{x^2+1} \cdot 2x$$
 
+
 $$= \frac{2x \cos(\ln(x^2+1))}{x^2+1}$$
+
 
 ## The Key Insight for Autodiff
 

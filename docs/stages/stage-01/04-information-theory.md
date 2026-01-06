@@ -44,6 +44,7 @@ The negative sign ensures rare events (small p, so log p is negative) give posit
 
 $$\boxed{I(p) = -\log_2(p) = \log_2(1/p)}$$
 
+
 This is the **information content** or **surprisal** of an event with probability p.
 
 ## Understanding the Formula
@@ -79,22 +80,30 @@ If we have a random variable X with distribution P(X), the **entropy** H(X) is t
 
 $$H(X) = \mathbb{E}[-\log P(X)] = -\sum_x P(x) \log P(x)$$
 
+
 Entropy measures the average surprise, or equivalently, the average number of bits needed to encode outcomes of X.
 
 **Example 1: Fair coin**
 P(heads) = P(tails) = 0.5
+
 $$H = -0.5 \log_2(0.5) - 0.5 \log_2(0.5) = -0.5(-1) - 0.5(-1) = 1 \text{ bit}$$
+
 
 **Example 2: Biased coin (90% heads)**
 P(heads) = 0.9, P(tails) = 0.1
+
 $$H = -0.9 \log_2(0.9) - 0.1 \log_2(0.1)$$
+
 $$= -0.9(-0.152) - 0.1(-3.322) = 0.137 + 0.332 = 0.469 \text{ bits}$$
+
 
 The biased coin has lower entropy—it's more predictable.
 
 **Example 3: Certain coin (always heads)**
 P(heads) = 1, P(tails) = 0
+
 $$H = -1 \cdot \log_2(1) - 0 \cdot \log_2(0) = 0 \text{ bits}$$
+
 
 (We define 0 · log(0) = 0 by continuity.)
 
@@ -105,10 +114,14 @@ No uncertainty, no information needed.
 1. **Non-negative**: H(X) ≥ 0. Entropy is always non-negative.
 
 2. **Maximum for uniform distribution**: For a random variable over n outcomes, entropy is maximized when all outcomes are equally likely:
-   $$H_{\max} = \log_2(n)$$
+
+$$H_{\max} = \log_2(n)$$
+
 
 3. **Additivity for independent variables**: If X and Y are independent:
-   $$H(X, Y) = H(X) + H(Y)$$
+
+$$H(X, Y) = H(X) + H(Y)$$
+
 
 4. **Concavity**: Entropy is a concave function of the probability distribution.
 
@@ -119,12 +132,16 @@ Now the crucial concept for language modeling.
 **Scenario**: The true distribution is P, but we're using a model Q to encode/predict.
 
 The **cross-entropy** is:
+
 $$H(P, Q) = -\sum_x P(x) \log Q(x) = \mathbb{E}_{x \sim P}[-\log Q(x)]$$
+
 
 This is the average number of bits needed to encode samples from P using a code optimized for Q.
 
 **Key insight**: Cross-entropy is always at least as large as entropy:
+
 $$H(P, Q) \geq H(P)$$
+
 
 with equality if and only if P = Q.
 
@@ -139,20 +156,28 @@ For a language model, we're evaluating on a test corpus. Let's connect to our se
 - **Samples**: The actual tokens in the test corpus
 
 The cross-entropy of our model on the test data is:
+
 $$H(P, Q) = -\frac{1}{N} \sum_{i=1}^{N} \log Q(x_i | \text{context}_i)$$
+
 
 This is exactly the average negative log-probability of the test tokens under our model!
 
 ## The Connection to Log-Likelihood
 
 Remember from Section 1.3, the log-likelihood was:
+
 $$\ell(\theta) = \sum_i \log P(x_i | \text{context}; \theta)$$
 
+
 Cross-entropy is:
+
 $$H = -\frac{1}{N} \sum_i \log Q(x_i | \text{context})$$
 
+
 So:
+
 $$H = -\frac{\ell}{N}$$
+
 
 **Minimizing cross-entropy = Maximizing log-likelihood!**
 
@@ -163,6 +188,7 @@ This is why these objectives are equivalent. MLE is *implicitly* minimizing the 
 The **Kullback-Leibler divergence** measures how different Q is from P:
 
 $$D_{KL}(P || Q) = H(P, Q) - H(P) = \sum_x P(x) \log \frac{P(x)}{Q(x)}$$
+
 
 **Properties**:
 - D_KL(P || Q) ≥ 0 (always non-negative)
@@ -180,6 +206,7 @@ For language modeling:
 In practice, we minimize cross-entropy, not KL divergence. Why?
 
 $$D_{KL}(P || Q) = H(P, Q) - H(P)$$
+
 
 Since H(P) is fixed (determined by the true data distribution), minimizing H(P, Q) is equivalent to minimizing D_KL(P || Q).
 

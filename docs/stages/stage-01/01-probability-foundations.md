@@ -27,7 +27,9 @@ Probabilities can't be negative. You can't have a -30% chance of something.
 Something must happen. The probability of *some* outcome occurring is 1.
 
 **Axiom 3 (Additivity)**: For mutually exclusive events A and B,
+
 $$P(A \cup B) = P(A) + P(B)$$
+
 
 If A and B can't both happen, the probability of either happening is the sum.
 
@@ -35,14 +37,18 @@ From these three axioms, we can derive everything else. For example:
 
 **P(not A) = 1 - P(A)**:
 Since A and "not A" are mutually exclusive and exhaust all possibilities:
+
 $$P(A) + P(\text{not } A) = P(\Omega) = 1$$
+
 
 ## Conditional Probability
 
 Here's where things get interesting. Often we want to know the probability of an event *given that we already know something*.
 
 **Definition**: The conditional probability of A given B is:
+
 $$P(A|B) = \frac{P(A \cap B)}{P(B)}$$
+
 
 where P(B) > 0.
 
@@ -62,15 +68,21 @@ The chain rule is the mathematical foundation of autoregressive language models.
 ### Two Events
 
 Starting from the definition of conditional probability:
+
 $$P(A|B) = \frac{P(A \cap B)}{P(B)}$$
 
+
 Rearranging:
+
 $$P(A \cap B) = P(A|B) \cdot P(B)$$
+
 
 This is the **product rule**: the probability of both A and B equals the probability of B times the probability of A given B.
 
 We could also write it the other way:
+
 $$P(A \cap B) = P(B|A) \cdot P(A)$$
+
 
 Both are correct. The choice depends on what we know.
 
@@ -79,13 +91,19 @@ Both are correct. The choice depends on what we know.
 Now let's extend to three events. We want P(A ∩ B ∩ C).
 
 First, treat (A ∩ B) as a single event and apply the product rule:
+
 $$P(A \cap B \cap C) = P(C | A \cap B) \cdot P(A \cap B)$$
 
+
 Now expand P(A ∩ B):
+
 $$P(A \cap B \cap C) = P(C | A \cap B) \cdot P(B | A) \cdot P(A)$$
 
+
 Rewriting in a more suggestive order:
+
 $$P(A, B, C) = P(A) \cdot P(B | A) \cdot P(C | A, B)$$
+
 
 ### The General Chain Rule
 
@@ -93,19 +111,27 @@ For n events, we apply the same logic inductively:
 
 $$P(X_1, X_2, \ldots, X_n) = P(X_1) \cdot P(X_2|X_1) \cdot P(X_3|X_1,X_2) \cdots P(X_n|X_1,\ldots,X_{n-1})$$
 
+
 Or more compactly:
+
 $$P(X_1, \ldots, X_n) = \prod_{i=1}^{n} P(X_i | X_1, \ldots, X_{i-1})$$
+
 
 **Proof by induction**:
 
 *Base case*: For n=1, P(X₁) = P(X₁). ✓
 
 *Inductive step*: Assume true for n-1. Then:
+
 $$P(X_1, \ldots, X_n) = P(X_n | X_1, \ldots, X_{n-1}) \cdot P(X_1, \ldots, X_{n-1})$$
 
+
 By inductive hypothesis:
+
 $$= P(X_n | X_1, \ldots, X_{n-1}) \cdot \prod_{i=1}^{n-1} P(X_i | X_1, \ldots, X_{i-1})$$
+
 $$= \prod_{i=1}^{n} P(X_i | X_1, \ldots, X_{i-1}) \quad \blacksquare$$
+
 
 **This is not an approximation**. The chain rule is an exact mathematical identity. It follows directly from the definition of conditional probability.
 
@@ -114,10 +140,14 @@ $$= \prod_{i=1}^{n} P(X_i | X_1, \ldots, X_{i-1}) \quad \blacksquare$$
 Consider a sentence as a sequence of words: "The cat sat down"
 
 The probability of this sentence is:
+
 $$P(\text{"The cat sat down"}) = P(\text{The}, \text{cat}, \text{sat}, \text{down})$$
 
+
 By the chain rule:
+
 $$= P(\text{The}) \cdot P(\text{cat}|\text{The}) \cdot P(\text{sat}|\text{The cat}) \cdot P(\text{down}|\text{The cat sat})$$
+
 
 We've converted the problem of assigning probability to an entire sentence into a sequence of next-word predictions. This is the **autoregressive factorization**.
 

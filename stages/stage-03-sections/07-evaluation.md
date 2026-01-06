@@ -12,6 +12,7 @@ Recall from Stage 1:
 
 $$\text{Perplexity} = \exp\left(-\frac{1}{N}\sum_{i=1}^{N} \log P(c_i | \text{context}_i)\right)$$
 
+
 **Interpretation**: Average branching factor. If PPL = 10, the model is "as uncertain as choosing uniformly among 10 options."
 
 **Lower is better.**
@@ -50,6 +51,7 @@ def compute_perplexity(model, examples):
 An alternative metric, measured in bits:
 
 $$\text{BPC} = -\frac{1}{N \ln 2}\sum_{i=1}^{N} \log P(c_i | \text{context}_i)$$
+
 
 **Relationship**: BPC = log₂(PPL)
 

@@ -12,6 +12,7 @@ The loss function L(θ) defines a surface over parameter space. For our language
 
 $$L(\theta) = -\frac{1}{N}\sum_{i=1}^{N} \log P(y_i | x_i; \theta)$$
 
+
 Where θ includes all embeddings, weights, and biases.
 
 ### Visualizing the Landscape
@@ -45,6 +46,7 @@ Given current parameters θ and learning rate η:
 
 $$\theta_{t+1} = \theta_t - \eta \nabla_\theta L(\theta_t)$$
 
+
 We move in the direction of steepest descent (negative gradient).
 
 ### Why It Works
@@ -53,11 +55,13 @@ Taylor expansion around current point:
 
 $$L(\theta + \Delta\theta) \approx L(\theta) + \nabla L \cdot \Delta\theta$$
 
+
 To decrease L, we want $\nabla L \cdot \Delta\theta < 0$.
 
 Choosing $\Delta\theta = -\eta \nabla L$:
 
 $$\nabla L \cdot (-\eta \nabla L) = -\eta ||\nabla L||^2 < 0$$
+
 
 The loss decreases (for small enough η).
 
@@ -73,6 +77,7 @@ Computing the gradient over all N examples is expensive. Instead:
 The gradient estimate is noisy but unbiased:
 
 $$\mathbb{E}[\nabla L_i] = \nabla L$$
+
 
 This noise can actually help escape local minima!
 
@@ -156,6 +161,7 @@ Reduce by factor every K epochs:
 
 $$\eta_t = \eta_0 \cdot \gamma^{\lfloor t/K \rfloor}$$
 
+
 Example: Start at 0.1, multiply by 0.5 every 10 epochs.
 
 ```python
@@ -169,6 +175,7 @@ Decrease linearly to zero:
 
 $$\eta_t = \eta_0 \cdot \left(1 - \frac{t}{T}\right)$$
 
+
 ```python
 def linear_decay(initial_lr, step, total_steps):
     return initial_lr * (1 - step / total_steps)
@@ -180,6 +187,7 @@ Smooth decrease following cosine:
 
 $$\eta_t = \eta_{\min} + \frac{1}{2}(\eta_{\max} - \eta_{\min})\left(1 + \cos\left(\frac{t}{T}\pi\right)\right)$$
 
+
 Popular in modern training.
 
 ### Warmup
@@ -187,6 +195,7 @@ Popular in modern training.
 Start with tiny learning rate, gradually increase:
 
 $$\eta_t = \eta_{\max} \cdot \frac{t}{T_{\text{warmup}}}$$
+
 
 Then decay. Helps stabilize early training when gradients are large.
 
@@ -209,6 +218,7 @@ Simple approach: small random values.
 
 $$W_{ij} \sim \mathcal{N}(0, \sigma^2)$$
 
+
 But what should σ be?
 
 ### The Variance Problem
@@ -218,6 +228,7 @@ Consider a single layer: y = Wx where x ∈ ℝⁿ.
 If $x_i$ has variance $\text{Var}(x)$ and $W_{ij}$ has variance σ²:
 
 $$\text{Var}(y_j) = \sum_{i=1}^{n} \text{Var}(W_{ij}) \cdot \text{Var}(x_i) = n \cdot \sigma^2 \cdot \text{Var}(x)$$
+
 
 The variance grows by factor n!
 
@@ -229,14 +240,18 @@ Solution: scale by both input and output dimensions.
 
 $$W_{ij} \sim \mathcal{N}\left(0, \frac{2}{n_{\text{in}} + n_{\text{out}}}\right)$$
 
+
 Or for uniform distribution:
+
 $$W_{ij} \sim \text{Uniform}\left(-\sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}}, \sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}}\right)$$
+
 
 This balances variance preservation in both forward and backward passes.
 
 **Simplified view** (forward pass only): If we just want forward variance preserved:
 
 $$\text{Var}(y_j) = n_{\text{in}} \cdot \frac{2}{n_{\text{in}} + n_{\text{out}}} \cdot \text{Var}(x) \approx \text{Var}(x)$$
+
 
 (Approximately preserved when n_in ≈ n_out.)
 
@@ -245,7 +260,9 @@ $$\text{Var}(y_j) = n_{\text{in}} \cdot \frac{2}{n_{\text{in}} + n_{\text{out}}}
 For ReLU activations, Xavier underestimates because ReLU zeros half the values.
 
 He initialization:
+
 $$W_{ij} \sim \mathcal{N}\left(0, \frac{2}{n_{\text{in}}}\right)$$
+
 
 The factor of 2 compensates for ReLU.
 
@@ -273,6 +290,7 @@ Processing one example at a time is inefficient and noisy.
 Process B examples together:
 
 $$\nabla L = \frac{1}{B}\sum_{i=1}^{B} \nabla L_i$$
+
 
 **Advantages**:
 - More stable gradients (averaging reduces variance)
@@ -400,6 +418,7 @@ Add penalty for large weights:
 
 $$L_{\text{total}} = L + \lambda \sum_i \theta_i^2$$
 
+
 This encourages smaller weights, reducing overfitting.
 
 ```python
@@ -413,11 +432,13 @@ In practice, combine with gradient update:
 
 $$\theta_{t+1} = \theta_t - \eta(\nabla L + \lambda \theta_t) = (1 - \eta\lambda)\theta_t - \eta \nabla L$$
 
+
 ### Dropout
 
 During training, randomly zero some activations:
 
 $$h_i^{\text{dropped}} = h_i \cdot m_i$$
+
 
 Where $m_i \sim \text{Bernoulli}(1 - p)$ and p is the dropout probability.
 

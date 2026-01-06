@@ -14,6 +14,7 @@ A linear layer transforms an input vector x ∈ ℝⁿ into an output vector y �
 
 $$y = Wx + b$$
 
+
 Where:
 - W ∈ ℝᵐˣⁿ is the **weight matrix**
 - b ∈ ℝᵐ is the **bias vector**
@@ -25,6 +26,7 @@ Where:
 Each output component yᵢ is a weighted sum of inputs plus a bias:
 
 $$y_i = \sum_{j=1}^{n} W_{ij} x_j + b_i$$
+
 
 This is a **linear combination** of the inputs.
 
@@ -43,7 +45,9 @@ Output dimension: m = 3
 
 $$W = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \end{bmatrix}, \quad b = \begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}$$
 
+
 $$y = \begin{bmatrix} 1·2 + 0·3 + 0 \\ 0·2 + 1·3 + 1 \\ 1·2 + 1·3 - 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 4 \\ 4 \end{bmatrix}$$
+
 
 ## The Problem: Linear Functions Are Limited
 
@@ -53,9 +57,11 @@ If f(x) = W₁x + b₁ and g(x) = W₂x + b₂, then:
 
 $$g(f(x)) = W_2(W_1 x + b_1) + b_2 = W_2 W_1 x + (W_2 b_1 + b_2)$$
 
+
 This is still a linear function! Let W' = W₂W₁ and b' = W₂b₁ + b₂:
 
 $$g(f(x)) = W' x + b'$$
+
 
 **No matter how many linear layers we stack, we get a linear function.**
 
@@ -78,34 +84,45 @@ To break linearity, we apply a **nonlinear function** after each linear layer.
 
 $$h = \sigma(Wx + b)$$
 
+
 Where σ is a nonlinear **activation function** applied element-wise.
 
 ### Common Activation Functions
 
 **ReLU (Rectified Linear Unit)**:
+
 $$\text{ReLU}(x) = \max(0, x)$$
+
 
 - Simple and fast
 - Derivative: 1 if x > 0, else 0
 - Most popular for hidden layers
 
 **Sigmoid**:
+
 $$\sigma(x) = \frac{1}{1 + e^{-x}}$$
+
 
 - Outputs between 0 and 1
 - Historically popular, less used now (vanishing gradients)
 
 **Tanh**:
+
 $$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$
+
 
 - Outputs between -1 and 1
 - Zero-centered (better than sigmoid)
 
 **GELU (Gaussian Error Linear Unit)**:
+
 $$\text{GELU}(x) = x \cdot \Phi(x)$$
 
+
 Where Φ is the standard normal CDF. Approximation:
+
 $$\text{GELU}(x) \approx 0.5x(1 + \tanh[\sqrt{2/\pi}(x + 0.044715x^3)])$$
+
 
 - Used in transformers
 - Smooth version of ReLU
@@ -119,7 +136,9 @@ ReLU is piecewise linear:
 This simple nonlinearity is enough to enable universal approximation.
 
 **Derivative**:
+
 $$\frac{d}{dx}\text{ReLU}(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x < 0 \\ \text{undefined} & \text{if } x = 0 \end{cases}$$
+
 
 At x = 0, we use the subgradient 0.
 
@@ -130,10 +149,15 @@ At x = 0, we use the subgradient 0.
 A deep network is a composition of layers:
 
 $$h_1 = \sigma(W_1 x + b_1)$$
+
 $$h_2 = \sigma(W_2 h_1 + b_2)$$
+
 $$h_3 = \sigma(W_3 h_2 + b_3)$$
+
 $$\vdots$$
+
 $$y = W_L h_{L-1} + b_L$$
+
 
 Note: The last layer often has no activation (for regression) or a special activation (softmax for classification).
 
@@ -205,13 +229,18 @@ Given logits z ∈ ℝ^|V|, softmax converts to probabilities:
 
 $$\text{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{|V|} e^{z_j}}$$
 
+
 ### Properties of Softmax
 
 1. **Valid probability distribution**:
-   $$\sum_i \text{softmax}(z)_i = 1$$
+
+$$\sum_i \text{softmax}(z)_i = 1$$
+
 
 2. **All positive**:
-   $$\text{softmax}(z)_i > 0 \quad \forall i$$
+
+$$\text{softmax}(z)_i > 0 \quad \forall i$$
+
 
 3. **Monotonic**:
    Higher logit → higher probability
@@ -222,7 +251,9 @@ $$\text{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{|V|} e^{z_j}}$$
 ### The Complete Output Stage
 
 $$\text{logits} = W_{\text{out}} h_L + b_{\text{out}}$$
+
 $$P(\text{token} | \text{context}) = \text{softmax}(\text{logits})$$
+
 
 Where:
 - h_L ∈ ℝ^h is the final hidden state
@@ -338,8 +369,13 @@ def softmax(logits):
 
 Softmax involves exponentials. For large logits:
 
-$$e^{100} \approx 2.7 \times 10^{43}$$ (overflow!)
-$$e^{-100} \approx 3.7 \times 10^{-44}$$ (underflow!)
+$$e^{100} \approx 2.7 \times 10^{43}$$
+
+(overflow!)
+
+$$e^{-100} \approx 3.7 \times 10^{-44}$$
+
+(underflow!)
 
 ### The Solution
 
@@ -347,11 +383,16 @@ Softmax is invariant to constant shifts:
 
 $$\text{softmax}(z - c) = \text{softmax}(z)$$
 
+
 **Proof**:
+
 $$\frac{e^{z_i - c}}{\sum_j e^{z_j - c}} = \frac{e^{z_i} e^{-c}}{\sum_j e^{z_j} e^{-c}} = \frac{e^{z_i}}{\sum_j e^{z_j}}$$
 
+
 So we compute:
+
 $$\text{softmax}(z)_i = \frac{e^{z_i - \max(z)}}{\sum_j e^{z_j - \max(z)}}$$
+
 
 After subtracting max, all exponents are ≤ 0, preventing overflow.
 
@@ -361,8 +402,11 @@ We often need log softmax:
 
 $$\log \text{softmax}(z)_i = z_i - \log\sum_j e^{z_j}$$
 
+
 The log-sum-exp (LSE) function:
+
 $$\text{LSE}(z) = \log\sum_j e^{z_j} = \max(z) + \log\sum_j e^{z_j - \max(z)}$$
+
 
 This is numerically stable.
 
@@ -393,6 +437,7 @@ Every parameter receives a gradient signal indicating how to change to reduce lo
 For a parameter W₁[i,j] in the first layer:
 
 $$\frac{\partial L}{\partial W_1[i,j]} = \frac{\partial L}{\partial h_1[i]} \cdot \frac{\partial h_1[i]}{\partial W_1[i,j]}$$
+
 
 The gradient "chains" through all intermediate layers—exactly what we built in Stage 2.
 

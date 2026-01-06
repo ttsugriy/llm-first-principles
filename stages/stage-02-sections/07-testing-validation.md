@@ -16,6 +16,7 @@ For any differentiable function f, the derivative can be approximated as:
 
 $$f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}$$
 
+
 This is the **central difference** formula. It's more accurate than the forward difference (f(x+h) - f(x))/h because errors cancel.
 
 ### Why It Works
@@ -23,13 +24,19 @@ This is the **central difference** formula. It's more accurate than the forward 
 Taylor series expansion:
 
 $$f(x + h) = f(x) + f'(x)h + \frac{f''(x)}{2}h^2 + O(h^3)$$
+
 $$f(x - h) = f(x) - f'(x)h + \frac{f''(x)}{2}h^2 + O(h^3)$$
 
+
 Subtracting:
+
 $$f(x + h) - f(x - h) = 2f'(x)h + O(h^3)$$
 
+
 So:
+
 $$\frac{f(x + h) - f(x - h)}{2h} = f'(x) + O(h^2)$$
+
 
 The error is O(h²), meaning it shrinks quadratically as h decreases.
 

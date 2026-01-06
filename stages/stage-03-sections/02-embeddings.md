@@ -15,9 +15,13 @@ The naive way to represent tokens: one-hot vectors.
 For vocabulary {a, b, c, d} with |V| = 4:
 
 $$\text{one\_hot}(a) = [1, 0, 0, 0]$$
+
 $$\text{one\_hot}(b) = [0, 1, 0, 0]$$
+
 $$\text{one\_hot}(c) = [0, 0, 1, 0]$$
+
 $$\text{one\_hot}(d) = [0, 0, 0, 1]$$
+
 
 Each token gets a unique position; all other entries are zero.
 
@@ -26,7 +30,9 @@ Each token gets a unique position; all other entries are zero.
 **Problem 1: No Similarity**
 
 For any two different tokens i ≠ j:
+
 $$\text{one\_hot}(i) \cdot \text{one\_hot}(j) = 0$$
+
 
 All tokens are orthogonal. "a" and "b" are as dissimilar as "a" and "7".
 
@@ -62,14 +68,18 @@ For vocabulary size |V| and embedding dimension d (where d << |V|):
 
 $$E \in \mathbb{R}^{|V| \times d}$$
 
+
 Each row of E is the embedding for one token:
+
 $$\text{embed}(i) = E[i, :] \in \mathbb{R}^d$$
+
 
 ### Example
 
 For vocabulary {a, b, c, d} with d = 3:
 
 $$E = \begin{bmatrix} 0.2 & -0.5 & 0.1 \\ 0.3 & -0.4 & 0.2 \\ -0.1 & 0.8 & 0.3 \\ 0.5 & 0.2 & -0.7 \end{bmatrix}$$
+
 
 Then:
 - embed(a) = [0.2, -0.5, 0.1]
@@ -94,14 +104,18 @@ The embedding operation is mathematically simple:
 
 $$\text{embed}(i) = E[i, :]$$
 
+
 This is equivalent to:
+
 $$\text{embed}(i) = \text{one\_hot}(i) \cdot E$$
+
 
 **Proof**:
 
 Let e_i = one_hot(i) be the i-th standard basis vector.
 
 $$e_i \cdot E = [0, ..., 1, ..., 0] \cdot E = \text{i-th row of } E = E[i, :]$$
+
 
 The one-hot vector "selects" the corresponding row of E.
 
@@ -112,6 +126,7 @@ During training, we need gradients of the loss with respect to E.
 If the loss is L and we used embedding E[i, :] in the forward pass:
 
 $$\frac{\partial L}{\partial E[i, :]} = \frac{\partial L}{\partial \text{embed}(i)}$$
+
 
 Only the i-th row of E gets a gradient—the rows for tokens not used in this example get zero gradient.
 
@@ -169,9 +184,11 @@ If two tokens t₁ and t₂ appear in similar contexts:
 
 $$P(\text{context} | t_1) \approx P(\text{context} | t_2)$$
 
+
 Then training will push their embeddings together:
 
 $$\text{embed}(t_1) \approx \text{embed}(t_2)$$
+
 
 This is not programmed—it's a consequence of the optimization objective.
 
@@ -182,12 +199,16 @@ This is not programmed—it's a consequence of the optimization objective.
 In a trained embedding space:
 
 **Cosine Similarity**:
+
 $$\text{sim}(u, v) = \frac{u \cdot v}{||u|| \cdot ||v||}$$
+
 
 Ranges from -1 (opposite) to +1 (identical direction).
 
 **Euclidean Distance**:
+
 $$d(u, v) = ||u - v||_2$$
+
 
 Small distance = similar tokens.
 
@@ -255,6 +276,7 @@ For context [t₁, t₂, t₃] with embedding dimension d:
 
 $$x = [\text{embed}(t_1); \text{embed}(t_2); \text{embed}(t_3)] \in \mathbb{R}^{3d}$$
 
+
 This preserves position information:
 - Dimensions [0:d] represent first position
 - Dimensions [d:2d] represent second position
@@ -272,6 +294,7 @@ Concatenation lets the network learn position-specific patterns.
 Some architectures add embeddings instead:
 
 $$x = \text{embed}(t_1) + \text{embed}(t_2) + \text{embed}(t_3)$$
+
 
 This loses position information but reduces dimensionality.
 
@@ -346,17 +369,23 @@ Before training, embeddings must start somewhere. The initialization affects:
 ### Common Initializations
 
 **Random Normal**:
+
 $$E[i,j] \sim \mathcal{N}(0, \sigma^2)$$
+
 
 With σ typically 0.01 to 0.1.
 
 **Uniform**:
+
 $$E[i,j] \sim \text{Uniform}(-a, a)$$
+
 
 With a typically 0.05 to 0.5.
 
 **Xavier/Glorot** (common for neural networks):
+
 $$E[i,j] \sim \mathcal{N}\left(0, \frac{1}{d}\right)$$
+
 
 For embeddings, we use 1/d since the "input" is effectively one-hot (dimension 1) and output is d.
 
@@ -365,6 +394,7 @@ For embeddings, we use 1/d since the "input" is effectively one-hot (dimension 1
 For character embeddings with d = 32:
 
 $$E[i,j] \sim \mathcal{N}\left(0, 0.1\right)$$
+
 
 Small random values that will be refined by training.
 

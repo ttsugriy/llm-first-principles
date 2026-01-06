@@ -249,8 +249,11 @@ Neural networks need nonlinear activations. Let's implement the most common ones
 
 $$\text{relu}(x) = \max(0, x)$$
 
+
 Derivative:
+
 $$\frac{\partial}{\partial x}\text{relu}(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{otherwise} \end{cases}$$
+
 
 ```python
 def relu(self):
@@ -267,8 +270,11 @@ def relu(self):
 
 $$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$
 
+
 Derivative:
+
 $$\frac{\partial}{\partial x}\tanh(x) = 1 - \tanh^2(x)$$
+
 
 ```python
 import math
@@ -290,8 +296,11 @@ def tanh(self):
 
 $$\sigma(x) = \frac{1}{1 + e^{-x}}$$
 
+
 Derivative:
+
 $$\frac{\partial}{\partial x}\sigma(x) = \sigma(x)(1 - \sigma(x))$$
+
 
 ```python
 def sigmoid(self):

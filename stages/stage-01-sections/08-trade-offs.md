@@ -66,6 +66,7 @@ The number of states grows exponentially with order:
 
 $$\text{States} = |V|^k$$
 
+
 For word-level models with |V| = 50,000:
 | Order | States | Storage (4 bytes each) |
 |-------|--------|----------------------|

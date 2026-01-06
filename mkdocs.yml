@@ -60,13 +60,6 @@ extra_javascript:
   - https://unpkg.com/mermaid@10/dist/mermaid.min.js
   - javascripts/mermaid-init.js
 
-extra:
-  analytics:
-    provider: custom
-  # Mermaid initialization
-  mermaid:
-    theme: neutral
-
 nav:
   - Home: index.md
   - Interactive Tools: interactive/index.md

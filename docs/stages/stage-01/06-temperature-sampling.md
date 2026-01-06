@@ -18,7 +18,7 @@ But step 2 hides a crucial choice: *how* do we sample from P(token | context)?
 
 **Greedy decoding**: Always pick the highest-probability token.
 
-\[x_t = \arg\max_{x} P(x | \text{context})\]
+$$x_t = \arg\max_{x} P(x | \text{context})$$
 
 **Problems with greedy**:
 
@@ -39,7 +39,7 @@ Greedy picks "The" (0.3 > 0.2) but the full sequence is less likely!
 
 **Ancestral sampling**: Sample each token from the full distribution.
 
-\[x_t \sim P(x | \text{context})\]
+$$x_t \sim P(x | \text{context})$$
 
 This produces samples from the true model distribution—exactly what the model learned.
 
@@ -87,11 +87,11 @@ Over many tokens, unlikely events accumulate, producing incoherent text.
 
 Given probabilities P(t) for each token t, the temperature-scaled distribution is:
 
-\[P_T(t) = \frac{P(t)^{1/T}}{\sum_{t'} P(t')^{1/T}}\]
+$$P_T(t) = \frac{P(t)^{1/T}}{\sum_{t'} P(t')^{1/T}}$$
 
 Or equivalently, working in log-space:
 
-\[P_T(t) = \frac{\exp(\log P(t) / T)}{\sum_{t'} \exp(\log P(t') / T)}\]
+$$P_T(t) = \frac{\exp(\log P(t) / T)}{\sum_{t'} \exp(\log P(t') / T)}$$
 
 **What temperature does**:
 
@@ -110,7 +110,7 @@ Where does this formula come from? It's inspired by statistical mechanics.
 
 First, let's understand softmax. Given "logits" (unnormalized log-probabilities) z₁, z₂, ..., zₙ:
 
-\[\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}\]
+$$\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}$$
 
 This converts arbitrary real numbers into a probability distribution.
 
@@ -123,7 +123,7 @@ This converts arbitrary real numbers into a probability distribution.
 
 Temperature divides the logits before softmax:
 
-\[\text{softmax}(z_i / T) = \frac{e^{z_i/T}}{\sum_j e^{z_j/T}}\]
+$$\text{softmax}(z_i / T) = \frac{e^{z_i/T}}{\sum_j e^{z_j/T}}$$
 
 **Why this works**:
 - Dividing by T > 1 makes logits smaller → differences smaller → distribution flatter
@@ -133,7 +133,7 @@ Temperature divides the logits before softmax:
 
 In physics, the Boltzmann distribution gives the probability of a system being in state i with energy Eᵢ:
 
-\[P(i) = \frac{e^{-E_i / kT}}{Z}\]
+$$P(i) = \frac{e^{-E_i / kT}}{Z}$$
 
 where T is temperature and k is Boltzmann's constant.
 
@@ -166,7 +166,7 @@ As T → 0, the distribution becomes a one-hot vector pointing at the highest-pr
 
 **Proof**: Let z₁ > z₂ > ... > zₙ (sorted logits).
 
-\[\lim_{T \to 0} \frac{e^{z_i/T}}{\sum_j e^{z_j/T}} = \lim_{T \to 0} \frac{e^{z_i/T}}{e^{z_1/T}(1 + \sum_{j>1} e^{(z_j-z_1)/T})}\]
+$$\lim_{T \to 0} \frac{e^{z_i/T}}{\sum_j e^{z_j/T}} = \lim_{T \to 0} \frac{e^{z_i/T}}{e^{z_1/T}(1 + \sum_{j>1} e^{(z_j-z_1)/T})}$$
 
 Since z₁ > zⱼ for j > 1, the terms e^{(zⱼ-z₁)/T} → 0 as T → 0.
 
@@ -208,7 +208,7 @@ def apply_temperature(distribution, temperature):
 ```
 
 **The log-sum-exp trick**: We subtract max before exponentiating to prevent overflow. This doesn't change the result because:
-\[\frac{e^{z_i - c}}{\sum_j e^{z_j - c}} = \frac{e^{z_i} e^{-c}}{\sum_j e^{z_j} e^{-c}} = \frac{e^{z_i}}{\sum_j e^{z_j}}\]
+$$\frac{e^{z_i - c}}{\sum_j e^{z_j - c}} = \frac{e^{z_i} e^{-c}}{\sum_j e^{z_j} e^{-c}} = \frac{e^{z_i}}{\sum_j e^{z_j}}$$
 
 ## Other Sampling Strategies
 

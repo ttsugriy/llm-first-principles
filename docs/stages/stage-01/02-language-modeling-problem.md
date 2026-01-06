@@ -8,7 +8,7 @@ A **language model** is a probability distribution over sequences of tokens.
 
 Given a vocabulary V (a finite set of possible tokens), a language model assigns a probability to every possible sequence:
 
-\[P: V^* \rightarrow [0, 1]\]
+$$P: V^* \rightarrow [0, 1]$$
 
 where V* means "sequences of any length from V" and the probabilities over all possible sequences sum to 1.
 
@@ -38,7 +38,7 @@ We cannot possibly store a probability for each sequence. Even for length-10 seq
 
 The chain rule (from Section 1.1) provides the solution. Instead of modeling P(x₁, x₂, ..., xₙ) directly, we factor it:
 
-\[P(x_1, x_2, \ldots, x_n) = \prod_{i=1}^{n} P(x_i | x_1, \ldots, x_{i-1})\]
+$$P(x_1, x_2, \ldots, x_n) = \prod_{i=1}^{n} P(x_i | x_1, \ldots, x_{i-1})$$
 
 Now we need to model n conditional distributions instead of one joint distribution. Each conditional distribution is over |V| possible next tokens.
 
@@ -53,7 +53,7 @@ Here's where we make our first modeling assumption—and it's important to recog
 **The Markov assumption**: The future depends only on the recent past.
 
 Specifically, for an **order-k Markov model**:
-\[P(x_i | x_1, \ldots, x_{i-1}) \approx P(x_i | x_{i-k}, \ldots, x_{i-1})\]
+$$P(x_i | x_1, \ldots, x_{i-1}) \approx P(x_i | x_{i-k}, \ldots, x_{i-1})$$
 
 The probability of the next token depends only on the last k tokens, not the entire history.
 
@@ -131,14 +131,14 @@ An **order-k Markov language model** is defined by:
 1. A vocabulary V (finite set of tokens)
 2. A special start token ⟨START⟩ and end token ⟨END⟩
 3. A set of transition probabilities: for each context c ∈ V^k and each token t ∈ V ∪ {⟨END⟩}:
-   \[\theta_{c \rightarrow t} = P(t | c)\]
+   $$\theta_{c \rightarrow t} = P(t | c)$$
 
 4. Constraints:
    - All probabilities non-negative: θ_{c→t} ≥ 0
    - Probabilities sum to 1 for each context: ∑_t θ_{c→t} = 1
 
 The probability of a sequence x₁, x₂, ..., xₙ is:
-\[P(x_1, \ldots, x_n) = \prod_{i=1}^{n+1} \theta_{c_i \rightarrow x_i}\]
+$$P(x_1, \ldots, x_n) = \prod_{i=1}^{n+1} \theta_{c_i \rightarrow x_i}$$
 
 where:
 - x_{n+1} = ⟨END⟩

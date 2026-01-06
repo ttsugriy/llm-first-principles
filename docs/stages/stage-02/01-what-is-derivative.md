@@ -40,7 +40,7 @@ For two points x and x+h on the curve:
 
 The **difference quotient** is:
 
-\[\frac{f(x+h) - f(x)}{h}\]
+$$\frac{f(x+h) - f(x)}{h}$$
 
 This gives the slope of the **secant line** connecting the two points.
 
@@ -50,7 +50,7 @@ As h → 0, the two points get closer together, and the secant line approaches t
 
 **Definition (Derivative)**: The derivative of f at x is:
 
-\[f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}\]
+$$f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
 
 if this limit exists.
 
@@ -64,17 +64,17 @@ Alternative notation:
 Let's derive the derivative of f(x) = x² from first principles.
 
 **Step 1**: Write the difference quotient.
-\[\frac{f(x+h) - f(x)}{h} = \frac{(x+h)^2 - x^2}{h}\]
+$$\frac{f(x+h) - f(x)}{h} = \frac{(x+h)^2 - x^2}{h}$$
 
 **Step 2**: Expand the numerator.
-\[(x+h)^2 = x^2 + 2xh + h^2\]
-\[\frac{x^2 + 2xh + h^2 - x^2}{h} = \frac{2xh + h^2}{h}\]
+$$(x+h)^2 = x^2 + 2xh + h^2$$
+$$\frac{x^2 + 2xh + h^2 - x^2}{h} = \frac{2xh + h^2}{h}$$
 
 **Step 3**: Simplify.
-\[\frac{2xh + h^2}{h} = \frac{h(2x + h)}{h} = 2x + h\]
+$$\frac{2xh + h^2}{h} = \frac{h(2x + h)}{h} = 2x + h$$
 
 **Step 4**: Take the limit as h → 0.
-\[\lim_{h \to 0} (2x + h) = 2x\]
+$$\lim_{h \to 0} (2x + h) = 2x$$
 
 **Result**: f'(x) = 2x
 
@@ -89,16 +89,16 @@ This means:
 Let's derive the derivative of f(x) = 1/x for x ≠ 0.
 
 **Step 1**: Difference quotient.
-\[\frac{f(x+h) - f(x)}{h} = \frac{\frac{1}{x+h} - \frac{1}{x}}{h}\]
+$$\frac{f(x+h) - f(x)}{h} = \frac{\frac{1}{x+h} - \frac{1}{x}}{h}$$
 
 **Step 2**: Find common denominator for the numerator.
-\[\frac{1}{x+h} - \frac{1}{x} = \frac{x - (x+h)}{x(x+h)} = \frac{-h}{x(x+h)}\]
+$$\frac{1}{x+h} - \frac{1}{x} = \frac{x - (x+h)}{x(x+h)} = \frac{-h}{x(x+h)}$$
 
 **Step 3**: Divide by h.
-\[\frac{-h}{h \cdot x(x+h)} = \frac{-1}{x(x+h)}\]
+$$\frac{-h}{h \cdot x(x+h)} = \frac{-1}{x(x+h)}$$
 
 **Step 4**: Take limit.
-\[\lim_{h \to 0} \frac{-1}{x(x+h)} = \frac{-1}{x \cdot x} = -\frac{1}{x^2}\]
+$$\lim_{h \to 0} \frac{-1}{x(x+h)} = \frac{-1}{x \cdot x} = -\frac{1}{x^2}$$
 
 **Result**: If f(x) = 1/x, then f'(x) = -1/x²
 
@@ -133,19 +133,19 @@ Real neural networks have millions of parameters. We need derivatives with respe
 
 **Partial Derivative**: For f(x, y), the partial derivative with respect to x is:
 
-\[\frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h, y) - f(x, y)}{h}\]
+$$\frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h, y) - f(x, y)}{h}$$
 
 We treat y as a constant and differentiate only with respect to x.
 
 **Example**: f(x, y) = x²y + y³
 
-\[\frac{\partial f}{\partial x} = 2xy\]
+$$\frac{\partial f}{\partial x} = 2xy$$
 
-\[\frac{\partial f}{\partial y} = x^2 + 3y^2\]
+$$\frac{\partial f}{\partial y} = x^2 + 3y^2$$
 
 **The Gradient**: The gradient ∇f collects all partial derivatives:
 
-\[\nabla f = \left( \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right)\]
+$$\nabla f = \left( \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right)$$
 
 For f with n variables: ∇f is an n-dimensional vector.
 

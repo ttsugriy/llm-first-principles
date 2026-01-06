@@ -119,7 +119,7 @@ For a DAG, this is always possible. We can use:
 
 This is where the chain rule comes in. For each node v:
 
-\[\frac{\partial f}{\partial v} = \sum_{c \in \text{children}(v)} \frac{\partial f}{\partial c} \cdot \frac{\partial c}{\partial v}\]
+$$\frac{\partial f}{\partial v} = \sum_{c \in \text{children}(v)} \frac{\partial f}{\partial c} \cdot \frac{\partial c}{\partial v}$$
 
 We sum over all paths from v to the output f.
 

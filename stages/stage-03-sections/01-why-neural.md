@@ -130,10 +130,12 @@ The key insight of neural language models:
 
 | Discrete (N-gram) | Continuous (Neural) |
 |-------------------|---------------------|
-| "cat" = entry #742 in table | "cat" = [0.2, -0.5, 0.8, ...] ∈ ℝ^d |
+| "cat" = entry #742 in table | "cat" = [0.2, -0.5, 0.8, ...] ∈ ℝᵈ |
 | Two words: same or different | Two words: distance in vector space |
 | Similarity undefined | Similarity = cosine, Euclidean, etc. |
 | No interpolation possible | Smooth interpolation natural |
+
+The notation **ℝᵈ** means "d-dimensional space of real numbers"—a vector with d components, each being a real number. For example, ℝ³ is 3D space (x, y, z coordinates).
 
 ### Why Continuous Helps
 

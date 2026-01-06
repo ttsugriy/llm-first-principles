@@ -47,6 +47,8 @@ This gives the slope of the **secant line** connecting the two points.
 
 ### Taking the Limit
 
+A **limit** describes the value a function approaches as its input approaches some value. The notation $\lim_{h \to 0} f(h)$ means "the value f(h) gets arbitrarily close to as h gets arbitrarily close to 0." We don't evaluate at h=0 directly (which might be undefined), but rather ask: what value is f(h) approaching?
+
 As h → 0, the two points get closer together, and the secant line approaches the tangent line.
 
 **Definition (Derivative)**: The derivative of f at x is:
@@ -165,12 +167,12 @@ $$\frac{\partial f}{\partial x} = 2xy$$
 $$\frac{\partial f}{\partial y} = x^2 + 3y^2$$
 
 
-**The Gradient**: The gradient ∇f collects all partial derivatives:
+**The Gradient**: The gradient collects all partial derivatives into a single object. We denote it with the symbol ∇ (called "nabla" or "del"):
 
 $$\nabla f = \left( \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right)$$
 
 
-For f with n variables: ∇f is an n-dimensional vector.
+The result is a **vector**—an ordered list of numbers. A vector in n dimensions has n components, written as (v₁, v₂, ..., vₙ). For f with n variables, ∇f is an n-dimensional vector.
 
 The gradient points in the direction of steepest ascent. To minimize, move opposite to the gradient.
 

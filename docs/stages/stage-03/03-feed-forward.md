@@ -119,7 +119,7 @@ $$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$
 $$\text{GELU}(x) = x \cdot \Phi(x)$$
 
 
-Where Φ is the standard normal CDF. Approximation:
+Where Φ is the standard normal CDF (cumulative distribution function)—the probability that a standard normal random variable is less than x. Approximation:
 
 $$\text{GELU}(x) \approx 0.5x(1 + \tanh[\sqrt{2/\pi}(x + 0.044715x^3)])$$
 
@@ -140,7 +140,7 @@ This simple nonlinearity is enough to enable universal approximation.
 $$\frac{d}{dx}\text{ReLU}(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x < 0 \\ \text{undefined} & \text{if } x = 0 \end{cases}$$
 
 
-At x = 0, we use the subgradient 0.
+At x = 0, we conventionally use 0 as the derivative. (Technically, we're using a "subgradient"—a generalization of derivatives for non-smooth functions—but in practice, x = 0 happens rarely enough that this choice doesn't matter much.)
 
 ## Building Deep Networks
 
@@ -224,6 +224,8 @@ Each change in slope corresponds to a neuron "turning on" or "off".
 For language modeling, we need to output a probability distribution over the vocabulary.
 
 ### The Softmax Function
+
+**Logits** are the raw, unnormalized outputs of the network—real numbers that can be any value (positive, negative, or zero). The term comes from "log-odds" in statistics. We convert logits to probabilities using softmax.
 
 Given logits z ∈ ℝ^|V|, softmax converts to probabilities:
 

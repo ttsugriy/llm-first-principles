@@ -191,7 +191,7 @@ What we've proven: If you just count how often each transition occurs and divide
 This isn't an approximation or heuristic. It's provably optimal.
 
 **Why this matters**:
-1. Training a Markov model is O(n) where n is corpus size—just one pass through the data
+1. Training a Markov model is O(n) where n is corpus size—just one pass through the data. (The notation O(n), called "Big-O notation," describes how computation time grows with input size. O(n) means time grows linearly with n.)
 2. No iterative optimization needed (unlike neural networks)
 3. The solution is exact, not approximate
 

@@ -14,6 +14,33 @@ But what does that number actually *mean*? There are two main interpretations:
 
 For language modeling, we'll mostly use the frequentist view: if we sample many sentences from English, what fraction start with "The"? That fraction is approximately P("The" is the first word).
 
+## Mathematical Notation
+
+Before proceeding, let's establish the mathematical notation we'll use throughout this book:
+
+**Set notation**:
+- **{a, b, c}**: A set containing elements a, b, and c (curly braces denote sets)
+- **∈**: "Element of" — x ∈ S means "x is in set S"
+- **∩**: Intersection — A ∩ B means "elements in both A and B"
+- **∪**: Union — A ∪ B means "elements in A or B (or both)"
+- **∅**: The empty set — a set with no elements
+
+**Summation and product notation**:
+- **Σ (sigma)**: Summation — $\sum_{i=1}^{n} x_i$ means $x_1 + x_2 + \cdots + x_n$
+- **∏ (capital pi)**: Product — $\prod_{i=1}^{n} x_i$ means $x_1 \times x_2 \times \cdots \times x_n$
+
+**Probability notation**:
+- **P(A)**: Probability of event A occurring
+- **P(A|B)**: Conditional probability — probability of A given that B occurred (defined formally below)
+- **P(A, B)**: Joint probability — equivalent to P(A ∩ B), the probability of both A and B
+- **X ~ P**: "X is distributed as P" — random variable X follows distribution P
+
+**Other notation**:
+- **∀**: "For all"
+- **∃**: "There exists"
+- **ℝ**: The set of real numbers
+- **■** or **□**: End of proof (also written Q.E.D.)
+
 ## Key Terminology
 
 Before diving into the axioms, let's define our terms:

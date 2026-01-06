@@ -53,8 +53,10 @@ Learning about "cat" provides zero information about "dog".
 
 In one-hot space:
 - All vectors have length 1
-- All pairs are distance √2 apart (since ||e_i - e_j||² = 2 for i ≠ j)
+- All pairs are distance √2 apart (since ||eᵢ - eⱼ||² = 2 for i ≠ j)
 - No structure, no clusters, no relationships
+
+The notation **||v||** denotes the **Euclidean length (norm)** of vector v, calculated as √(v₁² + v₂² + ... + vₙ²). The squared norm ||v||² is simply the sum of squared components.
 
 This is a failure of representation, not of the neural network itself.
 

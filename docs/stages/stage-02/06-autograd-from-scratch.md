@@ -43,6 +43,49 @@ else:
     other = Value(other)  # wrap it
 ```
 
+**Lambda functions**: Anonymous (unnamed) functions created with the `lambda` keyword. Useful for simple, one-expression functions:
+
+```python
+square = lambda x: x * x  # Same as: def square(x): return x * x
+print(square(5))  # Prints 25
+
+# lambda with no arguments
+do_nothing = lambda: None
+```
+
+**List comprehensions and generator expressions**: Concise ways to create lists or iterate:
+
+```python
+# List comprehension: creates a list
+squares = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]
+
+# Generator expression: creates an iterator (lazy evaluation, saves memory)
+sum_of_squares = sum(x**2 for x in range(5))  # 30
+```
+
+**zip()**: Pairs up elements from multiple iterables:
+
+```python
+names = ['a', 'b', 'c']
+values = [1, 2, 3]
+for name, value in zip(names, values):
+    print(f"{name} = {value}")  # a = 1, b = 2, c = 3
+```
+
+**`__call__` method**: Makes an object callable like a function:
+
+```python
+class Multiplier:
+    def __init__(self, factor):
+        self.factor = factor
+
+    def __call__(self, x):
+        return x * self.factor
+
+times_3 = Multiplier(3)
+print(times_3(5))  # Prints 15 — calls times_3.__call__(5)
+```
+
 ## Design Goals
 
 Our autograd system will:

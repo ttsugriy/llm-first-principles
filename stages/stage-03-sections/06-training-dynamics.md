@@ -162,6 +162,8 @@ Reduce by factor every K epochs:
 $$\eta_t = \eta_0 \cdot \gamma^{\lfloor t/K \rfloor}$$
 
 
+The notation ⌊x⌋ (floor function) means "round down to the nearest integer." For example, ⌊7/3⌋ = ⌊2.33⌋ = 2.
+
 Example: Start at 0.1, multiply by 0.5 every 10 epochs.
 
 ```python

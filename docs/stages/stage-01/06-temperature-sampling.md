@@ -103,10 +103,12 @@ $$P_T(t) = \frac{\exp(\log P(t) / T)}{\sum_{t'} \exp(\log P(t') / T)}$$
 
 | Temperature | Effect |
 |-------------|--------|
-| T → 0 | Distribution becomes one-hot (greedy) |
+| T → 0 | Distribution becomes one-hot (all probability on one token) |
 | T = 1 | Original distribution (no change) |
 | T > 1 | Distribution becomes flatter (more random) |
 | T → ∞ | Distribution becomes uniform |
+
+A **one-hot** distribution puts all probability mass on a single item (1 for one token, 0 for all others).
 
 ## Deriving the Temperature Formula
 

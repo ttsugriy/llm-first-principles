@@ -152,11 +152,14 @@
         .graph-container {
             min-height: 400px;
             position: relative;
+            overflow-x: auto;
+            overflow-y: hidden;
         }
 
         #graph {
-            width: 100%;
+            min-width: 100%;
             height: 400px;
+            display: block;
         }
 
         .node {
@@ -650,10 +653,10 @@
 
     function initGraph() {
         svg = d3.select('#graph');
-        const width = svg.node().parentElement.clientWidth;
+        const containerWidth = svg.node().parentElement.clientWidth;
         const height = 400;
 
-        svg.attr('width', width).attr('height', height);
+        svg.attr('width', containerWidth).attr('height', height);
         svg.selectAll('*').remove();
 
         // Add arrow marker
@@ -669,7 +672,8 @@
             .attr('d', 'M0,-5L10,0L0,5')
             .attr('class', 'arrow');
 
-        g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
+        // No transform needed - we use absolute coordinates
+        g = svg.append('g');
     }
 
     function collectNodes(value, nodes = new Map(), depth = 0) {
@@ -727,19 +731,32 @@
             byDepth[d].push(node);
         }
 
-        // Position nodes
-        const width = svg.attr('width');
-        const height = svg.attr('height');
-        const layerWidth = width / (maxDepth + 2);
+        // Calculate required width based on number of layers
+        const nodeWidth = 100;  // Width per node including spacing
+        const padding = 60;     // Padding on edges
+        const numLayers = maxDepth + 1;
+        const requiredWidth = numLayers * nodeWidth + padding * 2;
+
+        // Get container width and use max of required vs available
+        const containerWidth = svg.node().parentElement.clientWidth;
+        const width = Math.max(requiredWidth, containerWidth);
+        const height = 400;
+
+        // Update SVG width to fit all nodes
+        svg.attr('width', width);
+
+        // Position nodes from left to right (inputs on left, output on right)
+        const layerWidth = (width - padding * 2) / Math.max(numLayers, 1);
 
         for (const [depth, layerNodes] of Object.entries(byDepth)) {
             const d = parseInt(depth);
-            const x = width/2 - (maxDepth - d) * layerWidth;
+            // Depth 0 is output (rightmost), higher depths are towards inputs (left)
+            const x = padding + (maxDepth - d) * layerWidth + layerWidth / 2;
             const layerHeight = height / (layerNodes.length + 1);
 
             layerNodes.forEach((node, i) => {
-                node.x = x - width/2;
-                node.y = (i + 1) * layerHeight - height/2;
+                node.x = x;
+                node.y = (i + 1) * layerHeight;
             });
         }
 

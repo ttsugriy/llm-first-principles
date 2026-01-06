@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autograd Visualizer | LLM First Principles</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e4e4e7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #a1a1aa;
+            font-size: 1rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #a1a1aa;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+        }
+
+        .variables-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #818cf8, #6366f1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(129, 140, 248, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-backward {
+            background: linear-gradient(135deg, #f472b6, #ec4899);
+            color: white;
+        }
+
+        .btn-backward:hover {
+            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.4);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .graph-container {
+            min-height: 400px;
+            position: relative;
+        }
+
+        #graph {
+            width: 100%;
+            height: 400px;
+        }
+
+        .node {
+            cursor: pointer;
+        }
+
+        .node rect {
+            stroke-width: 2px;
+            transition: all 0.3s;
+        }
+
+        .node.input rect {
+            fill: #1e3a5f;
+            stroke: #3b82f6;
+        }
+
+        .node.operation rect {
+            fill: #3f2a5c;
+            stroke: #a855f7;
+        }
+
+        .node.output rect {
+            fill: #1e3a3a;
+            stroke: #14b8a6;
+        }
+
+        .node.highlighted rect {
+            stroke-width: 3px;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .node text {
+            fill: #e4e4e7;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+        }
+
+        .node .label {
+            font-weight: bold;
+        }
+
+        .node .value {
+            fill: #22c55e;
+        }
+
+        .node .grad {
+            fill: #f472b6;
+        }
+
+        .link {
+            fill: none;
+            stroke: #4b5563;
+            stroke-width: 2px;
+        }
+
+        .link.gradient-flow {
+            stroke: #f472b6;
+            stroke-width: 3px;
+            animation: flowPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes flowPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .arrow {
+            fill: #4b5563;
+        }
+
+        .info-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+
+        .info-panel h3 {
+            color: #818cf8;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .info-panel .forward {
+            color: #22c55e;
+        }
+
+        .info-panel .backward {
+            color: #f472b6;
+        }
+
+        .examples {
+            margin-top: 15px;
+        }
+
+        .example-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #a1a1aa;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: rgba(129, 140, 248, 0.2);
+            border-color: rgba(129, 140, 248, 0.3);
+            color: #e4e4e7;
+        }
+
+        .example-btn code {
+            color: #818cf8;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+
+        .legend-color.input {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+        }
+
+        .legend-color.operation {
+            background: #3f2a5c;
+            border-color: #a855f7;
+        }
+
+        .legend-color.output {
+            background: #1e3a3a;
+            border-color: #14b8a6;
+        }
+
+        .step-indicator {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .step-indicator .step {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+        }
+
+        .step-indicator .description {
+            font-size: 1.1rem;
+            color: #e4e4e7;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Autograd Visualizer</h1>
+            <p class="subtitle">Watch automatic differentiation in action — from Stage 2</p>
+        </header>
+
+        <div class="main-grid">
+            <div class="controls-column">
+                <div class="panel">
+                    <h2>Expression</h2>
+                    <div class="input-group">
+                        <label>Mathematical expression</label>
+                        <input type="text" id="expression" value="(x + y) * z" placeholder="e.g., (x + y) * z">
+                    </div>
+
+                    <h2 style="margin-top: 20px;">Variables</h2>
+                    <div class="variables-grid">
+                        <div class="input-group">
+                            <label>x =</label>
+                            <input type="number" id="var-x" value="2" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>y =</label>
+                            <input type="number" id="var-y" value="3" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>z =</label>
+                            <input type="number" id="var-z" value="4" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>w =</label>
+                            <input type="number" id="var-w" value="1" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="runForward()">Forward Pass</button>
+                        <button class="btn btn-backward" onclick="runBackward()">Backward Pass</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="reset()">Reset</button>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top: 20px;">
+                    <h2>Examples</h2>
+                    <div class="examples">
+                        <button class="example-btn" onclick="loadExample('(x + y) * z')">
+                            Simple: <code>(x + y) * z</code>
+                        </button>
+                        <button class="example-btn" onclick="loadExample('x * x + y * y')">
+                            Sum of squares: <code>x*x + y*y</code>
+                        </button>
+                        <button class="example-btn" onclick="loadExample('(x * y) + (y * z)')">
+                            Shared variable: <code>(x*y) + (y*z)</code>
+                        </button>
+                        <button class="example-btn" onclick="loadExample('x * x * x')">
+                            Cubic: <code>x * x * x</code>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel info-panel" id="info-panel">
+                    <h3>How it works</h3>
+                    <p>1. Enter an expression using x, y, z, w</p>
+                    <p>2. Click <span class="forward">Forward Pass</span> to compute values</p>
+                    <p>3. Click <span class="backward">Backward Pass</span> to compute gradients</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="step-indicator" id="step-indicator">
+                    <div class="step">Ready</div>
+                    <div class="description">Enter an expression and click Forward Pass</div>
+                </div>
+
+                <div class="graph-container">
+                    <svg id="graph"></svg>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color input"></div>
+                        <span>Input Variable</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color operation"></div>
+                        <span>Operation</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color output"></div>
+                        <span>Output</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============================================
+    // VALUE CLASS - Direct port from Stage 2
+    // ============================================
+
+    class Value {
+        constructor(data, parents = [], op = '', label = '') {
+            this.data = data;
+            this.grad = 0.0;
+            this._backward = () => {};
+            this._parents = parents;
+            this._op = op;
+            this.label = label;
+            this.id = Value.nextId++;
+        }
+
+        static nextId = 0;
+
+        add(other) {
+            other = other instanceof Value ? other : new Value(other);
+            const out = new Value(this.data + other.data, [this, other], '+');
+
+            out._backward = () => {
+                this.grad += out.grad;
+                other.grad += out.grad;
+            };
+
+            return out;
+        }
+
+        mul(other) {
+            other = other instanceof Value ? other : new Value(other);
+            const out = new Value(this.data * other.data, [this, other], '*');
+
+            out._backward = () => {
+                this.grad += other.data * out.grad;
+                other.grad += this.data * out.grad;
+            };
+
+            return out;
+        }
+
+        sub(other) {
+            other = other instanceof Value ? other : new Value(other);
+            return this.add(other.mul(-1));
+        }
+
+        div(other) {
+            other = other instanceof Value ? other : new Value(other);
+            const out = new Value(this.data / other.data, [this, other], '/');
+
+            out._backward = () => {
+                this.grad += (1 / other.data) * out.grad;
+                other.grad += (-this.data / (other.data * other.data)) * out.grad;
+            };
+
+            return out;
+        }
+
+        pow(n) {
+            const out = new Value(Math.pow(this.data, n), [this], `**${n}`);
+
+            out._backward = () => {
+                this.grad += n * Math.pow(this.data, n - 1) * out.grad;
+            };
+
+            return out;
+        }
+
+        backward() {
+            // Topological sort
+            const topo = [];
+            const visited = new Set();
+
+            const buildTopo = (v) => {
+                if (!visited.has(v.id)) {
+                    visited.add(v.id);
+                    for (const parent of v._parents) {
+                        buildTopo(parent);
+                    }
+                    topo.push(v);
+                }
+            };
+
+            buildTopo(this);
+
+            // Backward pass
+            this.grad = 1.0;
+            for (const v of topo.reverse()) {
+                v._backward();
+            }
+        }
+    }
+
+    // ============================================
+    // EXPRESSION PARSER
+    // ============================================
+
+    function tokenize(expr) {
+        const tokens = [];
+        let i = 0;
+
+        while (i < expr.length) {
+            const char = expr[i];
+
+            if (/\s/.test(char)) {
+                i++;
+                continue;
+            }
+
+            if (/[a-z]/.test(char)) {
+                tokens.push({ type: 'VAR', value: char });
+                i++;
+                continue;
+            }
+
+            if (/[0-9.]/.test(char)) {
+                let num = '';
+                while (i < expr.length && /[0-9.]/.test(expr[i])) {
+                    num += expr[i];
+                    i++;
+                }
+                tokens.push({ type: 'NUM', value: parseFloat(num) });
+                continue;
+            }
+
+            if ('+-*/()'.includes(char)) {
+                tokens.push({ type: 'OP', value: char });
+                i++;
+                continue;
+            }
+
+            throw new Error(`Unknown character: ${char}`);
+        }
+
+        return tokens;
+    }
+
+    function parse(tokens, variables) {
+        let pos = 0;
+
+        function parseExpr() {
+            let left = parseTerm();
+
+            while (pos < tokens.length && (tokens[pos].value === '+' || tokens[pos].value === '-')) {
+                const op = tokens[pos].value;
+                pos++;
+                const right = parseTerm();
+                left = op === '+' ? left.add(right) : left.sub(right);
+            }
+
+            return left;
+        }
+
+        function parseTerm() {
+            let left = parseFactor();
+
+            while (pos < tokens.length && (tokens[pos].value === '*' || tokens[pos].value === '/')) {
+                const op = tokens[pos].value;
+                pos++;
+                const right = parseFactor();
+                left = op === '*' ? left.mul(right) : left.div(right);
+            }
+
+            return left;
+        }
+
+        function parseFactor() {
+            const token = tokens[pos];
+
+            if (token.type === 'NUM') {
+                pos++;
+                return new Value(token.value, [], '', token.value.toString());
+            }
+
+            if (token.type === 'VAR') {
+                pos++;
+                if (!variables[token.value]) {
+                    throw new Error(`Unknown variable: ${token.value}`);
+                }
+                return variables[token.value];
+            }
+
+            if (token.value === '(') {
+                pos++;
+                const expr = parseExpr();
+                if (tokens[pos]?.value !== ')') {
+                    throw new Error('Missing closing parenthesis');
+                }
+                pos++;
+                return expr;
+            }
+
+            if (token.value === '-') {
+                pos++;
+                const factor = parseFactor();
+                return factor.mul(-1);
+            }
+
+            throw new Error(`Unexpected token: ${JSON.stringify(token)}`);
+        }
+
+        return parseExpr();
+    }
+
+    // ============================================
+    // VISUALIZATION
+    // ============================================
+
+    let currentNodes = [];
+    let currentLinks = [];
+    let svg, g;
+
+    function initGraph() {
+        svg = d3.select('#graph');
+        const width = svg.node().parentElement.clientWidth;
+        const height = 400;
+
+        svg.attr('width', width).attr('height', height);
+        svg.selectAll('*').remove();
+
+        // Add arrow marker
+        svg.append('defs').append('marker')
+            .attr('id', 'arrow')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 20)
+            .attr('refY', 0)
+            .attr('markerWidth', 6)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto')
+            .append('path')
+            .attr('d', 'M0,-5L10,0L0,5')
+            .attr('class', 'arrow');
+
+        g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
+    }
+
+    function collectNodes(value, nodes = new Map(), depth = 0) {
+        if (nodes.has(value.id)) {
+            const existing = nodes.get(value.id);
+            existing.depth = Math.max(existing.depth, depth);
+            return nodes;
+        }
+
+        const isInput = value._parents.length === 0;
+        const isOutput = depth === 0;
+
+        nodes.set(value.id, {
+            id: value.id,
+            value: value,
+            label: value.label || value._op || '?',
+            data: value.data,
+            grad: value.grad,
+            type: isInput ? 'input' : (isOutput ? 'output' : 'operation'),
+            depth: depth,
+            op: value._op
+        });
+
+        for (const parent of value._parents) {
+            collectNodes(parent, nodes, depth + 1);
+        }
+
+        return nodes;
+    }
+
+    function collectLinks(value, links = [], visited = new Set()) {
+        if (visited.has(value.id)) return links;
+        visited.add(value.id);
+
+        for (const parent of value._parents) {
+            links.push({
+                source: parent.id,
+                target: value.id
+            });
+            collectLinks(parent, links, visited);
+        }
+
+        return links;
+    }
+
+    function layoutNodes(nodesMap) {
+        const nodes = Array.from(nodesMap.values());
+        const maxDepth = Math.max(...nodes.map(n => n.depth));
+
+        // Group by depth
+        const byDepth = {};
+        for (const node of nodes) {
+            const d = node.depth;
+            if (!byDepth[d]) byDepth[d] = [];
+            byDepth[d].push(node);
+        }
+
+        // Position nodes
+        const width = svg.attr('width');
+        const height = svg.attr('height');
+        const layerWidth = width / (maxDepth + 2);
+
+        for (const [depth, layerNodes] of Object.entries(byDepth)) {
+            const d = parseInt(depth);
+            const x = width/2 - (maxDepth - d) * layerWidth;
+            const layerHeight = height / (layerNodes.length + 1);
+
+            layerNodes.forEach((node, i) => {
+                node.x = x - width/2;
+                node.y = (i + 1) * layerHeight - height/2;
+            });
+        }
+
+        return nodes;
+    }
+
+    function renderGraph(nodes, links, highlightGradients = false) {
+        g.selectAll('*').remove();
+
+        // Create node map for link positioning
+        const nodeMap = new Map(nodes.map(n => [n.id, n]));
+
+        // Draw links
+        const linkSelection = g.selectAll('.link')
+            .data(links)
+            .enter()
+            .append('path')
+            .attr('class', d => 'link' + (highlightGradients ? ' gradient-flow' : ''))
+            .attr('d', d => {
+                const source = nodeMap.get(d.source);
+                const target = nodeMap.get(d.target);
+                return `M${source.x},${source.y} L${target.x},${target.y}`;
+            })
+            .attr('marker-end', 'url(#arrow)');
+
+        // Draw nodes
+        const nodeSelection = g.selectAll('.node')
+            .data(nodes)
+            .enter()
+            .append('g')
+            .attr('class', d => `node ${d.type}`)
+            .attr('transform', d => `translate(${d.x}, ${d.y})`);
+
+        // Node rectangles
+        nodeSelection.append('rect')
+            .attr('x', -40)
+            .attr('y', -25)
+            .attr('width', 80)
+            .attr('height', 50)
+            .attr('rx', 8);
+
+        // Node labels
+        nodeSelection.append('text')
+            .attr('class', 'label')
+            .attr('text-anchor', 'middle')
+            .attr('y', -8)
+            .text(d => {
+                if (d.type === 'input') return d.label;
+                if (d.op) return d.op;
+                return d.label;
+            });
+
+        // Node values
+        nodeSelection.append('text')
+            .attr('class', 'value')
+            .attr('text-anchor', 'middle')
+            .attr('y', 8)
+            .text(d => `= ${d.data.toFixed(2)}`);
+
+        // Node gradients (if backward pass done)
+        if (highlightGradients) {
+            nodeSelection.append('text')
+                .attr('class', 'grad')
+                .attr('text-anchor', 'middle')
+                .attr('y', 22)
+                .text(d => `∇ ${d.grad.toFixed(2)}`);
+        }
+    }
+
+    // ============================================
+    // MAIN FUNCTIONS
+    // ============================================
+
+    let currentOutput = null;
+    let forwardDone = false;
+
+    function getVariables() {
+        Value.nextId = 0;
+        return {
+            x: new Value(parseFloat(document.getElementById('var-x').value), [], '', 'x'),
+            y: new Value(parseFloat(document.getElementById('var-y').value), [], '', 'y'),
+            z: new Value(parseFloat(document.getElementById('var-z').value), [], '', 'z'),
+            w: new Value(parseFloat(document.getElementById('var-w').value), [], '', 'w')
+        };
+    }
+
+    function runForward() {
+        try {
+            const expr = document.getElementById('expression').value;
+            const variables = getVariables();
+            const tokens = tokenize(expr);
+            currentOutput = parse(tokens, variables);
+
+            // Collect graph structure
+            const nodesMap = collectNodes(currentOutput);
+            const nodes = layoutNodes(nodesMap);
+            const links = collectLinks(currentOutput);
+
+            currentNodes = nodes;
+            currentLinks = links;
+
+            initGraph();
+            renderGraph(nodes, links, false);
+
+            forwardDone = true;
+
+            updateStep('Forward Pass Complete', `Output = ${currentOutput.data.toFixed(4)}`);
+            updateInfo(`<h3>Forward Pass</h3>
+                <p class="forward">Expression: ${expr}</p>
+                <p class="forward">Result: ${currentOutput.data.toFixed(4)}</p>
+                <p style="margin-top: 10px;">Click <span class="backward">Backward Pass</span> to compute gradients.</p>`);
+
+        } catch (e) {
+            updateInfo(`<h3 style="color: #ef4444;">Error</h3><p>${e.message}</p>`);
+        }
+    }
+
+    function runBackward() {
+        if (!forwardDone || !currentOutput) {
+            updateInfo(`<h3 style="color: #ef4444;">Error</h3><p>Run forward pass first!</p>`);
+            return;
+        }
+
+        // Reset gradients and run backward
+        const nodesMap = collectNodes(currentOutput);
+        for (const [id, node] of nodesMap) {
+            node.value.grad = 0;
+        }
+
+        currentOutput.backward();
+
+        // Update node data with new gradients
+        for (const node of currentNodes) {
+            node.grad = node.value.grad;
+        }
+
+        initGraph();
+        renderGraph(currentNodes, currentLinks, true);
+
+        updateStep('Backward Pass Complete', 'Gradients computed for all nodes');
+
+        // Show gradient info
+        const gradInfo = currentNodes
+            .filter(n => n.type === 'input')
+            .map(n => `∂out/∂${n.label} = ${n.grad.toFixed(4)}`)
+            .join('<br>');
+
+        updateInfo(`<h3>Gradients (Backward Pass)</h3>
+            <p class="backward">${gradInfo}</p>
+            <p style="margin-top: 10px; color: #a1a1aa;">
+                Each gradient shows how much the output changes when that input changes by a tiny amount.
+            </p>`);
+    }
+
+    function reset() {
+        forwardDone = false;
+        currentOutput = null;
+        currentNodes = [];
+        currentLinks = [];
+        initGraph();
+        updateStep('Ready', 'Enter an expression and click Forward Pass');
+        updateInfo(`<h3>How it works</h3>
+            <p>1. Enter an expression using x, y, z, w</p>
+            <p>2. Click <span class="forward">Forward Pass</span> to compute values</p>
+            <p>3. Click <span class="backward">Backward Pass</span> to compute gradients</p>`);
+    }
+
+    function loadExample(expr) {
+        document.getElementById('expression').value = expr;
+        reset();
+    }
+
+    function updateStep(step, description) {
+        document.getElementById('step-indicator').innerHTML = `
+            <div class="step">${step}</div>
+            <div class="description">${description}</div>`;
+    }
+
+    function updateInfo(html) {
+        document.getElementById('info-panel').innerHTML = html;
+    }
+
+    // Initialize
+    window.onload = () => {
+        initGraph();
+    };
+
+    window.onresize = () => {
+        if (currentNodes.length > 0) {
+            initGraph();
+            renderGraph(currentNodes, currentLinks, forwardDone && currentOutput?.grad !== 0);
+        } else {
+            initGraph();
+        }
+    };
+    </script>
+</body>
+</html>

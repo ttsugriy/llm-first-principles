@@ -44,6 +44,8 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+  - attr_list
+  - md_in_html
 
 extra_javascript:
   - javascripts/mathjax.js
@@ -51,6 +53,7 @@ extra_javascript:
 
 nav:
   - Home: index.md
+  - Interactive Tools: interactive/index.md
   - Stage 1 - Markov Chains:
     - Overview: stages/stage-01/index.md
     - 1.1 Probability Foundations: stages/stage-01/01-probability-foundations.md

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Sampling | LLM First Principles</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e4e4e7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #34d399, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #a1a1aa;
+            font-size: 1rem;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+        }
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .controls-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .slider-group {
+            margin-bottom: 20px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #a1a1aa;
+        }
+
+        .slider-group .value {
+            color: #22d3ee;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #34d399, #22d3ee);
+            cursor: pointer;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        #chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .bar {
+            fill: #22d3ee;
+            transition: all 0.3s ease;
+        }
+
+        .bar:hover {
+            fill: #34d399;
+        }
+
+        .bar.sampled {
+            fill: #f472b6;
+        }
+
+        .axis text {
+            fill: #a1a1aa;
+            font-size: 12px;
+        }
+
+        .axis path,
+        .axis line {
+            stroke: #4b5563;
+        }
+
+        .grid line {
+            stroke: #2d3748;
+            stroke-opacity: 0.5;
+        }
+
+        .sample-display {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .sample-display .label {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .sample-display .token {
+            font-size: 3rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: #f472b6;
+        }
+
+        .sample-display .prob {
+            color: #22d3ee;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-sample {
+            background: linear-gradient(135deg, #f472b6, #ec4899);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-sample:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.4);
+        }
+
+        .distribution-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-card .label {
+            color: #a1a1aa;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .info-card .value {
+            font-size: 1.2rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        .info-card .entropy {
+            color: #34d399;
+        }
+
+        .info-card .max-prob {
+            color: #22d3ee;
+        }
+
+        .info-card .effective {
+            color: #f472b6;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .explanation code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: #22d3ee;
+        }
+
+        .presets {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #a1a1aa;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(34, 211, 238, 0.2);
+            border-color: rgba(34, 211, 238, 0.3);
+            color: #22d3ee;
+        }
+
+        .formula {
+            font-family: 'Monaco', 'Consolas', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .formula .frac {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .formula .num {
+            border-bottom: 1px solid #a1a1aa;
+            padding: 0 5px;
+        }
+
+        .formula .den {
+            padding: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Temperature Sampling Explorer</h1>
+            <p class="subtitle">Visualize how temperature affects probability distributions — from Stage 1</p>
+        </header>
+
+        <div class="panel">
+            <h2>Base Distribution</h2>
+            <p style="color: #a1a1aa; margin-bottom: 15px;">
+                This is the original probability distribution for the next token.
+                Adjust the sliders to see how temperature transforms it.
+            </p>
+
+            <div class="presets">
+                <button class="preset-btn" onclick="setPreset('uniform')">Uniform</button>
+                <button class="preset-btn" onclick="setPreset('peaked')">Peaked</button>
+                <button class="preset-btn" onclick="setPreset('bimodal')">Bimodal</button>
+                <button class="preset-btn" onclick="setPreset('realistic')">Realistic LM</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Temperature Control</h2>
+
+            <div class="formula">
+                P<sub>T</sub>(token) =
+                <span class="frac">
+                    <span class="num">P(token)<sup>1/T</sup></span>
+                    <br>
+                    <span class="den">Σ P(t)<sup>1/T</sup></span>
+                </span>
+            </div>
+
+            <div class="slider-group">
+                <label>
+                    <span>Temperature (T)</span>
+                    <span class="value" id="temp-value">1.00</span>
+                </label>
+                <input type="range" id="temperature" min="0.1" max="3" step="0.05" value="1" oninput="updateTemperature()">
+            </div>
+
+            <div class="distribution-info">
+                <div class="info-card">
+                    <div class="label">Entropy (bits)</div>
+                    <div class="value entropy" id="entropy">0.00</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Max Probability</div>
+                    <div class="value max-prob" id="max-prob">0%</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Effective Vocab</div>
+                    <div class="value effective" id="effective">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Probability Distribution</h2>
+            <div class="chart-container">
+                <svg id="chart"></svg>
+            </div>
+
+            <button class="btn btn-sample" onclick="sampleToken()">Sample Token</button>
+
+            <div class="sample-display" id="sample-display" style="display: none;">
+                <div class="label">Sampled Token</div>
+                <div class="token" id="sampled-token">A</div>
+                <div class="prob" id="sampled-prob">Probability: 0%</div>
+            </div>
+        </div>
+
+        <div class="panel explanation" id="explanation">
+            <strong>Temperature = 1.0:</strong> Original distribution unchanged.
+            <br><br>
+            Try moving the slider to see how temperature affects the distribution:
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li><code>T &lt; 1</code>: Distribution becomes sharper (more deterministic)</li>
+                <li><code>T &gt; 1</code>: Distribution becomes flatter (more random)</li>
+                <li><code>T → 0</code>: Approaches greedy sampling (always pick the most likely)</li>
+                <li><code>T → ∞</code>: Approaches uniform random sampling</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+    // Vocabulary (letters for simplicity)
+    const vocab = 'ABCDEFGHIJ'.split('');
+
+    // Base probabilities (can be changed with presets)
+    let baseProbs = [0.25, 0.20, 0.15, 0.12, 0.10, 0.07, 0.05, 0.03, 0.02, 0.01];
+
+    // Current temperature-adjusted probabilities
+    let currentProbs = [...baseProbs];
+
+    // Last sampled index
+    let lastSampled = -1;
+
+    // Apply temperature to probabilities
+    function applyTemperature(probs, T) {
+        if (T === 0) {
+            // Greedy: put all probability on max
+            const maxIdx = probs.indexOf(Math.max(...probs));
+            return probs.map((_, i) => i === maxIdx ? 1 : 0);
+        }
+
+        // Apply temperature: P^(1/T), then renormalize
+        const scaled = probs.map(p => Math.pow(p, 1 / T));
+        const sum = scaled.reduce((a, b) => a + b, 0);
+        return scaled.map(p => p / sum);
+    }
+
+    // Calculate entropy in bits
+    function entropy(probs) {
+        return -probs.reduce((sum, p) => {
+            if (p > 0) {
+                return sum + p * Math.log2(p);
+            }
+            return sum;
+        }, 0);
+    }
+
+    // Calculate perplexity (effective vocabulary size)
+    function perplexity(probs) {
+        return Math.pow(2, entropy(probs));
+    }
+
+    // Initialize chart
+    let svg, xScale, yScale, bars;
+    const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+
+    function initChart() {
+        svg = d3.select('#chart');
+        const container = svg.node().parentElement;
+        const width = container.clientWidth;
+        const height = 300;
+
+        svg.attr('width', width).attr('height', height);
+        svg.selectAll('*').remove();
+
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+
+        const g = svg.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+        // Scales
+        xScale = d3.scaleBand()
+            .domain(vocab)
+            .range([0, chartWidth])
+            .padding(0.2);
+
+        yScale = d3.scaleLinear()
+            .domain([0, 0.5])
+            .range([chartHeight, 0]);
+
+        // Grid lines
+        g.append('g')
+            .attr('class', 'grid')
+            .call(d3.axisLeft(yScale)
+                .tickSize(-chartWidth)
+                .tickFormat('')
+                .ticks(5));
+
+        // X axis
+        g.append('g')
+            .attr('class', 'axis x-axis')
+            .attr('transform', `translate(0, ${chartHeight})`)
+            .call(d3.axisBottom(xScale));
+
+        // Y axis
+        g.append('g')
+            .attr('class', 'axis y-axis')
+            .call(d3.axisLeft(yScale)
+                .tickFormat(d => `${(d * 100).toFixed(0)}%`)
+                .ticks(5));
+
+        // Y axis label
+        g.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', -40)
+            .attr('x', -chartHeight / 2)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#a1a1aa')
+            .text('Probability');
+
+        // Bars
+        bars = g.selectAll('.bar')
+            .data(currentProbs)
+            .enter()
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('x', (d, i) => xScale(vocab[i]))
+            .attr('width', xScale.bandwidth())
+            .attr('y', d => yScale(d))
+            .attr('height', d => chartHeight - yScale(d));
+    }
+
+    function updateChart() {
+        const chartHeight = 300 - margin.top - margin.bottom;
+
+        // Update y scale domain based on max probability
+        const maxProb = Math.max(...currentProbs, 0.5);
+        yScale.domain([0, Math.min(1, maxProb * 1.2)]);
+
+        // Update y axis
+        svg.select('.y-axis')
+            .transition()
+            .duration(300)
+            .call(d3.axisLeft(yScale)
+                .tickFormat(d => `${(d * 100).toFixed(0)}%`)
+                .ticks(5));
+
+        // Update bars
+        svg.selectAll('.bar')
+            .data(currentProbs)
+            .transition()
+            .duration(300)
+            .attr('y', d => yScale(d))
+            .attr('height', d => chartHeight - yScale(d))
+            .attr('class', (d, i) => i === lastSampled ? 'bar sampled' : 'bar');
+    }
+
+    function updateTemperature() {
+        const T = parseFloat(document.getElementById('temperature').value);
+        document.getElementById('temp-value').textContent = T.toFixed(2);
+
+        currentProbs = applyTemperature(baseProbs, T);
+        updateChart();
+        updateStats();
+        updateExplanation(T);
+        lastSampled = -1;
+    }
+
+    function updateStats() {
+        const H = entropy(currentProbs);
+        const ppl = perplexity(currentProbs);
+        const maxP = Math.max(...currentProbs);
+
+        document.getElementById('entropy').textContent = H.toFixed(2);
+        document.getElementById('max-prob').textContent = `${(maxP * 100).toFixed(1)}%`;
+        document.getElementById('effective').textContent = ppl.toFixed(1);
+    }
+
+    function updateExplanation(T) {
+        let text;
+        if (T < 0.3) {
+            text = `<strong>Temperature = ${T.toFixed(2)} (Very Low):</strong> Nearly greedy sampling.
+                    The distribution is extremely peaked—almost always picks the most likely token.
+                    <br><br>
+                    <em>Use case:</em> When you want deterministic, predictable outputs.`;
+        } else if (T < 0.7) {
+            text = `<strong>Temperature = ${T.toFixed(2)} (Low):</strong> The distribution is sharper than original.
+                    Higher probability tokens become even more likely.
+                    <br><br>
+                    <em>Use case:</em> Coherent text generation with some variety.`;
+        } else if (T < 1.3) {
+            text = `<strong>Temperature = ${T.toFixed(2)} (Normal):</strong> Close to the original distribution.
+                    ${T === 1 ? 'At T=1, the distribution is unchanged.' : ''}
+                    <br><br>
+                    <em>Use case:</em> Balanced sampling for most applications.`;
+        } else if (T < 2) {
+            text = `<strong>Temperature = ${T.toFixed(2)} (High):</strong> The distribution is flatter.
+                    Lower probability tokens get a fighting chance.
+                    <br><br>
+                    <em>Use case:</em> Creative writing, brainstorming, more diverse outputs.`;
+        } else {
+            text = `<strong>Temperature = ${T.toFixed(2)} (Very High):</strong> Almost uniform distribution.
+                    All tokens have similar probability—very random!
+                    <br><br>
+                    <em>Use case:</em> Maximum randomness (rarely used in practice).`;
+        }
+        document.getElementById('explanation').innerHTML = text;
+    }
+
+    function sampleToken() {
+        // Sample from the distribution
+        const r = Math.random();
+        let cumsum = 0;
+        let sampledIdx = 0;
+
+        for (let i = 0; i < currentProbs.length; i++) {
+            cumsum += currentProbs[i];
+            if (r <= cumsum) {
+                sampledIdx = i;
+                break;
+            }
+        }
+
+        lastSampled = sampledIdx;
+        const token = vocab[sampledIdx];
+        const prob = currentProbs[sampledIdx];
+
+        document.getElementById('sample-display').style.display = 'block';
+        document.getElementById('sampled-token').textContent = token;
+        document.getElementById('sampled-prob').textContent = `Probability: ${(prob * 100).toFixed(1)}%`;
+
+        updateChart();
+    }
+
+    function setPreset(preset) {
+        switch (preset) {
+            case 'uniform':
+                baseProbs = vocab.map(() => 1 / vocab.length);
+                break;
+            case 'peaked':
+                baseProbs = [0.70, 0.10, 0.05, 0.04, 0.03, 0.03, 0.02, 0.01, 0.01, 0.01];
+                break;
+            case 'bimodal':
+                baseProbs = [0.35, 0.05, 0.05, 0.05, 0.35, 0.05, 0.03, 0.03, 0.02, 0.02];
+                break;
+            case 'realistic':
+                baseProbs = [0.25, 0.20, 0.15, 0.12, 0.10, 0.07, 0.05, 0.03, 0.02, 0.01];
+                break;
+        }
+
+        // Normalize just in case
+        const sum = baseProbs.reduce((a, b) => a + b, 0);
+        baseProbs = baseProbs.map(p => p / sum);
+
+        updateTemperature();
+    }
+
+    // Initialize
+    window.onload = () => {
+        initChart();
+        updateTemperature();
+    };
+
+    window.onresize = () => {
+        initChart();
+        updateChart();
+    };
+    </script>
+</body>
+</html>

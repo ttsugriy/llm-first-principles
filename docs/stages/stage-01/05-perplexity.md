@@ -8,11 +8,11 @@ Perplexity fixes this by converting cross-entropy into an interpretable number.
 
 **Definition**: Perplexity is the exponential of cross-entropy:
 
-$$\text{Perplexity} = 2^{H(P,Q)} = 2^{-\frac{1}{N}\sum_i \log_2 Q(x_i | \text{context})}$$
+\[\text{Perplexity} = 2^{H(P,Q)} = 2^{-\frac{1}{N}\sum_i \log_2 Q(x_i | \text{context})}\]
 
 Or equivalently, if using natural logarithms:
 
-$$\text{Perplexity} = \exp\left(-\frac{1}{N}\sum_i \ln Q(x_i | \text{context})\right)$$
+\[\text{Perplexity} = \exp\left(-\frac{1}{N}\sum_i \ln Q(x_i | \text{context})\right)\]
 
 **Why exponentiate?** To return from log-space to probability-space, giving us an interpretable number.
 
@@ -39,10 +39,10 @@ Let's prove that perplexity equals effective vocabulary size.
 **Consider a uniform distribution over K items**: Each item has probability 1/K.
 
 Cross-entropy of uniform Q on any P with support K:
-$$H = -\sum_i P(x_i) \log_2 \frac{1}{K} = -\sum_i P(x_i) \cdot (-\log_2 K) = \log_2 K$$
+\[H = -\sum_i P(x_i) \log_2 \frac{1}{K} = -\sum_i P(x_i) \cdot (-\log_2 K) = \log_2 K\]
 
 Perplexity:
-$$\text{PPL} = 2^{\log_2 K} = K$$
+\[\text{PPL} = 2^{\log_2 K} = K\]
 
 So a uniform distribution over K items has perplexity K.
 
@@ -63,10 +63,10 @@ So a uniform distribution over K items has perplexity K.
 - log₂(0.3) = -1.74
 
 **Step 2**: Average negative log-probability
-$$H = -\frac{1}{3}(-2.32 - 3.32 - 1.74) = \frac{7.38}{3} = 2.46 \text{ bits}$$
+\[H = -\frac{1}{3}(-2.32 - 3.32 - 1.74) = \frac{7.38}{3} = 2.46 \text{ bits}\]
 
 **Step 3**: Exponentiate
-$$\text{PPL} = 2^{2.46} = 5.5$$
+\[\text{PPL} = 2^{2.46} = 5.5\]
 
 **Interpretation**: On average, the model was as uncertain as choosing among 5.5 equally likely tokens.
 
@@ -99,7 +99,7 @@ Model B has much lower perplexity because it's more confident in correct answers
 **4. Infinite if any probability is 0**: If the model assigns 0 probability to an observed token, perplexity = ∞
 
 **5. Geometric mean interpretation**:
-$$\text{PPL} = \left( \prod_{i=1}^N \frac{1}{Q(x_i | \text{context})} \right)^{1/N}$$
+\[\text{PPL} = \left( \prod_{i=1}^N \frac{1}{Q(x_i | \text{context})} \right)^{1/N}\]
 
 Perplexity is the geometric mean of the inverse probabilities.
 

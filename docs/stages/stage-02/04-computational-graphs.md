@@ -119,7 +119,7 @@ For a DAG, this is always possible. We can use:
 
 This is where the chain rule comes in. For each node v:
 
-$$\frac{\partial f}{\partial v} = \sum_{c \in \text{children}(v)} \frac{\partial f}{\partial c} \cdot \frac{\partial c}{\partial v}$$
+\[\frac{\partial f}{\partial v} = \sum_{c \in \text{children}(v)} \frac{\partial f}{\partial c} \cdot \frac{\partial c}{\partial v}\]
 
 We sum over all paths from v to the output f.
 
@@ -144,7 +144,7 @@ Now backward:
 | 1 | f | ∂f/∂f = 1 | (start) |
 | 2 | a | ∂f/∂a = x = 3 | ∂(a·x)/∂a = x |
 | 3 | x | ∂f/∂x = ? | Via a: ∂f/∂a · ∂a/∂x = 3 · 1 = 3 |
-|   |   |   | Via f: ∂f/∂x · 1 = a = 5 |
+|   |   |   | Via multiplication: ∂f/∂f · ∂(a·x)/∂x = 1 · a = 5 |
 |   |   | Total: 3 + 5 = 8 | (sum paths) |
 | 4 | y | ∂f/∂y = 3 | ∂f/∂a · ∂a/∂y = 3 · 1 = 3 |
 

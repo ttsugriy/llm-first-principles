@@ -26,7 +26,7 @@ But what does "good" mean? We need a criterion for evaluating parameter choices.
 **Key idea**: A good model should assign high probability to the training data.
 
 If we observed data D, then the **likelihood** of parameters θ is:
-$$L(\theta) = P(D | \theta)$$
+\[L(\theta) = P(D | \theta)\]
 
 This reads: "The probability of observing data D, if the true parameters were θ."
 
@@ -34,13 +34,13 @@ This reads: "The probability of observing data D, if the true parameters were θ
 
 **Example**: Suppose we observed the sequence "ab" and we're learning a bigram model.
 
-$$L(\theta) = P(\text{"ab"} | \theta) = \theta_{\text{START} \rightarrow a} \cdot \theta_{a \rightarrow b} \cdot \theta_{b \rightarrow \text{END}}$$
+\[L(\theta) = P(\text{"ab"} | \theta) = \theta_{\text{START} \rightarrow a} \cdot \theta_{a \rightarrow b} \cdot \theta_{b \rightarrow \text{END}}\]
 
 If θ_{START→a} = 0.1, θ_{a→b} = 0.2, θ_{b→END} = 0.5:
-$$L(\theta) = 0.1 \times 0.2 \times 0.5 = 0.01$$
+\[L(\theta) = 0.1 \times 0.2 \times 0.5 = 0.01\]
 
 If θ_{START→a} = 0.5, θ_{a→b} = 0.8, θ_{b→END} = 0.5:
-$$L(\theta) = 0.5 \times 0.8 \times 0.5 = 0.2$$
+\[L(\theta) = 0.5 \times 0.8 \times 0.5 = 0.2\]
 
 The second parameter setting has higher likelihood—it makes the observed data more probable.
 
@@ -48,7 +48,7 @@ The second parameter setting has higher likelihood—it makes the observed data 
 
 **Principle**: Choose parameters that maximize the likelihood of the observed data.
 
-$$\theta^* = \arg\max_\theta L(\theta) = \arg\max_\theta P(D | \theta)$$
+\[\theta^* = \arg\max_\theta L(\theta) = \arg\max_\theta P(D | \theta)\]
 
 Why is this a good principle?
 1. **Intuitive**: We want a model that considers our data likely, not surprising.
@@ -58,14 +58,14 @@ Why is this a good principle?
 ## Log-Likelihood: A Computational Trick
 
 Likelihood involves products of many probabilities. For a corpus of n tokens:
-$$L(\theta) = \prod_{i=1}^{n} P(x_i | \text{context}_i; \theta)$$
+\[L(\theta) = \prod_{i=1}^{n} P(x_i | \text{context}_i; \theta)\]
 
 Products of many small numbers cause numerical problems:
 - 0.1 × 0.1 × 0.1 × ... (100 times) = 10^{-100} ≈ 0 (underflow!)
 
 **Solution**: Work with logarithms.
 
-$$\log L(\theta) = \log \prod_{i=1}^{n} P(x_i | c_i) = \sum_{i=1}^{n} \log P(x_i | c_i)$$
+\[\log L(\theta) = \log \prod_{i=1}^{n} P(x_i | c_i) = \sum_{i=1}^{n} \log P(x_i | c_i)\]
 
 **Why this works**:
 1. Log transforms products into sums (easier to compute)
@@ -96,10 +96,10 @@ The probabilities must satisfy:
 ### The Log-Likelihood
 
 The log-likelihood of the training data is:
-$$\ell(\theta) = \sum_{\text{all bigrams } (a,b) \text{ in data}} \log \theta_{a \rightarrow b}$$
+\[\ell(\theta) = \sum_{\text{all bigrams } (a,b) \text{ in data}} \log \theta_{a \rightarrow b}\]
 
 We can rewrite this by grouping identical bigrams:
-$$\ell(\theta) = \sum_{a \in V} \sum_{b \in V \cup \{\text{END}\}} \text{count}(a, b) \cdot \log \theta_{a \rightarrow b}$$
+\[\ell(\theta) = \sum_{a \in V} \sum_{b \in V \cup \{\text{END}\}} \text{count}(a, b) \cdot \log \theta_{a \rightarrow b}\]
 
 Each unique bigram (a, b) contributes count(a, b) × log θ_{a→b} to the total.
 
@@ -110,7 +110,7 @@ We want to maximize ℓ(θ) subject to the constraints Σ_b θ_{a→b} = 1.
 **Lagrange multipliers**: To optimize f(x) subject to g(x) = 0, we find where ∇f = λ∇g.
 
 For our problem, we form the Lagrangian:
-$$\mathcal{L}(\theta, \lambda) = \ell(\theta) - \sum_a \lambda_a \left( \sum_b \theta_{a \rightarrow b} - 1 \right)$$
+\[\mathcal{L}(\theta, \lambda) = \ell(\theta) - \sum_a \lambda_a \left( \sum_b \theta_{a \rightarrow b} - 1 \right)\]
 
 We have one Lagrange multiplier λₐ for each context a (one constraint per context).
 
@@ -118,7 +118,7 @@ We have one Lagrange multiplier λₐ for each context a (one constraint per con
 
 For each parameter θ_{a→b}, we take the partial derivative and set it to zero:
 
-$$\frac{\partial \mathcal{L}}{\partial \theta_{a \rightarrow b}} = \frac{\text{count}(a, b)}{\theta_{a \rightarrow b}} - \lambda_a = 0$$
+\[\frac{\partial \mathcal{L}}{\partial \theta_{a \rightarrow b}} = \frac{\text{count}(a, b)}{\theta_{a \rightarrow b}} - \lambda_a = 0\]
 
 **Derivation of ∂ℓ/∂θ_{a→b}**:
 - ℓ(θ) = Σ_{a',b'} count(a',b') · log θ_{a'→b'}
@@ -126,30 +126,30 @@ $$\frac{\partial \mathcal{L}}{\partial \theta_{a \rightarrow b}} = \frac{\text{c
 - All other terms don't involve θ_{a→b}, so their derivatives are 0
 
 From the derivative equation:
-$$\frac{\text{count}(a, b)}{\theta_{a \rightarrow b}} = \lambda_a$$
+\[\frac{\text{count}(a, b)}{\theta_{a \rightarrow b}} = \lambda_a\]
 
 Solving for θ_{a→b}:
-$$\theta_{a \rightarrow b} = \frac{\text{count}(a, b)}{\lambda_a}$$
+\[\theta_{a \rightarrow b} = \frac{\text{count}(a, b)}{\lambda_a}\]
 
 ### Finding λₐ Using the Constraint
 
 We know Σ_b θ_{a→b} = 1. Substituting:
-$$\sum_b \frac{\text{count}(a, b)}{\lambda_a} = 1$$
+\[\sum_b \frac{\text{count}(a, b)}{\lambda_a} = 1\]
 
-$$\frac{1}{\lambda_a} \sum_b \text{count}(a, b) = 1$$
+\[\frac{1}{\lambda_a} \sum_b \text{count}(a, b) = 1\]
 
-$$\frac{\text{count}(a, \cdot)}{\lambda_a} = 1$$
+\[\frac{\text{count}(a, \cdot)}{\lambda_a} = 1\]
 
-$$\lambda_a = \text{count}(a, \cdot)$$
+\[\lambda_a = \text{count}(a, \cdot)\]
 
 ### The Final Result
 
 Substituting λₐ back:
-$$\theta^*_{a \rightarrow b} = \frac{\text{count}(a, b)}{\text{count}(a, \cdot)}$$
+\[\theta^*_{a \rightarrow b} = \frac{\text{count}(a, b)}{\text{count}(a, \cdot)}\]
 
 **This is remarkable**: The optimal probability is simply the frequency!
 
-$$P^*(b | a) = \frac{\text{number of times } b \text{ follows } a}{\text{number of times } a \text{ appears}}$$
+\[P^*(b | a) = \frac{\text{number of times } b \text{ follows } a}{\text{number of times } a \text{ appears}}\]
 
 ## The Beautiful Equivalence
 
@@ -196,7 +196,7 @@ This is the highest probability this model can assign to "abab" given the constr
 
 The derivation extends naturally to order-k models:
 
-$$\theta^*_{c \rightarrow t} = \frac{\text{count}(c, t)}{\text{count}(c, \cdot)}$$
+\[\theta^*_{c \rightarrow t} = \frac{\text{count}(c, t)}{\text{count}(c, \cdot)}\]
 
 where c is a context of k tokens.
 

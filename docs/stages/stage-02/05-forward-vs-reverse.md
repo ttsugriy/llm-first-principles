@@ -33,7 +33,7 @@ To get derivatives with respect to *all* inputs, we need *n* forward passes (one
 2. For each node v in topological order:
    - Compute v's value from parents (standard forward pass)
    - Compute ∂v/∂xᵢ using chain rule:
-     $$\frac{\partial v}{\partial x_i} = \sum_{p \in \text{parents}(v)} \frac{\partial v}{\partial p} \cdot \frac{\partial p}{\partial x_i}$$
+     \[\frac{\partial v}{\partial x_i} = \sum_{p \in \text{parents}(v)} \frac{\partial v}{\partial p} \cdot \frac{\partial p}{\partial x_i}\]
 
 **Output**: ∂output/∂xᵢ
 
@@ -103,7 +103,7 @@ One backward pass gives derivatives with respect to *all* inputs!
 2. Set gradient of output to 1
 3. For each node v in reverse topological order:
    - For each parent p of v:
-     $$\frac{\partial \text{output}}{\partial p} \mathrel{+}= \frac{\partial \text{output}}{\partial v} \cdot \frac{\partial v}{\partial p}$$
+     \[\frac{\partial \text{output}}{\partial p} \mathrel{+}= \frac{\partial \text{output}}{\partial v} \cdot \frac{\partial v}{\partial p}\]
 
 **Output**: ∂output/∂(all inputs)
 
@@ -155,7 +155,7 @@ This is why backpropagation (reverse mode autodiff) is the standard for training
 
 For f: ℝⁿ → ℝᵐ, the Jacobian is an m × n matrix:
 
-$$J_{ij} = \frac{\partial f_i}{\partial x_j}$$
+\[J_{ij} = \frac{\partial f_i}{\partial x_j}\]
 
 - **Forward mode**: Computes one *column* of J per pass (how one input affects all outputs)
 - **Reverse mode**: Computes one *row* of J per pass (how all inputs affect one output)

@@ -16,7 +16,7 @@ Consider modeling the probability of the next character given the previous 10 ch
 
 With a vocabulary of |V| = 100 characters (letters, digits, punctuation, space):
 
-$$\text{Number of possible 10-character contexts} = 100^{10} = 10^{20}$$
+\[\text{Number of possible 10-character contexts} = 100^{10} = 10^{20}\]
 
 That's **100 quintillion** possible contexts.
 
@@ -59,7 +59,7 @@ For a 5-gram model on typical training data:
 
 In Stage 1, we applied Laplace smoothing:
 
-$$P(w | c) = \frac{\text{count}(c, w) + 1}{\text{count}(c) + |V|}$$
+\[P(w | c) = \frac{\text{count}(c, w) + 1}{\text{count}(c) + |V|}\]
 
 This prevents zero probabilities, but:
 - Assigns equal probability to all unseen continuations
@@ -110,7 +110,7 @@ But NOT across:
 ### What We Want
 
 We want a model where:
-$$\text{similarity}(\text{"the cat"}, \text{"the dog"}) > 0$$
+\[\text{similarity}(\text{"the cat"}, \text{"the dog"}) > 0\]
 
 And this similarity should affect predictions:
 - If we learn that "sat" often follows "the cat"
@@ -141,10 +141,10 @@ In a continuous space:
 ### The Mathematical Shift
 
 N-gram:
-$$P(w | c) = \text{table}[c][w]$$
+\[P(w | c) = \text{table}[c][w]\]
 
 Neural:
-$$P(w | c) = f_\theta(\text{embed}(c))$$
+\[P(w | c) = f_\theta(\text{embed}(c))\]
 
 Where:
 - embed(c) maps discrete context to continuous vector

@@ -74,6 +74,24 @@ To distinguish between N equally likely possibilities, you need log₂(N) yes/no
 
 So -log₂(p) = log₂(1/p) tells us: "How many yes/no questions would it take to identify this outcome among equally-likely alternatives?"
 
+## Expected Value: A Quick Review
+
+Before we define entropy, we need the concept of **expected value** (or expectation, denoted 𝔼[·]). It's the average value of a random variable, weighted by probabilities.
+
+For a discrete random variable X with distribution P:
+
+$$\mathbb{E}[X] = \sum_x x \cdot P(x)$$
+
+More generally, for any function f applied to X:
+
+$$\mathbb{E}[f(X)] = \sum_x f(x) \cdot P(x)$$
+
+**Example**: For a fair six-sided die:
+
+$$\mathbb{E}[\text{value}] = 1 \cdot \frac{1}{6} + 2 \cdot \frac{1}{6} + 3 \cdot \frac{1}{6} + 4 \cdot \frac{1}{6} + 5 \cdot \frac{1}{6} + 6 \cdot \frac{1}{6} = 3.5$$
+
+**Intuition**: If you rolled the die infinitely many times and averaged the results, you'd get 3.5.
+
 ## Entropy: Average Information
 
 If we have a random variable X with distribution P(X), the **entropy** H(X) is the expected (average) information:

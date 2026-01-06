@@ -14,6 +14,26 @@ But what does that number actually *mean*? There are two main interpretations:
 
 For language modeling, we'll mostly use the frequentist view: if we sample many sentences from English, what fraction start with "The"? That fraction is approximately P("The" is the first word).
 
+## Key Terminology
+
+Before diving into the axioms, let's define our terms:
+
+**Sample space (Ω)**: The set of all possible outcomes of a random process.
+- Example: For a coin flip, Ω = {heads, tails}
+- Example: For a die roll, Ω = {1, 2, 3, 4, 5, 6}
+
+**Event**: Any subset of the sample space—a collection of outcomes we're interested in.
+- Example: "Rolling an even number" is the event {2, 4, 6}
+
+**Mutually exclusive events**: Events that cannot both occur. If A happens, B cannot happen, and vice versa.
+- Example: "Rolling a 1" and "rolling a 6" are mutually exclusive
+- Formally: A and B are mutually exclusive if A ∩ B = ∅ (their intersection is empty)
+
+**Independent events**: Events where knowing one occurred doesn't change the probability of the other.
+- Example: Two separate coin flips are independent
+- Formally: A and B are independent if P(A|B) = P(A) and P(B|A) = P(B)
+- Equivalently: P(A ∩ B) = P(A) · P(B)
+
 ## The Three Axioms of Probability
 
 All of probability theory follows from just three axioms, formulated by Kolmogorov in 1933:

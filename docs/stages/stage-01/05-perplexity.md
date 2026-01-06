@@ -119,7 +119,7 @@ Perplexity is the geometric mean of the inverse probabilities.
 ## Perplexity on Train vs. Test
 
 **Training perplexity**: Evaluate model on data it was trained on.
-**Test perplexity**: Evaluate model on held-out data it never saw.
+**Test perplexity**: Evaluate model on **held-out data** (data set aside before training and used only for evaluation)—data the model never saw during training.
 
 **Critical insight**: Training perplexity always looks better (or equal).
 

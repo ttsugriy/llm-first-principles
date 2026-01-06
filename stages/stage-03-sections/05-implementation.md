@@ -406,7 +406,10 @@ def train(model, examples, epochs, learning_rate, print_every=100):
 
 ## Text Generation
 
-Once trained, we can generate new text:
+Once trained, we can generate new text. We use **temperature sampling** (introduced in Section 1.6) to control the randomness of generation:
+- Temperature = 1.0: Sample from the model's learned distribution
+- Temperature < 1.0: More deterministic, favors high-probability tokens
+- Temperature > 1.0: More random, explores lower-probability tokens
 
 ```python
 def generate(model, idx_to_char, char_to_idx, seed_text, length, temperature=1.0):
@@ -455,11 +458,11 @@ def generate(model, idx_to_char, char_to_idx, seed_text, length, temperature=1.0
 
 ## Putting It All Together
 
-Here's a complete training script:
+Here's a complete training script. The configuration values at the top are **hyperparameters**—settings we choose before training (as opposed to **parameters** like weights, which are learned during training). Common hyperparameters include learning rate, batch size, number of layers, and hidden dimensions.
 
 ```python
 def main():
-    # Hyperparameters
+    # Hyperparameters (configuration choices, not learned)
     CONTEXT_LENGTH = 8
     EMBED_DIM = 32
     HIDDEN_DIM = 128

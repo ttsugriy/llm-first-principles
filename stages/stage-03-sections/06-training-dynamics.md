@@ -34,7 +34,7 @@ Real networks have millions of parameters—the surface is in million-dimensiona
 
 **Non-convex**: Multiple local minima. No guarantee of finding the global minimum.
 
-**High-dimensional**: In high dimensions, most critical points are saddle points, not local minima. This is actually good—harder to get stuck.
+**High-dimensional**: In high dimensions, most critical points are saddle points (points where the gradient is zero but the surface curves up in some directions and down in others—neither a minimum nor maximum), not local minima. This is actually good—harder to get stuck.
 
 **Flat regions**: Some directions have near-zero gradient. Training can plateau.
 
@@ -283,6 +283,13 @@ def init_weights(shape, activation='relu'):
 ## Batching
 
 Processing one example at a time is inefficient and noisy.
+
+**Key terminology**:
+- **Mini-batch**: A subset of training examples processed together before updating parameters
+- **Epoch**: One complete pass through all training examples
+- **Iteration/Step**: One parameter update (processing one mini-batch)
+
+If you have 1000 training examples and batch size 100, then 1 epoch = 10 iterations.
 
 ### Mini-Batch Gradient Descent
 

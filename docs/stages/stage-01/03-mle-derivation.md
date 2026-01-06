@@ -57,6 +57,7 @@ The second parameter setting has higher likelihood—it makes the observed data 
 
 $$\theta^* = \arg\max_\theta L(\theta) = \arg\max_\theta P(D | \theta)$$
 
+**Reading this notation**: "arg max" (short for "argument of the maximum") means "the value of θ that makes L(θ) as large as possible." Think of it as "the input that maximizes the output."
 
 Why is this a good principle?
 1. **Intuitive**: We want a model that considers our data likely, not surprising.

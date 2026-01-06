@@ -104,7 +104,7 @@ $$\sigma(x) = \frac{1}{1 + e^{-x}}$$
 
 
 - Outputs between 0 and 1
-- Historically popular, less used now (vanishing gradients)
+- Historically popular, less used now due to **vanishing gradients**: sigmoid's derivative is at most 0.25, so when gradients pass through many sigmoid layers, they shrink exponentially (0.25 × 0.25 × ... → 0), making early layers learn very slowly
 
 **Tanh**:
 

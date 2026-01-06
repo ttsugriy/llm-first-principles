@@ -4,6 +4,45 @@ We've covered the theory: derivatives, the chain rule, computational graphs, and
 
 **By the end of this section, you'll have working code that can differentiate arbitrary compositions of operations—the same capability that powers PyTorch and TensorFlow.**
 
+## Python Prerequisites
+
+This section uses several Python features that you should understand:
+
+**Operator overloading** (`__add__`, `__mul__`, etc.): Python lets classes define how operators work on their instances. When you write `a + b`, Python actually calls `a.__add__(b)`. By defining these "magic methods," we can make our Value class work with `+`, `-`, `*`, `/`, and `**`.
+
+```python
+class Example:
+    def __init__(self, x):
+        self.x = x
+
+    def __add__(self, other):
+        # Called when we write: example + something
+        return Example(self.x + other.x)
+```
+
+**Closures**: A function that "remembers" variables from its enclosing scope. This is crucial for our `_backward` functions:
+
+```python
+def make_multiplier(n):
+    def multiply(x):
+        return x * n  # 'n' is remembered from enclosing scope
+    return multiply
+
+times_5 = make_multiplier(5)
+print(times_5(3))  # Prints 15
+```
+
+In our autograd, each operation creates a `_backward` function that remembers which Values were involved—this is a closure.
+
+**isinstance()**: Checks if an object is of a certain type. We use it to handle both Value objects and raw Python numbers:
+
+```python
+if isinstance(other, Value):
+    # other is already a Value
+else:
+    other = Value(other)  # wrap it
+```
+
 ## Design Goals
 
 Our autograd system will:

@@ -369,6 +369,13 @@ print(f"Train perplexity: {train_ppl:.2f}")
 
 ## Time and Space Complexity
 
+We use **Big-O notation** to describe how algorithms scale with input size. This notation captures the growth rate, ignoring constant factors:
+
+- **O(1)**: Constant time—same speed regardless of input size (e.g., dictionary lookup)
+- **O(n)**: Linear time—doubles when input doubles (e.g., scanning a list)
+- **O(n²)**: Quadratic time—4× slower when input doubles (e.g., nested loops)
+- **O(|V|^k)**: Exponential in k—explodes quickly as k grows
+
 **Training**:
 - Time: O(n) where n = length of training data
 - Space: O(|V|^k) worst case, but typically O(n) in practice (sparse)

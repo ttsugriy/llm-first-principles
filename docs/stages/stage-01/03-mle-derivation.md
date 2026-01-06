@@ -1,5 +1,7 @@
 # Section 1.3: Learning from Data — Maximum Likelihood Estimation
 
+*Reading time: 18 minutes | Difficulty: ★★★☆☆*
+
 We have a model structure (Markov chain) with parameters θ (transition probabilities). Now we need to learn those parameters from data.
 
 This section derives *from first principles* why counting is the optimal way to estimate probabilities, and proves it rigorously using calculus.
@@ -250,6 +252,42 @@ This means any text containing "xz" gets probability 0, which means:
 - **Interpolation**: Weighted combination of n-gram orders
 
 For now, we note this limitation and move on.
+
+!!! info "Connection to Modern LLMs"
+
+    Neural language models like GPT-4 and Claude also use maximum likelihood training! The objective is the same: maximize P(training data | parameters).
+
+    The difference is *how* probabilities are computed:
+    - Markov: P(next|context) = count ratio (closed-form solution)
+    - Neural: P(next|context) = softmax(neural_network(context))
+
+    Since neural networks don't have a closed-form MLE solution, we use gradient descent. But the objective being optimized is the same log-likelihood we derived here. Cross-entropy loss = negative log-likelihood.
+
+!!! note "Historical Note: Fisher and MLE (1912-1922)"
+
+    Maximum likelihood estimation was developed by Ronald Fisher in the early 20th century. Fisher showed that MLE estimators have optimal properties: they're consistent (converge to true values), asymptotically efficient (minimum variance for large samples), and asymptotically normal.
+
+    The use of Lagrange multipliers for constrained optimization dates back to Joseph-Louis Lagrange's work in 1788, originally developed for mechanics problems.
+
+!!! warning "Common Mistake: Forgetting the Normalization Constraint"
+
+    A frequent error when implementing MLE by hand:
+
+    ❌ **Wrong**: Setting each θ_{a→b} = count(a,b) and forgetting to normalize
+
+    ✓ **Right**: θ_{a→b} = count(a,b) / count(a,·)
+
+    Without normalization, the "probabilities" won't sum to 1 and won't be valid probability distributions. The Lagrange multiplier in our derivation enforces this constraint.
+
+## Complexity Analysis
+
+| Operation | Time Complexity | Space Complexity |
+|-----------|----------------|------------------|
+| Count all n-grams | O(n) | O(K) |
+| Look up P(b\|a) | O(1) | — |
+| Compute log-likelihood | O(n) | O(1) |
+
+Where n = corpus length, K = number of unique n-grams observed.
 
 ## Summary
 

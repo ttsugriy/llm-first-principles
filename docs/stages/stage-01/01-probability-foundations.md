@@ -1,5 +1,7 @@
 # Section 1.1: Probability Foundations
 
+*Reading time: 15 minutes | Difficulty: ★★☆☆☆*
+
 Before we can build a language model, we need to understand probability. Not just use it—*understand* it. This section builds the foundation everything else rests on.
 
 ## What is Probability?
@@ -247,6 +249,29 @@ flowchart TB
 We've converted the problem of assigning probability to an entire sentence into a sequence of next-word predictions. This is the **autoregressive factorization**.
 
 The term "autoregressive" means the model predicts each element based on previous elements—it regresses on its own past outputs.
+
+!!! info "Connection to Modern LLMs"
+
+    GPT-4, Claude, LLaMA, and every other modern language model uses exactly this autoregressive factorization. When you chat with ChatGPT, it's computing:
+
+    P(response) = P(word₁) × P(word₂|word₁) × P(word₃|word₁,word₂) × ...
+
+    The mathematics is identical to what we derived here. The only difference is *how* each conditional probability P(next|context) is computed—Markov models use counting, transformers use neural networks.
+
+!!! note "Historical Note: Kolmogorov and the Axioms (1933)"
+
+    The three axioms of probability were formalized by Andrey Kolmogorov in his 1933 monograph "Foundations of the Theory of Probability." Before Kolmogorov, probability was often treated intuitively without rigorous foundations.
+
+    Kolmogorov's axioms unified different approaches (frequentist, Bayesian) under a single mathematical framework. The chain rule we derived follows directly from these axioms—it's not an approximation or heuristic, but a mathematical identity.
+
+!!! warning "Common Mistake: Confusing Independence and Mutual Exclusivity"
+
+    These are often confused:
+
+    - **Mutually exclusive**: A and B cannot both happen. P(A ∩ B) = 0.
+    - **Independent**: Knowing A doesn't change probability of B. P(A|B) = P(A).
+
+    If A and B are mutually exclusive and both have non-zero probability, they are **not** independent! Knowing A happened tells you B definitely didn't.
 
 ## Summary
 

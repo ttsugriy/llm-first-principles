@@ -1,0 +1,74 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'code/**'
+      - 'benchmarks/**'
+      - '.github/workflows/tests.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'code/**'
+      - 'benchmarks/**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install matplotlib numpy
+
+      - name: Run Stage 1 tests
+        run: |
+          cd code/stage-01
+          python tests/test_markov.py
+
+      - name: Run Stage 4 tests
+        run: |
+          cd code/stage-04
+          python tests/test_optimizers.py
+
+      - name: Run benchmarks (smoke test)
+        run: |
+          cd benchmarks
+          python run_benchmarks.py | head -50
+
+      - name: Verify data utilities
+        run: |
+          cd code/stage-01
+          python -c "from data import prepare_data, get_sample_data; train, test, stats = prepare_data(get_sample_data()); print(f'Vocab: {stats[\"vocab_size\"]}, Train: {len(train)}, Test: {len(test)}')"
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile code/stage-01/markov.py
+          python -m py_compile code/stage-01/evaluate.py
+          python -m py_compile code/stage-01/generate.py
+          python -m py_compile code/stage-01/data.py
+          python -m py_compile code/stage-04/optimizers.py
+          python -m py_compile benchmarks/run_benchmarks.py

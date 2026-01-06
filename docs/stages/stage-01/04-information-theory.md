@@ -1,5 +1,7 @@
 # Section 1.4: Information Theory Foundations
 
+*Reading time: 16 minutes | Difficulty: ★★★☆☆*
+
 To properly understand how to measure model quality, we need information theory. This section derives the key concepts from first principles, explaining *why* logarithms appear everywhere in machine learning.
 
 ## The Core Question: What is Information?

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Descent Visualizer</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #333;
+        }
+        h1 {
+            color: #1a1a2e;
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 10px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .main-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .control-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        select, input[type="range"], button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        .range-value {
+            text-align: center;
+            font-family: monospace;
+            color: #666;
+            margin-top: 5px;
+        }
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #4338ca;
+        }
+        button.secondary {
+            background: #6b7280;
+        }
+        button.secondary:hover {
+            background: #4b5563;
+        }
+        #visualization {
+            width: 100%;
+            height: 500px;
+        }
+        .legend {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 13px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 3px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        .stats {
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            font-family: monospace;
+        }
+        .info-box {
+            background: #e0e7ff;
+            border-left: 4px solid #4f46e5;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gradient Descent Visualizer</h1>
+
+    <div class="info-box">
+        Visualize how different optimizers navigate loss landscapes. Click on the contour plot to set a starting point, then watch the optimization path unfold.
+    </div>
+
+    <div class="container">
+        <div class="main-panel">
+            <div id="visualization"></div>
+        </div>
+
+        <div class="control-panel">
+            <div class="control-group">
+                <label>Loss Function</label>
+                <select id="loss-function">
+                    <option value="quadratic">Quadratic Bowl</option>
+                    <option value="elongated">Elongated Valley (High Condition Number)</option>
+                    <option value="rosenbrock">Rosenbrock (Curved Valley)</option>
+                    <option value="saddle">Saddle Point</option>
+                    <option value="rastrigin">Rastrigin (Many Local Minima)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Optimizer</label>
+                <select id="optimizer">
+                    <option value="sgd">SGD</option>
+                    <option value="momentum">SGD + Momentum</option>
+                    <option value="nesterov">Nesterov Momentum</option>
+                    <option value="rmsprop">RMSprop</option>
+                    <option value="adam" selected>Adam</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Learning Rate</label>
+                <input type="range" id="learning-rate" min="-4" max="0" step="0.1" value="-2">
+                <div class="range-value" id="lr-value">0.01</div>
+            </div>
+
+            <div class="control-group">
+                <label>Momentum (β₁)</label>
+                <input type="range" id="momentum" min="0" max="0.99" step="0.01" value="0.9">
+                <div class="range-value" id="momentum-value">0.9</div>
+            </div>
+
+            <div class="control-group">
+                <label>RMSprop Decay (β₂)</label>
+                <input type="range" id="beta2" min="0.9" max="0.999" step="0.001" value="0.999">
+                <div class="range-value" id="beta2-value">0.999</div>
+            </div>
+
+            <div class="control-group">
+                <label>Max Steps</label>
+                <input type="range" id="max-steps" min="10" max="500" step="10" value="200">
+                <div class="range-value" id="steps-value">200</div>
+            </div>
+
+            <button id="run-btn">Run Optimization</button>
+            <button id="step-btn" class="secondary">Step Once</button>
+            <button id="reset-btn" class="secondary">Reset</button>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ef4444;"></div>
+                    <span>Optimization Path</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #22c55e; width: 10px; height: 10px; border-radius: 50%;"></div>
+                    <span>Start Point</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #3b82f6; width: 10px; height: 10px; border-radius: 50%;"></div>
+                    <span>Current Position</span>
+                </div>
+            </div>
+
+            <div class="stats" id="stats">
+                <div class="stats-row"><span>Step:</span><span id="stat-step">0</span></div>
+                <div class="stats-row"><span>Loss:</span><span id="stat-loss">-</span></div>
+                <div class="stats-row"><span>Grad Norm:</span><span id="stat-grad">-</span></div>
+                <div class="stats-row"><span>Position:</span><span id="stat-pos">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Loss functions and their gradients
+        const lossFunctions = {
+            quadratic: {
+                fn: (x, y) => x*x + y*y,
+                grad: (x, y) => [2*x, 2*y],
+                range: [-3, 3],
+                optimum: [0, 0]
+            },
+            elongated: {
+                fn: (x, y) => x*x + 100*y*y,
+                grad: (x, y) => [2*x, 200*y],
+                range: [-3, 3],
+                optimum: [0, 0]
+            },
+            rosenbrock: {
+                fn: (x, y) => Math.pow(1 - x, 2) + 100 * Math.pow(y - x*x, 2),
+                grad: (x, y) => [
+                    -2*(1 - x) - 400*x*(y - x*x),
+                    200*(y - x*x)
+                ],
+                range: [-2, 2],
+                optimum: [1, 1]
+            },
+            saddle: {
+                fn: (x, y) => x*x - y*y,
+                grad: (x, y) => [2*x, -2*y],
+                range: [-3, 3],
+                optimum: [0, 0]
+            },
+            rastrigin: {
+                fn: (x, y) => 20 + (x*x - 10*Math.cos(2*Math.PI*x)) + (y*y - 10*Math.cos(2*Math.PI*y)),
+                grad: (x, y) => [
+                    2*x + 20*Math.PI*Math.sin(2*Math.PI*x),
+                    2*y + 20*Math.PI*Math.sin(2*Math.PI*y)
+                ],
+                range: [-3, 3],
+                optimum: [0, 0]
+            }
+        };
+
+        // Optimizers
+        function createOptimizer(type, lr, beta1, beta2) {
+            let m = [0, 0];
+            let v = [0, 0];
+            let t = 0;
+            const eps = 1e-8;
+
+            return {
+                step: function(grad) {
+                    t++;
+                    let update = [0, 0];
+
+                    switch(type) {
+                        case 'sgd':
+                            update = [lr * grad[0], lr * grad[1]];
+                            break;
+
+                        case 'momentum':
+                            m = [beta1 * m[0] + grad[0], beta1 * m[1] + grad[1]];
+                            update = [lr * m[0], lr * m[1]];
+                            break;
+
+                        case 'nesterov':
+                            const m_prev = [...m];
+                            m = [beta1 * m[0] + grad[0], beta1 * m[1] + grad[1]];
+                            update = [
+                                lr * (beta1 * m[0] + (1 + beta1) * (m[0] - m_prev[0])),
+                                lr * (beta1 * m[1] + (1 + beta1) * (m[1] - m_prev[1]))
+                            ];
+                            break;
+
+                        case 'rmsprop':
+                            v = [
+                                beta2 * v[0] + (1 - beta2) * grad[0] * grad[0],
+                                beta2 * v[1] + (1 - beta2) * grad[1] * grad[1]
+                            ];
+                            update = [
+                                lr * grad[0] / (Math.sqrt(v[0]) + eps),
+                                lr * grad[1] / (Math.sqrt(v[1]) + eps)
+                            ];
+                            break;
+
+                        case 'adam':
+                            m = [
+                                beta1 * m[0] + (1 - beta1) * grad[0],
+                                beta1 * m[1] + (1 - beta1) * grad[1]
+                            ];
+                            v = [
+                                beta2 * v[0] + (1 - beta2) * grad[0] * grad[0],
+                                beta2 * v[1] + (1 - beta2) * grad[1] * grad[1]
+                            ];
+                            const mHat = [m[0] / (1 - Math.pow(beta1, t)), m[1] / (1 - Math.pow(beta1, t))];
+                            const vHat = [v[0] / (1 - Math.pow(beta2, t)), v[1] / (1 - Math.pow(beta2, t))];
+                            update = [
+                                lr * mHat[0] / (Math.sqrt(vHat[0]) + eps),
+                                lr * mHat[1] / (Math.sqrt(vHat[1]) + eps)
+                            ];
+                            break;
+                    }
+
+                    return update;
+                },
+                reset: function() {
+                    m = [0, 0];
+                    v = [0, 0];
+                    t = 0;
+                }
+            };
+        }
+
+        // Visualization
+        const width = 600;
+        const height = 500;
+        const margin = {top: 20, right: 20, bottom: 40, left: 50};
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const svg = d3.select('#visualization')
+            .append('svg')
+            .attr('width', '100%')
+            .attr('height', height)
+            .attr('viewBox', `0 0 ${width} ${height}`);
+
+        const g = svg.append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        // Tooltip
+        const tooltip = d3.select('body').append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+
+        let currentLossFunc = 'quadratic';
+        let path = [];
+        let startPoint = [2, 2];
+        let currentPoint = [...startPoint];
+        let optimizer = null;
+        let isRunning = false;
+        let animationId = null;
+
+        function getParams() {
+            const lr = Math.pow(10, parseFloat(document.getElementById('learning-rate').value));
+            const beta1 = parseFloat(document.getElementById('momentum').value);
+            const beta2 = parseFloat(document.getElementById('beta2').value);
+            const optType = document.getElementById('optimizer').value;
+            const maxSteps = parseInt(document.getElementById('max-steps').value);
+            return {lr, beta1, beta2, optType, maxSteps};
+        }
+
+        function updateContourPlot() {
+            const lf = lossFunctions[currentLossFunc];
+            const range = lf.range;
+
+            const x = d3.scaleLinear().domain(range).range([0, plotWidth]);
+            const y = d3.scaleLinear().domain(range).range([plotHeight, 0]);
+
+            // Generate contour data
+            const n = 100;
+            const values = new Array(n * n);
+            for (let j = 0, k = 0; j < n; j++) {
+                for (let i = 0; i < n; i++, k++) {
+                    const xi = range[0] + (range[1] - range[0]) * i / (n - 1);
+                    const yi = range[0] + (range[1] - range[0]) * j / (n - 1);
+                    values[k] = lf.fn(xi, yi);
+                }
+            }
+
+            // Create contour generator
+            const contours = d3.contours()
+                .size([n, n])
+                .thresholds(20);
+
+            const contourData = contours(values);
+
+            // Scale contour coordinates
+            const pathGenerator = d3.geoPath()
+                .projection(d3.geoTransform({
+                    point: function(px, py) {
+                        this.stream.point(
+                            x(range[0] + (range[1] - range[0]) * px / (n - 1)),
+                            y(range[0] + (range[1] - range[0]) * py / (n - 1))
+                        );
+                    }
+                }));
+
+            // Color scale
+            const maxVal = d3.max(values);
+            const color = d3.scaleSequential(d3.interpolateViridis)
+                .domain([0, Math.log(maxVal + 1)]);
+
+            // Clear and draw contours
+            g.selectAll('.contour').remove();
+            g.selectAll('.contour')
+                .data(contourData)
+                .enter()
+                .append('path')
+                .attr('class', 'contour')
+                .attr('d', pathGenerator)
+                .attr('fill', d => color(Math.log(d.value + 1)))
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 0.5)
+                .attr('stroke-opacity', 0.3);
+
+            // Draw optimum
+            g.selectAll('.optimum').remove();
+            g.append('circle')
+                .attr('class', 'optimum')
+                .attr('cx', x(lf.optimum[0]))
+                .attr('cy', y(lf.optimum[1]))
+                .attr('r', 6)
+                .attr('fill', 'none')
+                .attr('stroke', '#fbbf24')
+                .attr('stroke-width', 2);
+
+            // Axes
+            g.selectAll('.axis').remove();
+            g.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${plotHeight})`)
+                .call(d3.axisBottom(x));
+
+            g.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(y));
+
+            // Click handler to set start point
+            g.selectAll('.click-area').remove();
+            g.append('rect')
+                .attr('class', 'click-area')
+                .attr('width', plotWidth)
+                .attr('height', plotHeight)
+                .attr('fill', 'transparent')
+                .on('click', function(event) {
+                    const [mx, my] = d3.pointer(event);
+                    startPoint = [x.invert(mx), y.invert(my)];
+                    resetOptimization();
+                    drawPath();
+                });
+
+            return {x, y};
+        }
+
+        function drawPath() {
+            const lf = lossFunctions[currentLossFunc];
+            const scales = updateContourPlot();
+
+            // Draw path
+            g.selectAll('.opt-path').remove();
+            if (path.length > 1) {
+                const line = d3.line()
+                    .x(d => scales.x(d[0]))
+                    .y(d => scales.y(d[1]));
+
+                g.append('path')
+                    .attr('class', 'opt-path')
+                    .attr('d', line(path))
+                    .attr('fill', 'none')
+                    .attr('stroke', '#ef4444')
+                    .attr('stroke-width', 2)
+                    .attr('stroke-linecap', 'round');
+            }
+
+            // Draw points
+            g.selectAll('.path-point').remove();
+
+            // Start point
+            g.append('circle')
+                .attr('class', 'path-point')
+                .attr('cx', scales.x(startPoint[0]))
+                .attr('cy', scales.y(startPoint[1]))
+                .attr('r', 6)
+                .attr('fill', '#22c55e');
+
+            // Current point
+            if (path.length > 0) {
+                const last = path[path.length - 1];
+                g.append('circle')
+                    .attr('class', 'path-point')
+                    .attr('cx', scales.x(last[0]))
+                    .attr('cy', scales.y(last[1]))
+                    .attr('r', 6)
+                    .attr('fill', '#3b82f6');
+            }
+
+            // Update stats
+            updateStats();
+        }
+
+        function updateStats() {
+            const lf = lossFunctions[currentLossFunc];
+            document.getElementById('stat-step').textContent = path.length;
+
+            if (path.length > 0) {
+                const pos = path[path.length - 1];
+                const loss = lf.fn(pos[0], pos[1]);
+                const grad = lf.grad(pos[0], pos[1]);
+                const gradNorm = Math.sqrt(grad[0]*grad[0] + grad[1]*grad[1]);
+
+                document.getElementById('stat-loss').textContent = loss.toFixed(6);
+                document.getElementById('stat-grad').textContent = gradNorm.toFixed(6);
+                document.getElementById('stat-pos').textContent = `(${pos[0].toFixed(3)}, ${pos[1].toFixed(3)})`;
+            } else {
+                document.getElementById('stat-loss').textContent = '-';
+                document.getElementById('stat-grad').textContent = '-';
+                document.getElementById('stat-pos').textContent = '-';
+            }
+        }
+
+        function resetOptimization() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            isRunning = false;
+            currentPoint = [...startPoint];
+            path = [[...startPoint]];
+            const params = getParams();
+            optimizer = createOptimizer(params.optType, params.lr, params.beta1, params.beta2);
+        }
+
+        function stepOptimization() {
+            const lf = lossFunctions[currentLossFunc];
+            const params = getParams();
+
+            const grad = lf.grad(currentPoint[0], currentPoint[1]);
+            const update = optimizer.step(grad);
+
+            currentPoint[0] -= update[0];
+            currentPoint[1] -= update[1];
+
+            // Clamp to range
+            const range = lf.range;
+            currentPoint[0] = Math.max(range[0], Math.min(range[1], currentPoint[0]));
+            currentPoint[1] = Math.max(range[0], Math.min(range[1], currentPoint[1]));
+
+            path.push([...currentPoint]);
+            drawPath();
+
+            // Check convergence
+            const gradNorm = Math.sqrt(grad[0]*grad[0] + grad[1]*grad[1]);
+            return gradNorm > 1e-8 && path.length < params.maxSteps;
+        }
+
+        function runOptimization() {
+            if (isRunning) {
+                isRunning = false;
+                if (animationId) cancelAnimationFrame(animationId);
+                return;
+            }
+
+            isRunning = true;
+
+            function animate() {
+                if (!isRunning) return;
+
+                const shouldContinue = stepOptimization();
+
+                if (shouldContinue) {
+                    animationId = requestAnimationFrame(animate);
+                } else {
+                    isRunning = false;
+                }
+            }
+
+            animate();
+        }
+
+        // Event listeners
+        document.getElementById('loss-function').addEventListener('change', (e) => {
+            currentLossFunc = e.target.value;
+            const lf = lossFunctions[currentLossFunc];
+            startPoint = [lf.range[1] * 0.7, lf.range[1] * 0.7];
+            resetOptimization();
+            drawPath();
+        });
+
+        document.getElementById('optimizer').addEventListener('change', () => {
+            resetOptimization();
+            drawPath();
+        });
+
+        document.getElementById('learning-rate').addEventListener('input', (e) => {
+            const lr = Math.pow(10, parseFloat(e.target.value));
+            document.getElementById('lr-value').textContent = lr.toFixed(6);
+        });
+
+        document.getElementById('momentum').addEventListener('input', (e) => {
+            document.getElementById('momentum-value').textContent = e.target.value;
+        });
+
+        document.getElementById('beta2').addEventListener('input', (e) => {
+            document.getElementById('beta2-value').textContent = e.target.value;
+        });
+
+        document.getElementById('max-steps').addEventListener('input', (e) => {
+            document.getElementById('steps-value').textContent = e.target.value;
+        });
+
+        document.getElementById('run-btn').addEventListener('click', runOptimization);
+        document.getElementById('step-btn').addEventListener('click', stepOptimization);
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            resetOptimization();
+            drawPath();
+        });
+
+        // Initialize
+        resetOptimization();
+        drawPath();
+    </script>
+</body>
+</html>

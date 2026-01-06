@@ -24,9 +24,66 @@ Explore the concepts from each stage with these interactive tools. All visualiza
 
     _From Stage 1: Markov Chains_
 
+-   :material-state-machine:{ .lg .middle } __N-gram State Machine__
+
+    ---
+
+    Visualize Markov chains as state machines. Train on custom text, watch state transitions, and generate text step-by-step.
+
+    [:octicons-arrow-right-24: Launch N-gram Visualizer](./ngram.html){ .md-button target="_blank" }
+
+    _From Stage 1: Markov Chains_
+
+-   :material-chart-line:{ .lg .middle } __Gradient Descent Visualizer__
+
+    ---
+
+    Watch optimizers navigate loss landscapes. Compare SGD, momentum, RMSprop, and Adam on different surfaces.
+
+    [:octicons-arrow-right-24: Launch Optimizer Visualizer](./optimizer.html){ .md-button target="_blank" }
+
+    _From Stage 4: Optimization_
+
 </div>
 
 ## What These Visualizations Teach
+
+### Gradient Descent Visualizer (Stage 4) — NEW
+
+The optimizer visualizer demonstrates the core concepts from Sections 4.2-4.5:
+
+- **Loss landscapes**: See how different surfaces create different optimization challenges
+- **Optimizer comparison**: Watch how SGD, momentum, and Adam behave differently
+- **Hyperparameter effects**: Explore how learning rate and momentum coefficients affect convergence
+- **Condition number**: Observe zigzagging on elongated valleys
+
+Try these experiments:
+
+| Surface | Optimizer | What it demonstrates |
+|---------|-----------|---------------------|
+| Elongated Valley | SGD | Zigzag problem, slow convergence |
+| Elongated Valley | Momentum | Dampens oscillation, faster |
+| Rosenbrock | Adam | Navigates curved valleys |
+| Saddle Point | Any | Escape behavior (or getting stuck) |
+| Rastrigin | Adam | Local minima challenges |
+
+### N-gram State Machine (Stage 1)
+
+The n-gram visualizer demonstrates the core concepts from Sections 1.1-1.3:
+
+- **State machine view**: Markov chains are finite state automata
+- **Training = counting**: Watch how observations become transition probabilities
+- **Generation**: Sample from the model one token at a time
+- **Context dependence**: See how history determines the next token distribution
+
+Try these experiments:
+
+| Training Text | What it demonstrates |
+|--------------|---------------------|
+| `abab` | Deterministic patterns |
+| `the cat sat on the mat` | Natural language structure |
+| `to be or not to be` | Repeated patterns create loops |
+| `aaaaabbbbb` | Imbalanced distributions |
 
 ### Autograd Visualizer (Stage 2)
 

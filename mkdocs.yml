@@ -63,16 +63,19 @@ extra_javascript:
 nav:
   - Home: index.md
   - Interactive Tools: interactive/index.md
+  - Glossary: glossary.md
   - Stage 1 - Markov Chains:
     - Overview: stages/stage-01/index.md
     - 1.1 Probability Foundations: stages/stage-01/01-probability-foundations.md
     - 1.2 Language Modeling Problem: stages/stage-01/02-language-modeling-problem.md
     - 1.3 MLE Derivation: stages/stage-01/03-mle-derivation.md
+    - 1.3b Smoothing: stages/stage-01/03b-smoothing.md
     - 1.4 Information Theory: stages/stage-01/04-information-theory.md
     - 1.5 Perplexity: stages/stage-01/05-perplexity.md
     - 1.6 Temperature Sampling: stages/stage-01/06-temperature-sampling.md
     - 1.7 Implementation: stages/stage-01/07-implementation.md
     - 1.8 Trade-offs: stages/stage-01/08-trade-offs.md
+    - 1.9 Why Neural Networks: stages/stage-01/09-why-neural.md
   - Stage 2 - Automatic Differentiation:
     - Overview: stages/stage-02/index.md
     - 2.1 What is a Derivative?: stages/stage-02/01-what-is-derivative.md
@@ -91,4 +94,13 @@ nav:
     - 3.5 Implementation: stages/stage-03/05-implementation.md
     - 3.6 Training Dynamics: stages/stage-03/06-training-dynamics.md
     - 3.7 Evaluation: stages/stage-03/07-evaluation.md
-  - Stage 4 - Coming Soon: stages/stage-04-preview.md
+  - Stage 4 - Optimization:
+    - Overview: stages/stage-04/index.md
+    - 4.1 The Optimization Problem: stages/stage-04/01-optimization-problem.md
+    - 4.2 Gradient Descent: stages/stage-04/02-gradient-descent.md
+    - 4.3 Stochastic Gradient Descent: stages/stage-04/03-sgd.md
+    - 4.4 Momentum: stages/stage-04/04-momentum.md
+    - 4.5 Adaptive Learning Rates: stages/stage-04/05-adaptive.md
+    - 4.6 Learning Rate Schedules: stages/stage-04/06-schedules.md
+    - 4.7 Implementation: stages/stage-04/07-implementation.md
+    - 4.8 Practical Considerations: stages/stage-04/08-practical.md

@@ -1,5 +1,7 @@
 # Section 1.2: The Language Modeling Problem
 
+*Reading time: 12 minutes | Difficulty: ★★☆☆☆*
+
 Now that we understand probability and the chain rule, let's define precisely what we're trying to build.
 
 ## What is a Language Model?

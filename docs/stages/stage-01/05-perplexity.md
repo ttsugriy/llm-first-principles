@@ -1,5 +1,7 @@
 # Section 1.5: Perplexity — The Standard Evaluation Metric
 
+*Reading time: 12 minutes | Difficulty: ★★☆☆☆*
+
 Cross-entropy is the theoretically correct metric, but it's hard to interpret. "Our model has cross-entropy 4.2 bits" doesn't mean much intuitively.
 
 Perplexity fixes this by converting cross-entropy into an interpretable number.
@@ -186,6 +188,27 @@ For Markov models, you'll observe this pattern as you increase order:
 - Test PPL then explodes (model sees unseen n-grams, assigns probability 0)
 
 This is the fundamental limitation of Markov models that we'll address with neural networks.
+
+!!! info "Connection to Modern LLMs"
+
+    Perplexity remains THE standard metric for evaluating language models. When OpenAI reports "GPT-4 achieves X perplexity on benchmark Y," they're using exactly the formula we derived here.
+
+    Modern LLM leaderboards (like the Hugging Face Open LLM Leaderboard) report perplexity alongside other metrics. A perplexity of 20 on WikiText means the model is, on average, as uncertain as choosing among 20 equally likely tokens—even though the vocabulary has 50,000+ tokens.
+
+!!! note "Historical Note: Shannon's Experiments (1951)"
+
+    Claude Shannon, the father of information theory, conducted experiments measuring the entropy of English in his 1951 paper "Prediction and Entropy of Printed English." He had humans predict the next character and measured their error rate.
+
+    Shannon estimated English has about 1.0-1.3 bits per character of entropy. This corresponds to perplexity 2.0-2.5 per character—remarkably close to what modern character-level models achieve!
+
+!!! warning "Common Mistake: Comparing Perplexities Across Different Tokenizations"
+
+    You CANNOT directly compare perplexity between:
+    - Character-level and word-level models
+    - Models with different vocabularies
+    - Different test sets
+
+    A character model with PPL=5 and word model with PPL=100 are not comparable. The character model predicts 1 character at a time; the word model predicts entire words. Always compare apples to apples.
 
 ## Summary
 

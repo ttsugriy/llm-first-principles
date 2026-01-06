@@ -1,5 +1,7 @@
 # Section 1.7: Implementation — Building It From Scratch
 
+*Reading time: 20 minutes | Difficulty: ★★★☆☆*
+
 Now we implement everything we've learned. Every line of code will be explained.
 
 ## Design Decisions

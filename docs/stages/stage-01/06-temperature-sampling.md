@@ -1,5 +1,7 @@
 # Section 1.6: Generating Text — Sampling and Temperature
 
+*Reading time: 14 minutes | Difficulty: ★★☆☆☆*
+
 We've learned how to train a model and evaluate it. Now: how do we use it to generate text?
 
 ## The Generation Problem

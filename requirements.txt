@@ -1,0 +1,14 @@
+# Core dependencies for building the book
+mkdocs>=1.5.0
+mkdocs-material>=9.0.0
+pymdown-extensions>=10.0
+
+# Optional: for benchmarks and visualizations
+matplotlib>=3.7.0
+numpy>=1.24.0
+
+# Optional: for interactive notebooks
+marimo>=0.1.0
+
+# Development
+pytest>=7.0.0

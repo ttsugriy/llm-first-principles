@@ -21,14 +21,19 @@ Let's trace through this computation:
 3. Compute f = a · x
 
 The graph:
-```
-    x ─────┬─────────┐
-           │         │
-           ▼         │
-    y ──▶ [+] ──▶ a  │
-                 │   │
-                 ▼   ▼
-                [×] ──▶ f
+
+```mermaid
+flowchart LR
+    x((x)):::input --> add["+"]
+    y((y)):::input --> add
+    add --> a((a)):::intermediate
+    a --> mul["×"]
+    x --> mul
+    mul --> f((f)):::output
+
+    classDef input fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef intermediate fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef output fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
 ```
 
 Reading the graph:
@@ -36,6 +41,8 @@ Reading the graph:
 - a depends on x and y via addition
 - f depends on a and x via multiplication
 - f is the output
+
+Note that **x appears twice** in the graph—once feeding into the addition and once feeding directly into the multiplication. This is how DAGs represent shared variables.
 
 ### Terminology
 
@@ -162,6 +169,30 @@ In the example, x contributes to f two ways:
 1. Through a (as part of x + y): contributes gradient 3
 2. Directly (as the second operand of multiplication): contributes gradient 5
 3. Total: 8
+
+```mermaid
+flowchart LR
+    subgraph "Two Paths from x to f"
+        x1((x=3)):::input --> |"Path 1"| add["+"]
+        y((y=2)):::input --> add
+        add --> a((a=5))
+        a --> |"∂f/∂a = 3"| mul["×"]
+        x2((x=3)):::input --> |"Path 2"| mul
+        mul --> f((f=15)):::output
+    end
+
+    subgraph "Gradient Accumulation"
+        G1["Path 1: ∂f/∂a × ∂a/∂x = 3 × 1 = 3"]
+        G2["Path 2: ∂f/∂f × ∂(ax)/∂x = 1 × 5 = 5"]
+        G3["Total: 3 + 5 = 8"]:::result
+        G1 --> G3
+        G2 --> G3
+    end
+
+    classDef input fill:#e3f2fd,stroke:#1976d2
+    classDef output fill:#e8f5e9,stroke:#388e3c
+    classDef result fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+```
 
 This is the multivariate chain rule in action.
 

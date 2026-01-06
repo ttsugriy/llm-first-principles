@@ -196,6 +196,54 @@ By the chain rule:
 $$= P(\text{The}) \cdot P(\text{cat}|\text{The}) \cdot P(\text{sat}|\text{The cat}) \cdot P(\text{down}|\text{The cat sat})$$
 
 
+The following diagram visualizes this decomposition:
+
+```mermaid
+flowchart LR
+    subgraph "Joint Probability"
+        J["P(The, cat, sat, down)"]
+    end
+
+    J --> M["="]
+
+    subgraph "Autoregressive Factorization"
+        direction LR
+        P1["P(The)"] --> X1["×"]
+        X1 --> P2["P(cat | The)"]
+        P2 --> X2["×"]
+        X2 --> P3["P(sat | The cat)"]
+        P3 --> X3["×"]
+        X3 --> P4["P(down | The cat sat)"]
+    end
+
+    M --> P1
+```
+
+Each factor predicts the next word given all preceding words—this is the **autoregressive** pattern:
+
+```mermaid
+flowchart TB
+    subgraph "Step 1"
+        S1["⟨START⟩"] --> |"P(The)"| W1["The"]
+    end
+
+    subgraph "Step 2"
+        S1a["⟨START⟩ The"] --> |"P(cat|The)"| W2["cat"]
+    end
+
+    subgraph "Step 3"
+        S2["The cat"] --> |"P(sat|The cat)"| W3["sat"]
+    end
+
+    subgraph "Step 4"
+        S3["The cat sat"] --> |"P(down|The cat sat)"| W4["down"]
+    end
+
+    W1 -.-> S1a
+    W2 -.-> S2
+    W3 -.-> S3
+```
+
 We've converted the problem of assigning probability to an entire sentence into a sequence of next-word predictions. This is the **autoregressive factorization**.
 
 The term "autoregressive" means the model predicts each element based on previous elements—it regresses on its own past outputs.

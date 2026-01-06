@@ -135,6 +135,39 @@ ReLU is piecewise linear:
 
 This simple nonlinearity is enough to enable universal approximation.
 
+```mermaid
+%%{init: {'theme': 'neutral'}}%%
+flowchart TB
+    subgraph "Activation Function Comparison"
+        direction LR
+
+        subgraph ReLU["ReLU: max(0, x)"]
+            R["Linear for x>0<br/>Zero for x≤0<br/>Fast, simple"]
+        end
+
+        subgraph Sigmoid["Sigmoid: 1/(1+e⁻ˣ)"]
+            S["Output: (0, 1)<br/>S-shaped<br/>Vanishing gradients"]
+        end
+
+        subgraph Tanh["Tanh"]
+            T["Output: (-1, 1)<br/>Zero-centered<br/>Better than sigmoid"]
+        end
+
+        subgraph GELU["GELU: x·Φ(x)"]
+            G["Smooth ReLU<br/>Used in Transformers<br/>Modern choice"]
+        end
+    end
+```
+
+**Why ReLU is preferred for hidden layers:**
+
+| Activation | Gradient range | Issue | Speed |
+|------------|----------------|-------|-------|
+| ReLU | 0 or 1 | Dead neurons (grad=0 forever) | Fast |
+| Sigmoid | (0, 0.25) | Vanishing gradients | Slow (exp) |
+| Tanh | (0, 1) | Vanishing gradients | Slow (exp) |
+| GELU | (0, 1+) | None major | Medium |
+
 **Derivative**:
 
 $$\frac{d}{dx}\text{ReLU}(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x < 0 \\ \text{undefined} & \text{if } x = 0 \end{cases}$$
@@ -266,6 +299,50 @@ Where:
 ## Putting It Together: The Full Architecture
 
 For a character-level language model:
+
+```mermaid
+flowchart LR
+    subgraph Input["Input: Context Window"]
+        C1["c₁"]
+        C2["c₂"]
+        C3["..."]
+        C4["c_k"]
+    end
+
+    subgraph Embed["Embedding Layer"]
+        E1["e₁<br/>(d dims)"]
+        E2["e₂"]
+        E3["..."]
+        E4["e_k"]
+    end
+
+    subgraph Concat["Concatenation"]
+        X["x<br/>(k×d dims)"]
+    end
+
+    subgraph Hidden["Hidden Layers"]
+        H1["ReLU(W₁x + b₁)<br/>(h₁ dims)"]
+        H2["ReLU(W₂h₁ + b₂)<br/>(h₂ dims)"]
+    end
+
+    subgraph Output["Output Layer"]
+        L["Logits<br/>(|V| dims)"]
+        S["Softmax"]
+        P["P(next | context)"]
+    end
+
+    C1 --> E1
+    C2 --> E2
+    C3 --> E3
+    C4 --> E4
+
+    E1 --> X
+    E2 --> X
+    E3 --> X
+    E4 --> X
+
+    X --> H1 --> H2 --> L --> S --> P
+```
 
 ### Forward Pass
 

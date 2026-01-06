@@ -13,6 +13,31 @@ Both modes compute exact derivatives. They differ in *direction*:
 | Forward | ∂(all outputs)/∂(one input) | input → output | few inputs |
 | Reverse | ∂(one output)/∂(all inputs) | output → input | few outputs |
 
+The following diagram illustrates the fundamental difference:
+
+```mermaid
+flowchart TB
+    subgraph "Forward Mode (one pass per input)"
+        direction LR
+        FI1["x₁<br/>∂·/∂x₁ = 1"]:::seed --> FG["Graph"] --> FO["∂f/∂x₁"]
+        FI2["x₂<br/>∂·/∂x₂ = 0"] --> FG
+        FI3["x₃<br/>∂·/∂x₃ = 0"] --> FG
+    end
+
+    subgraph "Reverse Mode (one pass for ALL inputs)"
+        direction LR
+        RI1["x₁"] --> RG["Graph"] --> RO["f<br/>∂f/∂f = 1"]:::seed
+        RI2["x₂"] --> RG
+        RI3["x₃"] --> RG
+        RO --> |"backward"| RR["∂f/∂x₁, ∂f/∂x₂, ∂f/∂x₃"]:::result
+    end
+
+    classDef seed fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef result fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+```
+
+**Key difference**: Forward mode requires **n passes** for n inputs. Reverse mode requires **1 pass** regardless of input count.
+
 ## Forward Mode: Intuition
 
 In forward mode, we pick one input xᵢ and compute how it affects everything downstream.
@@ -150,6 +175,20 @@ Consider a function f: ℝⁿ → ℝᵐ (n inputs, m outputs).
 - m = 1 (scalar loss)
 - Forward mode: millions of passes
 - Reverse mode: ONE pass
+
+```mermaid
+flowchart LR
+    subgraph "Neural Network: n = 1,000,000 parameters, m = 1 loss"
+        direction TB
+        FM["Forward Mode<br/>1,000,000 passes"]:::bad
+        RM["Reverse Mode<br/>1 pass"]:::good
+    end
+
+    FM --> |"1,000,000× slower"| RM
+
+    classDef bad fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+    classDef good fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+```
 
 **Reverse mode wins by a factor of n!**
 

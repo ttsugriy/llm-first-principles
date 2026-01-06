@@ -61,6 +61,24 @@ $$P(x_i | x_1, \ldots, x_{i-1}) \approx P(x_i | x_{i-k}, \ldots, x_{i-1})$$
 
 The probability of the next token depends only on the last k tokens, not the entire history.
 
+The following diagram illustrates what gets "kept" versus "discarded":
+
+```mermaid
+flowchart LR
+    subgraph "Full History (Intractable)"
+        H1["x₁"] --- H2["x₂"] --- H3["x₃"] --- H4["..."] --- H5["x_{i-2}"] --- H6["x_{i-1}"]
+    end
+    H6 --> Q["Predict x_i?"]
+
+    subgraph "Order-2 Markov (Tractable)"
+        M1["x₁"]:::discarded --- M2["x₂"]:::discarded --- M3["x₃"]:::discarded --- M4["..."]:::discarded --- M5["x_{i-2}"]:::kept --- M6["x_{i-1}"]:::kept
+    end
+    M6 --> Q2["Predict x_i"]
+
+    classDef discarded fill:#ffcccc,stroke:#cc0000,stroke-dasharray: 5 5
+    classDef kept fill:#ccffcc,stroke:#00cc00
+```
+
 **Special cases**:
 - k=1: **Bigram model**. P(xᵢ | xᵢ₋₁). Next token depends only on previous token.
 - k=2: **Trigram model**. P(xᵢ | xᵢ₋₂, xᵢ₋₁). Next token depends on previous two tokens.
@@ -100,6 +118,26 @@ Language has long-range dependencies that the Markov assumption cannot capture.
 "The cat that sat on the mat next to the dogs **was** sleeping."
 
 The verb "was" must agree with "cat" (singular), not "dogs" (the nearest noun). A bigram model seeing "dogs" would likely predict "were".
+
+```mermaid
+flowchart LR
+    subgraph "Sentence Structure"
+        W1["The"]:::neutral --> W2["cat"]:::subject
+        W2 --> W3["that sat on the mat next to the"]:::neutral
+        W3 --> W4["dogs"]:::distractor
+        W4 --> W5["???"]:::predict
+    end
+
+    W2 -.->|"Agreement needed"| W5
+    W4 -->|"Bigram only sees this"| W5
+
+    classDef subject fill:#90EE90,stroke:#006400
+    classDef distractor fill:#FFB6C1,stroke:#8B0000
+    classDef predict fill:#87CEEB,stroke:#00008B
+    classDef neutral fill:#f0f0f0,stroke:#666
+```
+
+The bigram model sees "dogs → ???" and incorrectly predicts "were", while the true dependency spans back to "cat".
 
 **Example 2: Coreference**
 "John went to the store. **He** bought milk."

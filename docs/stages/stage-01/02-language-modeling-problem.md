@@ -104,6 +104,7 @@ Each context is a sequence of k tokens, so there are |V|^k possible contexts.
 Even k=2 is stretching it for explicit storage. k=3 or higher requires sparse representations (storing only contexts we've actually seen).
 
 For character-level models with |V| ≈ 100:
+
 | Order k | Possible contexts |
 |---------|------------------|
 | 1 | 100 |

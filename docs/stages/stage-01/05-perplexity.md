@@ -168,6 +168,7 @@ What perplexity values are typical?
 | GPT-3 | ~20 | Various |
 
 Character-level models have different scales:
+
 | Model | Perplexity | Dataset |
 |-------|------------|---------|
 | Unigram (char) | ~27 | English text |

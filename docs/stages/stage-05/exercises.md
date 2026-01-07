@@ -164,6 +164,8 @@ def relative_attention(Q, K, V, pos_embed):
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-05/solutions/`.
+- **Test suite**: See `code/stage-05/tests/test_attention.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-05/attention.py`
+- **Self-check**: Verify attention weights sum to 1 and causal mask blocks future positions

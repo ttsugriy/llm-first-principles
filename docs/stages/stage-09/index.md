@@ -70,3 +70,12 @@ By the end of this stage, you will:
 ## Key Insight
 
 > PEFT isn't about approximating full fine-tuning—it's about finding the right subspace for adaptation. Often, this subspace is tiny compared to the full parameter space.
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-09/peft.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-09/peft.py) | LoRA, Adapters, and Prompt Tuning |
+| [`code/stage-09/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-09/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

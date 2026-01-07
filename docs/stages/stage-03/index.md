@@ -67,3 +67,12 @@ By the end of this stage, you will understand:
 We start by understanding exactly why counting-based models hit a wall, and how continuous representations offer a way forward.
 
 [→ Start with Section 3.1: Why Neural?](01-why-neural.md)
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-03/neural_lm.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-03/neural_lm.py) | Reference implementation |
+| [`code/stage-03/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-03/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

@@ -154,6 +154,8 @@ Consider a 10-layer network where each layer multiplies by 2.
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-02/solutions/`.
+- **Test suite**: See `code/stage-02/tests/test_value.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-02/value.py`
+- **Self-check**: Use numerical gradient checking to verify your derivatives

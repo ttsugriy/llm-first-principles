@@ -68,3 +68,12 @@ By the end of this stage, you will:
 ## Key Insight
 
 > Tokenization is not just preprocessing—it defines the atomic units of meaning that your model can learn. A good tokenizer creates tokens that correspond to meaningful linguistic units while keeping the vocabulary tractable.
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-07/tokenizer.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-07/tokenizer.py) | BPE and tokenizer implementations |
+| [`code/stage-07/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-07/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

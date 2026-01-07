@@ -261,6 +261,8 @@ class AutoTrainer:
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-08/solutions/`.
+- **Test suite**: See `code/stage-08/tests/test_diagnostics.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-08/diagnostics.py`
+- **Self-check**: Test your diagnostics on simulated healthy and unhealthy training runs

@@ -61,3 +61,12 @@ The difference between a Markov chain and GPT-4 isn't in *what* they compute, bu
 Start with the foundations:
 
 → [Section 1.1: Probability Foundations](01-probability-foundations.md)
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-01/markov.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-01/markov.py) | Reference implementation |
+| [`code/stage-01/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-01/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

@@ -200,3 +200,12 @@ This stage represents the culmination of our journey from first principles. Afte
 ## Begin
 
 → [Start with Section 6.1: Tokenization](01-tokenization.md)
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-06/transformer.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-06/transformer.py) | Reference implementation |
+| [`code/stage-06/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-06/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

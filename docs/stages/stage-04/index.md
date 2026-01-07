@@ -122,3 +122,12 @@ Before starting this stage, ensure you understand:
 ## Begin
 
 → [Start with Section 4.1: The Optimization Problem](01-optimization-problem.md)
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-04/optimizers.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-04/optimizers.py) | Reference implementation |
+| [`code/stage-04/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-04/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

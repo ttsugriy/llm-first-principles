@@ -170,6 +170,8 @@ class SwiGLU_FFN:
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-06/solutions/`.
+- **Test suite**: See `code/stage-06/tests/test_transformer.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-06/transformer.py`
+- **Self-check**: Verify output shapes match expectations and gradients flow correctly

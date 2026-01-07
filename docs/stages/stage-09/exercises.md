@@ -288,6 +288,8 @@ class QLoRALayer:
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-09/solutions/`.
+- **Test suite**: See `code/stage-09/tests/test_peft.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-09/peft.py`
+- **Self-check**: Verify LoRA merging produces same output as unmerged forward pass

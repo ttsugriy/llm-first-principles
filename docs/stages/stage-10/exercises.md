@@ -321,6 +321,8 @@ class ConstitutionalCritic:
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-10/solutions/`.
+- **Test suite**: See `code/stage-10/tests/test_alignment.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-10/alignment.py`
+- **Self-check**: Verify DPO loss decreases and accuracy on preference pairs increases

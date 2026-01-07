@@ -142,6 +142,8 @@ On the same dataset:
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-03/solutions/`.
+- **Test suite**: See `code/stage-03/tests/test_neural_lm.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-03/neural_lm.py`
+- **Self-check**: Verify loss decreases during training and perplexity is reasonable

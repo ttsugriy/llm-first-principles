@@ -70,3 +70,12 @@ By the end of this stage, you will understand:
 The derivative is where it all starts. Understanding it deeply—not just as a formula, but as a concept—unlocks everything that follows.
 
 [→ Start with Section 2.1: What is a Derivative?](01-what-is-derivative.md)
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-02/value.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-02/value.py) | Reference implementation |
+| [`code/stage-02/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-02/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

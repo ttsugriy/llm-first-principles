@@ -153,6 +153,8 @@ For a vocabulary of size V=10,000:
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-01/solutions/`.
+- **Test suite**: See `code/stage-01/tests/test_markov.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-01/markov.py`
+- **Self-check**: Verify perplexity calculation matches examples in documentation

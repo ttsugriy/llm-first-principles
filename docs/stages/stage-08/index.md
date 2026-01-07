@@ -75,3 +75,12 @@ By the end of this stage, you will:
 ## Key Insight
 
 > Training failures are not random—they have specific signatures. Learning to read these signatures transforms debugging from guesswork into engineering.
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-08/diagnostics.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-08/diagnostics.py) | Training diagnostics tools |
+| [`code/stage-08/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-08/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

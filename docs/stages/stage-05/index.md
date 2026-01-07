@@ -138,3 +138,12 @@ Attention solves the fundamental limitation of all previous approaches: fixed co
 ## Begin
 
 → [Start with Section 5.1: The Attention Problem](01-attention-problem.md)
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-05/attention.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-05/attention.py) | Reference implementation |
+| [`code/stage-05/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-05/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

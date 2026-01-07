@@ -82,3 +82,12 @@ By the end of this stage, you will:
 ## Key Insight
 
 > Alignment doesn't require solving the "hard problem" of defining what's good. It requires learning from human judgments—which humans are very good at providing.
+
+## Code & Resources
+
+| Resource | Description |
+|----------|-------------|
+| [`code/stage-10/alignment.py`](https://github.com/ttsugriy/llm-first-principles/blob/main/code/stage-10/alignment.py) | Reward Model, RLHF, and DPO |
+| [`code/stage-10/tests/`](https://github.com/ttsugriy/llm-first-principles/tree/main/code/stage-10/tests) | Test suite |
+| [Exercises](exercises.md) | Practice problems |
+| [Common Mistakes](common-mistakes.md) | Debugging guide |

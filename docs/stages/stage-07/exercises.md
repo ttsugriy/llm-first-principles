@@ -213,6 +213,8 @@ Explore how tokenization affects different languages:
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-07/solutions/`.
+- **Test suite**: See `code/stage-07/tests/test_tokenizer.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-07/tokenizer.py`
+- **Self-check**: Verify encode/decode roundtrips correctly: `decode(encode(text)) == text`

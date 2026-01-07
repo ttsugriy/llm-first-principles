@@ -163,6 +163,8 @@ Train models with different batch sizes: 16, 32, 64, 128, 256.
 
 ---
 
-## Solutions
+## Checking Your Work
 
-Solutions are available in `code/stage-04/solutions/`.
+- **Test suite**: See `code/stage-04/tests/test_optimizers.py` for expected behavior
+- **Reference implementation**: Compare with `code/stage-04/optimizers.py`
+- **Self-check**: Verify optimizers converge on simple quadratic functions

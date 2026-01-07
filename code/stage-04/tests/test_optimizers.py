@@ -188,17 +188,16 @@ class TestSchedulers:
         opt = Adam(params, lr=1.0)
         scheduler = StepScheduler(opt, step_size=10, gamma=0.1)
 
-        # First 10 steps: lr = 1.0
-        for _ in range(10):
+        # After 9 steps: still lr = 1.0 (step_count=9, 9//10=0)
+        for _ in range(9):
             scheduler.step()
         assert abs(opt.lr - 1.0) < 1e-6, f"Expected 1.0, got {opt.lr}"
 
-        # Next 10 steps: lr = 0.1
-        for _ in range(10):
-            scheduler.step()
+        # After 10th step: lr = 0.1 (step_count=10, 10//10=1)
+        scheduler.step()
         assert abs(opt.lr - 0.1) < 1e-6, f"Expected 0.1, got {opt.lr}"
 
-        # Next 10 steps: lr = 0.01
+        # After 10 more steps (total 20): lr = 0.01 (20//10=2)
         for _ in range(10):
             scheduler.step()
         assert abs(opt.lr - 0.01) < 1e-6, f"Expected 0.01, got {opt.lr}"

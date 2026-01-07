@@ -110,6 +110,18 @@ python3 tests/test_attention.py
 python3 -c "from attention import CausalTransformer; model = CausalTransformer(100, 32, 4, 2); print('Attention ready!')"
 ```
 
+### Run Stage 6 Code
+
+```bash
+cd code/stage-06
+
+# Run transformer tests (60+ tests)
+python3 tests/test_transformer.py
+
+# Use the transformer in your code
+python3 -c "from transformer import Transformer; model = Transformer(vocab_size=100); print(f'Params: {model.count_parameters():,}')"
+```
+
 ### Run Benchmarks
 
 ```bash
@@ -223,7 +235,26 @@ The attention mechanism that powers transformers:
 - `attention.py` — Full attention implementation
 - `tests/test_attention.py` — Comprehensive test suite (53 tests)
 
-### Stages 6-18: Coming Soon
+### Stage 6: The Complete Transformer ✅
+
+Bringing all components together into a complete LLM:
+
+| Section | Topic | Key Concepts |
+|---------|-------|--------------|
+| 6.1 | Tokenization | BPE, WordPiece, vocabulary size trade-offs |
+| 6.2 | Transformer Block | Pre-norm, residual stream, FFN expansion |
+| 6.3 | Deep Networks | Initialization, gradient flow, layer specialization |
+| 6.4 | Pre-training Objectives | Causal LM, masked LM, span corruption |
+| 6.5 | Training at Scale | Large batches, mixed precision, distributed training |
+| 6.6 | Modern Architectures | GPT, LLaMA, Mistral, Mixtral (MoE), GQA |
+| 6.7 | Scaling Laws | Chinchilla, compute-optimal training, emergent abilities |
+| 6.8 | Implementation | Complete Transformer with modern features |
+
+**Code includes:**
+- `transformer.py` — Complete Transformer with RMSNorm, RoPE, SwiGLU, GQA
+- `tests/test_transformer.py` — Comprehensive test suite (60+ tests)
+
+### Stages 7-18: Coming Soon
 
 | Spiral | Theme | Stages |
 |--------|-------|--------|
@@ -252,7 +283,8 @@ llm-first-principles/
 │       ├── stage-02/               # Autodiff
 │       ├── stage-03/               # Neural LMs
 │       ├── stage-04/               # Optimization
-│       └── stage-05/               # Attention
+│       ├── stage-05/               # Attention
+│       └── stage-06/               # Complete Transformer
 ├── code/
 │   ├── stage-01/                   # Stage 1 implementation
 │   │   ├── markov.py               # Core Markov chain class
@@ -270,14 +302,18 @@ llm-first-principles/
 │   │   ├── neural_lm.py            # Neural language model
 │   │   └── tests/
 │   │       └── test_neural_lm.py
-│   └── stage-04/                   # Stage 4 implementation
-│       ├── optimizers.py           # All optimizers from scratch
+│   ├── stage-04/                   # Stage 4 implementation
+│   │   ├── optimizers.py           # All optimizers from scratch
+│   │   └── tests/
+│   │       └── test_optimizers.py
+│   ├── stage-05/                   # Stage 5 implementation
+│   │   ├── attention.py            # Complete attention from scratch
+│   │   └── tests/
+│   │       └── test_attention.py
+│   └── stage-06/                   # Stage 6 implementation
+│       ├── transformer.py          # Complete Transformer
 │       └── tests/
-│           └── test_optimizers.py
-│   └── stage-05/                   # Stage 5 implementation
-│       ├── attention.py            # Complete attention from scratch
-│       └── tests/
-│           └── test_attention.py
+│           └── test_transformer.py
 ├── benchmarks/                     # Reproducible benchmarks
 │   ├── run_benchmarks.py           # Run all benchmarks
 │   └── visualize.py                # Generate plots
@@ -348,6 +384,10 @@ python3 code/stage-04/tests/test_optimizers.py
 # Run Stage 5 tests
 python3 code/stage-05/tests/test_attention.py
 # Expected output: "Results: 53 passed, 0 failed"
+
+# Run Stage 6 tests
+python3 code/stage-06/tests/test_transformer.py
+# Expected output: "Results: 60+ passed, 0 failed"
 ```
 
 ### Building the Book

@@ -59,6 +59,11 @@ jobs:
           cd code/stage-05
           python tests/test_attention.py
 
+      - name: Run Stage 6 tests
+        run: |
+          cd code/stage-06
+          python tests/test_transformer.py
+
       - name: Run benchmarks (smoke test)
         run: |
           cd benchmarks
@@ -89,4 +94,5 @@ jobs:
           python -m py_compile code/stage-03/neural_lm.py
           python -m py_compile code/stage-04/optimizers.py
           python -m py_compile code/stage-05/attention.py
+          python -m py_compile code/stage-06/transformer.py
           python -m py_compile benchmarks/run_benchmarks.py

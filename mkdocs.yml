@@ -114,3 +114,13 @@ nav:
     - 5.6 Positional Encoding: stages/stage-05/06-positional-encoding.md
     - 5.7 Causal Masking: stages/stage-05/07-causal-masking.md
     - 5.8 Implementation: stages/stage-05/08-implementation.md
+  - Stage 6 - The Complete Transformer:
+    - Overview: stages/stage-06/index.md
+    - 6.1 Tokenization: stages/stage-06/01-tokenization.md
+    - 6.2 Transformer Block: stages/stage-06/02-transformer-block.md
+    - 6.3 Deep Networks: stages/stage-06/03-deep-networks.md
+    - 6.4 Pre-training Objectives: stages/stage-06/04-pretraining.md
+    - 6.5 Training at Scale: stages/stage-06/05-training-scale.md
+    - 6.6 Modern Architectures: stages/stage-06/06-architectures.md
+    - 6.7 Scaling Laws: stages/stage-06/07-scaling-laws.md
+    - 6.8 Implementation: stages/stage-06/08-implementation.md

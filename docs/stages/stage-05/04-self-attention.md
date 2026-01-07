@@ -190,6 +190,7 @@ Different attention heads learn different patterns:
 "The cat that I saw sat on the mat"
 
 When processing "sat":
+
 - High attention to "cat" (subject)
 - Lower attention to "I" (not the subject of "sat")
 ```
@@ -200,6 +201,7 @@ When processing "sat":
 Some heads learn to attend to nearby tokens:
 
 Position i attends heavily to:
+
 - Position i-1 (previous token)
 - Position i+1 (next token)
 ```
@@ -210,6 +212,7 @@ Position i attends heavily to:
 "The bank was closed. I couldn't deposit money at the bank."
 
 When processing the second "bank":
+
 - Attends to "deposit" and "money"
 - Learns this "bank" means financial institution
 ```
@@ -238,6 +241,7 @@ Position n [   αₙ₁         αₙ₂       ...      αₙₙ    ]
 ```
 
 Properties:
+
 - Each row sums to 1 (probability distribution)
 - Entry α_ij = "how much position i attends to position j"
 - Diagonal elements = self-attention (attending to yourself)
@@ -246,17 +250,20 @@ Properties:
 ## Parameter Count
 
 For self-attention with:
+
 - Input dimension: d
 - Key/Query dimension: d_k
 - Value dimension: d_v
 
 Parameters:
+
 - W^Q: d × d_k
 - W^K: d × d_k
 - W^V: d × d_v
 - **Total**: d(2d_k + d_v)
 
 Typical setting (d = d_k = d_v = 512):
+
 - **Parameters**: 512 × 3 × 512 = 786,432 ≈ 0.8M per attention layer
 
 ## Computational Cost
@@ -358,6 +365,7 @@ class SelfAttentionLayer:
 | Self-Attention | All positions | Yes | O(1) |
 
 Self-attention wins on all fronts for modeling:
+
 - **Global context**: Every position sees every other
 - **Training speed**: Fully parallelizable
 - **Gradient flow**: Direct paths between any positions

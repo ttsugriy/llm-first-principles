@@ -688,6 +688,7 @@ def visualize_attention(model, token_ids, tokens_str, layer=0, head=0):
 
 ```
 Model parameters:
+
 - Token embeddings: vocab_size × d_model
 - Per block:
   - QKV projection: d_model × 3d_model = 3d_model²
@@ -697,6 +698,7 @@ Model parameters:
   - Total per block: ~12d_model²
 
 Activation memory (during forward):
+
 - Attention scores: batch × n_heads × seq_len²
 - Attention weights: batch × n_heads × seq_len²
 - This is the O(n²) that limits context length!
@@ -706,6 +708,7 @@ Activation memory (during forward):
 
 ```
 Per attention layer:
+
 - QKV projection: O(seq_len × d_model²)
 - Attention scores: O(seq_len² × d_model)
 - Softmax: O(seq_len²)
@@ -713,6 +716,7 @@ Per attention layer:
 - Output projection: O(seq_len × d_model²)
 
 Per FFN:
+
 - First linear: O(seq_len × d_model × d_ff)
 - Second linear: O(seq_len × d_ff × d_model)
 

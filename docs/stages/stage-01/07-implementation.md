@@ -15,12 +15,14 @@ Before coding, let's make explicit choices:
 We'll use **character-level** for this stage—it lets us explore higher-order models without running out of data.
 
 **2. Data structure for counts**:
+
 - Dense matrix: |V|^k × |V| entries, mostly zeros
 - Sparse dictionary: Only store observed transitions
 
 We'll use **nested dictionaries**—efficient for sparse data.
 
 **3. Special tokens**:
+
 - ⟨START⟩: Marks beginning of sequence (so we can predict first real token)
 - ⟨END⟩: Marks end of sequence (so model learns when to stop)
 
@@ -36,6 +38,7 @@ import random
 ```
 
 **Why these imports**:
+
 - `defaultdict`: Creates missing keys automatically (avoids KeyError)
 - `Counter`: Efficiently counts occurrences
 - `Dict, List, Tuple`: Type hints for documentation
@@ -85,11 +88,13 @@ class MarkovChain:
 ```
 
 **Why `defaultdict(Counter)`**:
+
 - `defaultdict` with `Counter`: If we access `counts[new_context]`, it automatically creates an empty `Counter` for that context.
 - `Counter` is a dict subclass that defaults missing keys to 0.
 - Result: We can write `self.counts[context][token] += 1` without any existence checks.
 
 **Why cache totals separately**:
+
 - We'll query P(token | context) frequently
 - P requires dividing by the sum of all counts for that context
 - Rather than recompute `sum(self.counts[context].values())` each time, we maintain `totals` incrementally
@@ -130,6 +135,7 @@ class MarkovChain:
 ```
 
 **Why `tuple` for context**:
+
 - Lists are mutable and can't be dictionary keys
 - Tuples are immutable and hashable → can be dict keys
 
@@ -379,22 +385,27 @@ We use **Big-O notation** to describe how algorithms scale with input size. This
 - **O(|V|^k)**: Exponential in k—explodes quickly as k grows
 
 **Training**:
+
 - Time: O(n) where n = length of training data
 - Space: O(|V|^k) worst case, but typically O(n) in practice (sparse)
 
 **Probability query**:
+
 - Time: O(1) average (hash table lookup)
 
 **Generation**:
+
 - Time: O(L × |V|) where L = output length, |V| = vocabulary size
 - The |V| factor is for sampling (iterating over distribution)
 
 **Perplexity**:
+
 - Time: O(n) where n = evaluation sequence length
 
 ## Summary
 
 We've implemented a complete Markov chain language model with:
+
 - Training via counting (MLE)
 - Probability queries
 - Temperature-controlled sampling
@@ -403,6 +414,7 @@ We've implemented a complete Markov chain language model with:
 The entire implementation is ~150 lines of well-documented Python with no external dependencies beyond the standard library.
 
 **Key implementation insights**:
+
 1. Use `defaultdict(Counter)` for sparse count storage
 2. Cache totals for O(1) probability queries
 3. Work in log-space for numerical stability

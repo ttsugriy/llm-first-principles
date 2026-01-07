@@ -40,6 +40,7 @@ The "effective batch size" is the total tokens processed per update:
 $$\text{Effective Batch} = \text{Micro Batch} \times \text{Gradient Accumulation} \times \text{Data Parallel Replicas}$$
 
 Example:
+
 - Micro batch: 8 sequences × 2048 tokens = 16K tokens
 - Gradient accumulation: 16 steps
 - Data parallel: 128 GPUs
@@ -194,11 +195,13 @@ Loss: 2.3, 2.2, 2.1, 8.5!, 3.1, 2.5, 2.3, ...
 ```
 
 Causes:
+
 - Bad data batch
 - Numerical instability
 - Learning rate too high
 
 Solutions:
+
 - Skip update if gradient norm too large
 - Reduce learning rate after spike
 - Improve data quality
@@ -371,6 +374,7 @@ Large models use all techniques:
 
 ```
 LLaMA 70B training:
+
 - Data Parallel: 128 replicas
 - Tensor Parallel: 8 GPUs per model
 - Pipeline Parallel: 4 stages

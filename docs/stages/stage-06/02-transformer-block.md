@@ -121,6 +121,7 @@ Each layer **adds** to the residual stream, not replaces it. The final output is
 $$x_{\text{final}} = x_0 + \sum_{i=1}^{n} (\text{Attn}_i + \text{FFN}_i)$$
 
 This means:
+
 - Information flows through unchanged unless modified
 - Early layers can directly influence final output
 - Each layer provides a "delta" to the representation
@@ -148,6 +149,7 @@ d_model=512 → d_ff=2048 → d_model=512
 ```
 
 This expansion allows:
+
 - More expressive transformations
 - Non-linear feature combinations
 - Storage of "knowledge" in the weight matrices
@@ -177,6 +179,7 @@ Layer normalization normalizes across the feature dimension:
 $$\text{LayerNorm}(x) = \gamma \odot \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta$$
 
 Where:
+
 - μ, σ² are mean and variance across features
 - γ, β are learnable scale and shift
 - ε is small constant for numerical stability
@@ -191,6 +194,7 @@ Where:
 | Inference behavior | Different from training | Same as training |
 
 LayerNorm is essential for:
+
 - Variable-length sequences
 - Autoregressive generation (batch size 1)
 - Consistent behavior at train/inference time

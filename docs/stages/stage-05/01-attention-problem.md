@@ -19,6 +19,7 @@ This works, but has a fatal flaw: **k is fixed**.
 Consider translating: "The cat sat on the mat because **it** was tired."
 
 What does "it" refer to? The cat. But:
+
 - "it" appears at position 10
 - "cat" appears at position 2
 - With context k=4, we only see "because it was tired"
@@ -70,6 +71,7 @@ French:  Le     chat   noir  s'est assis
 ```
 
 The word order differs between languages. A fixed left-to-right model struggles because:
+
 - "black" (position 2) maps to "noir" (position 3)
 - "cat" (position 3) maps to "chat" (position 2)
 
@@ -154,6 +156,7 @@ Decoder:      y₁ → y₂ → y₃
 ```
 
 At each decoder step:
+
 1. Compute attention weights over all encoder states
 2. Take weighted sum to get context
 3. Use context to generate output
@@ -181,6 +184,7 @@ We'll derive this fully in the next section, but here's the core formula:
 $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
 
 Each part serves a purpose:
+
 - **QK^T**: Compute similarity between queries and keys
 - **softmax**: Convert similarities to probabilities (sum to 1)
 - **√d_k**: Scaling factor (we'll explain why)
@@ -198,6 +202,7 @@ Attention is not just an improvement—it's a paradigm shift:
 | Hard to parallelize (RNNs) | Fully parallelizable |
 
 The Transformer architecture (next stage) builds entirely on attention, removing recurrence completely. This enabled:
+
 - Massive parallelization during training
 - Scaling to billions of parameters
 - The modern LLM revolution

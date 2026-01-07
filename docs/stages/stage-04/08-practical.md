@@ -9,11 +9,13 @@ Theory is beautiful, but training real models involves countless practical detai
 ### Why Initialization is Critical
 
 At initialization, the network must:
+
 1. Produce reasonable output magnitudes
 2. Have gradients that can flow backward
 3. Not saturate activations
 
 **Bad initialization leads to**:
+
 - Vanishing gradients (weights too small)
 - Exploding gradients (weights too large)
 - Dead neurons (ReLUs stuck at 0)
@@ -70,6 +72,7 @@ def kaiming_init(shape):
 ### The Linear Scaling Rule
 
 When increasing batch size by k:
+
 1. Multiply learning rate by k
 2. Increase warmup steps by k
 
@@ -281,6 +284,7 @@ def softmax_good(x):
 ### Weight Decay
 
 Already covered with AdamW. Typical values:
+
 - LLMs: 0.1
 - Vision models: 1e-4 to 1e-2
 - Small models: 1e-4

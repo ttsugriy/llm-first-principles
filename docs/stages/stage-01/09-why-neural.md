@@ -36,6 +36,7 @@ To the model, "cat lay" and "dog sat" are **impossible**—even though they're p
 ### What Humans See
 
 Humans recognize:
+
 - "cat" and "dog" are both animals
 - "sat" and "lay" are both position verbs
 - If "the dog lay" is valid, "the cat lay" should be too
@@ -56,6 +57,7 @@ To a Markov model, "cat" is as different from "dog" as it is from "quantum" or "
 ### What We Need: Representations
 
 Imagine if we could represent words as vectors where:
+
 - Similar words have similar vectors
 - Operations on vectors capture semantic relationships
 
@@ -103,11 +105,13 @@ Another fundamental limitation: Markov models store everything explicitly.
 Training data: 1 billion words of English.
 
 **Trigram model**:
+
 - Stores: ~500 million unique trigrams
 - Each with counts
 - Lookup table approach
 
 **Neural model**:
+
 - Learns: patterns like "adjective before noun", "verb after subject"
 - Applies patterns to any input, including novel combinations
 - Compresses the data into general rules
@@ -121,6 +125,7 @@ Language is compositional—meaning builds from parts:
 ```
 
 A Markov model must see each instantiation:
+
 - "the big cat chased the mouse"
 - "the small dog chased the ball"
 - "the angry bird chased the worm"

@@ -7,10 +7,12 @@ Different parameters may need different learning rates. Adaptive methods automat
 ## The Motivation
 
 Consider a neural network with:
+
 - **Embedding weights**: Sparse updates (most gradients are zero)
 - **Output layer**: Dense updates (every example affects it)
 
 Using the same learning rate for both is suboptimal:
+
 - Embeddings need larger steps (rare updates)
 - Output layer needs smaller steps (frequent updates)
 
@@ -27,6 +29,7 @@ $$G_t = G_{t-1} + g_t^2$$
 $$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{G_t} + \epsilon} g_t$$
 
 Where:
+
 - $g_t = \nabla L(\theta_t)$ is the gradient
 - $G_t$ accumulates squared gradients (element-wise)
 - $\epsilon \approx 10^{-8}$ prevents division by zero
@@ -101,6 +104,7 @@ def rmsprop(loss_fn, grad_fn, theta_init, lr, beta=0.9, num_steps=1000, eps=1e-8
 **Kingma & Ba (2014)**
 
 Adam combines the best of both worlds:
+
 - **Momentum** (first moment): Smooths gradient direction
 - **RMSprop** (second moment): Adapts learning rate per parameter
 
@@ -122,6 +126,7 @@ $$\theta_{t+1} = \theta_t - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
 ### Default Hyperparameters
 
 The original paper recommends:
+
 - η = 0.001 (learning rate)
 - β₁ = 0.9 (momentum decay)
 - β₂ = 0.999 (RMSprop decay)
@@ -132,6 +137,7 @@ These work well for most problems!
 ### Why Bias Correction?
 
 At t = 1:
+
 - $m_1 = (1-\beta_1) g_1$ ← biased toward 0
 - $v_1 = (1-\beta_2) g_1^2$ ← biased toward 0
 
@@ -273,6 +279,7 @@ class AdamW:
 ### The SGD vs Adam Debate
 
 Research shows:
+
 - **Adam converges faster** in terms of training loss
 - **SGD often generalizes better** on held-out data
 - **For LLMs, Adam wins** due to scale and complexity
@@ -399,6 +406,7 @@ The development of adaptive methods:
 - **2017**: AdamW (Loshchilov & Hutter) — Fixed weight decay
 
 Adam became the default optimizer, but research continues:
+
 - **RAdam** (2019): Rectified Adam with variance reduction
 - **LAMB** (2019): Layer-wise adaptive rates for large batches
 - **AdaFactor** (2018): Memory-efficient Adam for huge models

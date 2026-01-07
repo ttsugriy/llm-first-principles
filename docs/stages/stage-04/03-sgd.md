@@ -99,6 +99,7 @@ $$\text{Var}[\nabla \tilde{L}] = \frac{\sigma^2}{B}$$
 where σ² is the variance of individual gradients and B is batch size.
 
 **Trade-off**:
+
 - Small B: High variance, more exploration, less stable
 - Large B: Low variance, less exploration, more stable
 
@@ -148,6 +149,7 @@ For SGD to converge, we often need to decrease the learning rate over time:
 $$\sum_{t=1}^{\infty} \eta_t = \infty \quad \text{and} \quad \sum_{t=1}^{\infty} \eta_t^2 < \infty$$
 
 **Common schedules**:
+
 - $\eta_t = \eta_0 / \sqrt{t}$ (1/√t decay)
 - $\eta_t = \eta_0 / (1 + \alpha t)$ (inverse decay)
 - Step decay: halve every k epochs
@@ -186,6 +188,7 @@ For language models, this is typically 10⁵ - 10⁶ tokens.
 **Always shuffle data each epoch!**
 
 Without shuffling:
+
 - The model sees patterns in a fixed order
 - Can lead to poor generalization
 - Convergence guarantees may not hold
@@ -281,6 +284,7 @@ For N examples, n parameters, B batch size, T total updates:
 | SGD | O(Bn) | O(1/ε²) |
 
 Total cost to reach ε error:
+
 - Full GD: O(Nn/ε)
 - SGD: O(Bn/ε²)
 

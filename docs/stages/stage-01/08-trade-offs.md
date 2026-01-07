@@ -41,6 +41,7 @@ Here's what happens with a typical corpus (100,000 characters of English text):
 | 7 | 1.1 | ∞ | 95,000 | 89% |
 
 **The pattern**:
+
 1. Train perplexity keeps improving (memorization)
 2. Test perplexity improves, then explodes (overfitting)
 3. Eventually, test perplexity becomes infinite (unseen n-grams)
@@ -179,6 +180,7 @@ From statistical learning theory:
 **The trade-off**: We can't minimize both simultaneously.
 
 Neural networks navigate this differently:
+
 - Flexible function class (low bias)
 - Regularization controls variance
 - Learning algorithm finds good solutions
@@ -198,11 +200,13 @@ Neural networks navigate this differently:
 ## Summary
 
 **What we built**:
+
 - A complete language model from first principles
 - Training, evaluation, and generation
 - Full mathematical derivations for everything
 
 **What we learned**:
+
 - Probability theory foundations
 - Chain rule → autoregressive factorization
 - MLE → counting is optimal
@@ -210,6 +214,7 @@ Neural networks navigate this differently:
 - Temperature → controlled sampling
 
 **Why it's limited**:
+
 - Context-sparsity trade-off is fundamental
 - No generalization to similar-but-unseen patterns
 - Exponential state space explosion

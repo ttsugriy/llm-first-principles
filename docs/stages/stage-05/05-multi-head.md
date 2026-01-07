@@ -9,11 +9,13 @@ A single attention mechanism can only focus on one type of relationship at a tim
 Consider processing "The cat sat on the mat because it was tired."
 
 Different types of information are relevant:
+
 - **Syntactic**: "sat" should attend to "cat" (subject-verb)
 - **Positional**: "tired" should attend to nearby words
 - **Coreference**: "it" should attend to "cat" (reference)
 
 A single attention head must compress all these relationships into one set of weights. It can't simultaneously:
+
 - Pay maximum attention to the subject AND
 - Pay attention to nearby words AND
 - Resolve references
@@ -34,6 +36,7 @@ Each head learns to focus on different aspects of the input.
 ### Step 1: Project to Multiple Heads
 
 For each head i:
+
 - Q_i = QW_i^Q ∈ ℝ^{n × d_k}
 - K_i = KW_i^K ∈ ℝ^{n × d_k}
 - V_i = VW_i^V ∈ ℝ^{n × d_v}
@@ -207,11 +210,13 @@ like proper nouns, numbers, or technical terms.
 ## Parameter Analysis
 
 For multi-head attention with:
+
 - Model dimension: d
 - Number of heads: h
 - Head dimension: d_k = d_v = d/h
 
 **Per-head parameters**:
+
 - W_i^Q: d × d_k = d × d/h = d²/h
 - W_i^K: d × d_k = d²/h
 - W_i^V: d × d_v = d²/h
@@ -231,6 +236,7 @@ Question: Why h heads of dimension d/h instead of 1 head of dimension d?
 ### Computational Efficiency
 
 Same parameter count, but:
+
 - Each head operates in lower dimension
 - All heads compute in parallel
 - Similar total compute
@@ -238,6 +244,7 @@ Same parameter count, but:
 ### Representational Power
 
 Different heads can learn:
+
 - Orthogonal attention patterns
 - Specialized roles
 - Complementary information

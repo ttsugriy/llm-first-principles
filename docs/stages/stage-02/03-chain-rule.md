@@ -11,6 +11,7 @@ Consider h(x) = (x² + 1)³.
 This isn't a simple polynomial or product. It's a **composition**: the cube function applied to (x² + 1).
 
 If we write:
+
 - g(x) = x² + 1 (inner function)
 - f(u) = u³ (outer function)
 
@@ -21,6 +22,7 @@ How do we find h'(x)?
 ## Intuition: Rates of Change Multiply
 
 Suppose:
+
 - x changes by a small amount Δx
 - This causes g(x) to change by Δg
 - Which causes f(g(x)) to change by Δf
@@ -72,6 +74,7 @@ $$= \frac{f(g(x) + \Delta g) - f(g(x))}{\Delta g} \cdot \frac{g(x+k) - g(x)}{k}$
 **Step 4**: Take limits.
 
 As k → 0:
+
 - The first factor → f'(g(x)) (definition of derivative of f at g(x))
 - The second factor → g'(x) (definition of derivative of g at x)
 
@@ -85,6 +88,7 @@ $$h'(x) = f'(g(x)) \cdot g'(x) \quad \blacksquare$$
 ## Example: h(x) = (x² + 1)³
 
 **Identify the parts**:
+
 - Inner: g(x) = x² + 1, so g'(x) = 2x
 - Outer: f(u) = u³, so f'(u) = 3u²
 
@@ -136,6 +140,7 @@ $$\frac{d}{dx}\ln(x^2+1) = \frac{1}{x^2+1} \cdot 2x = \frac{2x}{x^2+1}$$
 Let h(x) = sin(e^{x²}).
 
 Break it down:
+
 - Innermost: a = x², so da/dx = 2x
 - Middle: b = e^a, so db/da = e^a
 - Outer: y = sin(b), so dy/db = cos(b)
@@ -238,10 +243,12 @@ $$= \frac{2x \cos(\ln(x^2+1))}{x^2+1}$$
 ## The Key Insight for Autodiff
 
 Notice the pattern:
+
 1. Forward pass: compute intermediate values (a, b, y)
 2. Backward pass: multiply derivatives in reverse order
 
 We don't need to derive a formula for the overall derivative. We just need:
+
 - The derivative of each primitive operation (sin, ln, +, ×, etc.)
 - A systematic way to apply the chain rule
 

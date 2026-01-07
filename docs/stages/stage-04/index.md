@@ -54,6 +54,7 @@ We'll derive this step by step and explain why each component is necessary.
 ## Connection to Modern LLMs
 
 Modern LLM training uses:
+
 - **Adam or AdamW** as the base optimizer
 - **Linear warmup** for the first 1-10% of training
 - **Cosine decay** to final learning rate

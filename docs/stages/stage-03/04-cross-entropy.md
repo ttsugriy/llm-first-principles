@@ -14,6 +14,7 @@ $$\hat{P}(c_t | c_{t-k:t-1}; \theta)$$
 
 
 Where:
+
 - $c_{t-k:t-1}$ is the context (previous k characters)
 - $c_t$ is the next character
 - θ are all the model parameters (embeddings, weights, biases)
@@ -43,6 +44,7 @@ The optimal parameters are those that maximize the probability of the observed d
 The principle is exactly the same!
 
 Given training data $D = \{(x_1, y_1), ..., (x_N, y_N)\}$ where:
+
 - $x_i$ is the i-th context
 - $y_i$ is the true next character
 
@@ -96,6 +98,7 @@ It measures the expected number of bits needed to encode samples from p using a 
 ### For Language Modeling
 
 At each position in our data:
+
 - True distribution: p(c_t | context) = 1 if c_t is the actual next character, else 0 (one-hot)
 - Model distribution: $q(c) = \hat{P}(c | \text{context}; \theta)$
 
@@ -129,6 +132,7 @@ $$\text{Cross-Entropy Loss} = -\frac{1}{N}\sum_{i=1}^{N} \log \hat{P}(y_i | x_i;
 As shown, minimizing cross-entropy = maximizing likelihood.
 
 MLE has strong theoretical justification:
+
 - Consistent (converges to true parameters with infinite data)
 - Asymptotically efficient (lowest variance among consistent estimators)
 - Invariant under reparametrization
@@ -340,12 +344,14 @@ Training: minimize L (cross-entropy)
 Evaluation: report exp(L) (perplexity)
 
 Same underlying metric, different presentations:
+
 - L ∈ [0, ∞): additive, for optimization
 - PPL ∈ [1, ∞): interpretable, for humans
 
 ### Interpreting the Loss
 
 If L = 2.3:
+
 - PPL = exp(2.3) ≈ 10
 - Model is "as uncertain as picking uniformly among 10 options"
 - Lower is better
@@ -447,6 +453,7 @@ def batch_cross_entropy(batch_logits, batch_targets):
 ## What's Next
 
 We have:
+
 - Embeddings (Section 3.2)
 - Feed-forward networks (Section 3.3)
 - Cross-entropy loss (Section 3.4)

@@ -211,6 +211,7 @@ $$D_{KL}(P || Q) = H(P, Q) - H(P) = \sum_x P(x) \log \frac{P(x)}{Q(x)}$$
 
 
 **Properties**:
+
 - D_KL(P || Q) ≥ 0 (always non-negative)
 - D_KL(P || Q) = 0 if and only if P = Q
 - D_KL(P || Q) ≠ D_KL(Q || P) in general (not symmetric!)
@@ -220,6 +221,7 @@ $$D_{KL}(P || Q) = H(P, Q) - H(P) = \sum_x P(x) \log \frac{P(x)}{Q(x)}$$
 **Interpretation**: KL divergence is the extra bits needed (on average) when using code Q instead of the optimal code P. It's always non-negative because the optimal code for P is always at least as good as any other code.
 
 For language modeling:
+
 - If our model Q matches the true distribution P: D_KL = 0, cross-entropy = entropy
 - If our model is bad: D_KL is large, cross-entropy >> entropy
 
@@ -244,6 +246,7 @@ We use cross-entropy because H(P) is unknown (we'd need the true distribution), 
 | KL divergence | D_KL(P\|\|Q) = H(P,Q) - H(P) | Extra bits from using Q instead of P |
 
 **The big picture**:
+
 1. We want a model Q that matches the true distribution P
 2. We measure this by cross-entropy (lower = better)
 3. Minimizing cross-entropy = maximizing likelihood

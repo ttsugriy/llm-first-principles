@@ -139,6 +139,7 @@ Loss
 **Learning rate finder**: Gradually increase LR, plot loss. Use value just before loss explodes.
 
 **Common values**:
+
 - 0.1: Often too high for deep nets
 - 0.01: Good starting point
 - 0.001: Common for fine-tuning
@@ -147,6 +148,7 @@ Loss
 ### Our Character LM
 
 For our model, try:
+
 - Start: η = 0.1 (aggressive)
 - If unstable: reduce to 0.01
 - If too slow: increase to 0.5
@@ -208,6 +210,7 @@ How we initialize parameters affects training dramatically.
 ### The Problem with Zeros
 
 If all weights are zero:
+
 - All neurons compute the same thing
 - All gradients are the same
 - Symmetry is never broken
@@ -287,6 +290,7 @@ def init_weights(shape, activation='relu'):
 Processing one example at a time is inefficient and noisy.
 
 **Key terminology**:
+
 - **Mini-batch**: A subset of training examples processed together before updating parameters
 - **Epoch**: One complete pass through all training examples
 - **Iteration/Step**: One parameter update (processing one mini-batch)
@@ -301,6 +305,7 @@ $$\nabla L = \frac{1}{B}\sum_{i=1}^{B} \nabla L_i$$
 
 
 **Advantages**:
+
 - More stable gradients (averaging reduces variance)
 - Computational efficiency (parallelism)
 - Better generalization (noise helps)
@@ -360,6 +365,7 @@ def train_batch(model, batch, learning_rate):
 With enough parameters, the model can memorize training data perfectly—but fail on new data.
 
 **Signs of overfitting**:
+
 - Training loss keeps decreasing
 - Validation loss starts increasing
 - Large gap between train and validation loss

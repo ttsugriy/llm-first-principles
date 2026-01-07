@@ -41,6 +41,7 @@ By the end of this stage, you'll understand:
 $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
 
 Where:
+
 - Q (Query): What am I looking for? [n × d_k]
 - K (Key): What do I contain? [m × d_k]
 - V (Value): What should I return? [m × d_v]

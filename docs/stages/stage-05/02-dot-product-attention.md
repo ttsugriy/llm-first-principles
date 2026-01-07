@@ -68,6 +68,7 @@ The scores can be any real number. Convert to probabilities using softmax:
 $$\alpha_{ij} = \frac{\exp(\text{score}_{ij})}{\sum_{k=1}^{n} \exp(\text{score}_{ik})}$$
 
 Properties of attention weights α:
+
 - Non-negative: α_{ij} ≥ 0
 - Normalized: Σ_j α_{ij} = 1
 - Differentiable: We can backpropagate through them
@@ -87,6 +88,7 @@ Putting it together for all positions simultaneously:
 $$\text{Attention}(Q, K, V) = \text{softmax}(QK^T) V$$
 
 Where:
+
 - Q = XW^Q ∈ ℝ^{n×d_k} (all queries)
 - K = XW^K ∈ ℝ^{n×d_k} (all keys)
 - V = XW^V ∈ ℝ^{n×d_v} (all values)
@@ -161,6 +163,7 @@ Why not use the same projection for all three?
 | Value | "What should I return?" — actual content |
 
 Example: The word "it" might have:
+
 - Query: "looking for a noun, preferably animate"
 - Key: "I am a pronoun"
 - Value: semantic representation of "it"
@@ -184,6 +187,7 @@ def soft_lookup(query, keys, values):
 ```
 
 The soft version:
+
 - Never fails (always returns something)
 - Can combine information from multiple sources
 - Is differentiable (we can learn query/key representations)

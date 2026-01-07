@@ -117,6 +117,7 @@ Target:   Predict "cat" and "mat"
 ```
 
 Masking strategy (BERT):
+
 - 15% of tokens are selected
 - Of selected: 80% → [MASK], 10% → random token, 10% → unchanged
 
@@ -253,6 +254,7 @@ Various ways to corrupt input and train recovery:
 Original: "The cat sat. The dog ran."
 
 Possible corruptions:
+
 1. Token deletion: "The sat. The ran."
 2. Text infilling: "The [MASK] sat. The [MASK] ran."
 3. Sentence shuffle: "The dog ran. The cat sat."

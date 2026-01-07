@@ -19,6 +19,7 @@ Each term q_i k_i is a product of two independent N(0,1) variables.
 **Fact**: If X, Y ~ N(0,1) independently, then Var(XY) = 1.
 
 **Proof sketch**:
+
 - E[XY] = E[X]E[Y] = 0
 - E[(XY)²] = E[X²]E[Y²] = 1 × 1 = 1
 - Var(XY) = E[(XY)²] - E[XY]² = 1 - 0 = 1
@@ -46,6 +47,7 @@ weights ≈ [0.99, 0.00, 0.01, ...]
 ```
 
 When softmax saturates:
+
 1. **Gradients vanish**: ∂softmax/∂input → 0 at extremes
 2. **No learning**: The model can't adjust attention patterns
 3. **Information loss**: Only one position contributes
@@ -100,6 +102,7 @@ The scaled version allows attention to spread across multiple positions, enablin
 ### Setup
 
 Let q, k ∈ ℝ^{d_k} with components:
+
 - q_i ~ N(0, 1) independently
 - k_i ~ N(0, 1) independently
 

@@ -11,6 +11,7 @@ In 2020, OpenAI discovered that LLM loss follows predictable power laws:
 $$L(N, D) = \left(\frac{N_c}{N}\right)^{\alpha_N} + \left(\frac{D_c}{D}\right)^{\alpha_D} + L_\infty$$
 
 Where:
+
 - L = Cross-entropy loss
 - N = Number of parameters
 - D = Number of training tokens
@@ -291,6 +292,7 @@ Frontier models: ~1T+ parameters, ~10T+ tokens
 Compute: ~10^25 FLOPs
 
 Still seeing:
+
 - Continued improvement with scale
 - New emergent capabilities
 - No sign of ceiling yet

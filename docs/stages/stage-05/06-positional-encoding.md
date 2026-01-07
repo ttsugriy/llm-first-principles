@@ -16,6 +16,7 @@ Without positional info:
 ```
 
 The attention mechanism computes:
+
 - score(dog, bites) based on their embeddings
 - score(man, bites) based on their embeddings
 
@@ -57,6 +58,7 @@ $$PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d}}\right)$$
 $$PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d}}\right)$$
 
 Where:
+
 - pos: position in sequence (0, 1, 2, ...)
 - i: dimension index (0, 1, 2, ..., d/2-1)
 - d: model dimension
@@ -193,6 +195,7 @@ Modify attention scores to include relative position:
 $$\text{score}_{ij} = q_i^T k_j + q_i^T r_{i-j} + u^T k_j + v^T r_{i-j}$$
 
 Where:
+
 - r_{i-j}: relative position embedding
 - u, v: learnable global biases
 

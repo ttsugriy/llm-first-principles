@@ -16,6 +16,7 @@ $$P: V^* \rightarrow [0, 1]$$
 where V* means "sequences of any length from V" and the probabilities over all possible sequences sum to 1.
 
 **Examples of what a language model answers**:
+
 - P("The cat sat on the mat") = ?
 - P("Mat the on sat cat the") = ?
 - P("asdfghjkl") = ?
@@ -82,6 +83,7 @@ flowchart LR
 ```
 
 **Special cases**:
+
 - k=1: **Bigram model**. P(xᵢ | xᵢ₋₁). Next token depends only on previous token.
 - k=2: **Trigram model**. P(xᵢ | xᵢ₋₂, xᵢ₋₁). Next token depends on previous two tokens.
 - k=n-1: **Full model**. No approximation, but intractable.
@@ -162,6 +164,7 @@ Despite being wrong, Markov models are useful for several reasons:
 4. **They're a stepping stone**: Understanding Markov models helps us understand why neural language models are better.
 
 The progression through this course will be:
+
 - Markov models (this stage): Wrong but simple
 - Neural LMs (Stage 4): Less wrong, can learn representations
 - Transformers (Stage 7-8): Can model arbitrary-length dependencies
@@ -189,6 +192,7 @@ $$P(x_1, \ldots, x_n) = \prod_{i=1}^{n+1} \theta_{c_i \rightarrow x_i}$$
 
 
 where:
+
 - x_{n+1} = ⟨END⟩
 - cᵢ = (x_{i-k}, ..., x_{i-1}) with padding using ⟨START⟩ for i ≤ k
 

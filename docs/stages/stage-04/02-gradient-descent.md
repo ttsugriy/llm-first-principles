@@ -99,6 +99,7 @@ This means the gradient doesn't change too rapidly. L is called the Lipschitz co
 $$L(\theta_T) - L(\theta^*) \leq \frac{\|\theta_0 - \theta^*\|^2}{2\eta T}$$
 
 **Proof sketch**:
+
 1. From Lipschitz property: $L(\theta_{t+1}) \leq L(\theta_t) - \frac{\eta}{2}\|\nabla L(\theta_t)\|^2$
 2. Sum over t = 0 to T-1
 3. Use telescoping and rearrange
@@ -158,6 +159,7 @@ Step 20: (0.11, 0.00), Loss = 0.012
 ```
 
 The path zigzags because:
+
 1. The gradient in y is 10x larger than in x
 2. We overshoot in y, undershoot in x
 3. This is the "condition number problem"
@@ -207,6 +209,7 @@ Pure gradient descent always goes downhill. It can't climb over barriers to find
 $$\nabla L(\theta) = \frac{1}{N} \sum_{i=1}^{N} \nabla \ell_i(\theta)$$
 
 **Problems**:
+
 - For N = 1 billion examples, this is very expensive
 - Must load all data into memory
 - One update per full pass through data

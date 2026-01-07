@@ -46,6 +46,7 @@ Each stage is self-contained but builds on previous stages:
 5. **Reflect** — Connect new concepts to the bigger picture
 
 The book follows Pólya's problem-solving method:
+
 - **Understand** the problem
 - **Devise** a plan
 - **Execute** the plan

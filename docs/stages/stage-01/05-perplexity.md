@@ -90,12 +90,14 @@ Why not just use accuracy (% of correct predictions)?
 **Problem**: Accuracy ignores confidence.
 
 Consider two models predicting "cat":
+
 - Model A: P("cat") = 0.51, P("dog") = 0.49
 - Model B: P("cat") = 0.99, P("dog") = 0.01
 
 Both have 100% accuracy if "cat" is correct, but Model B is clearly better.
 
 Perplexity (via log-probability) captures this:
+
 - Model A contribution: -log₂(0.51) = 0.97 bits
 - Model B contribution: -log₂(0.99) = 0.01 bits
 
@@ -147,6 +149,7 @@ Perplexity: PPL = exp(H)
 ```
 
 All contain the same information, just different presentations:
+
 - Log-likelihood: raw sum (for optimization)
 - Cross-entropy: normalized (for comparison across corpus sizes)
 - Perplexity: intuitive (for human interpretation)
@@ -183,6 +186,7 @@ For Markov models, you'll observe this pattern as you increase order:
 | 5 | 1.5 | ∞ | 50,000 |
 
 **What's happening**:
+
 - Train PPL keeps improving (more context = better fit)
 - Test PPL improves initially (capturing real patterns)
 - Test PPL then explodes (model sees unseen n-grams, assigns probability 0)
@@ -220,6 +224,7 @@ This is the fundamental limitation of Markov models that we'll address with neur
 | PPL = ∞ | Model assigns P=0 | Considered token impossible |
 
 **Key takeaways**:
+
 1. Perplexity is the standard metric for language models
 2. Lower is better
 3. It measures how "surprised" the model is on average

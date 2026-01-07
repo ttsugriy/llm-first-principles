@@ -64,6 +64,7 @@ where $\theta_i$ is the probability of outcome $i$.
 ### Deriving Laplace Smoothing
 
 Given:
+
 - Prior: $\text{Dir}(\alpha)$ (each outcome has $\alpha$ pseudo-counts)
 - Data: count$(a, b)$ observations of transition $a \to b$
 
@@ -74,6 +75,7 @@ $$P(b | a) = \frac{\text{count}(a, b) + \alpha}{\text{count}(a, \cdot) + \alpha 
 **Derivation**:
 
 The Dirichlet distribution is a **conjugate prior** for the categorical distribution. This means:
+
 - Prior: Dir($\alpha, \alpha, ..., \alpha$)
 - Likelihood: Categorical with counts $c_1, c_2, ..., c_{|V|}$
 - Posterior: Dir($\alpha + c_1, \alpha + c_2, ..., \alpha + c_{|V|}$)
@@ -85,6 +87,7 @@ For our bigram case:
 $$P(b | a) = \frac{\alpha + \text{count}(a, b)}{\alpha |V| + \text{count}(a, \cdot)}$$
 
 **Special cases**:
+
 - $\alpha = 1$: **Laplace smoothing** (add-one smoothing)
 - $\alpha = 0.5$: **Jeffreys prior** (sometimes better for small datasets)
 - $\alpha \to 0$: Approaches MLE (no smoothing)
@@ -121,6 +124,7 @@ Let's verify with our example:
 **Training data**: "the cat sat on the mat"
 
 **Without smoothing**:
+
 - P(lay | cat) = 0/2 = 0
 - Perplexity("the cat lay") = ∞
 

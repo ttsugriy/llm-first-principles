@@ -52,6 +52,7 @@ Learning about "cat" provides zero information about "dog".
 ### The Geometric View
 
 In one-hot space:
+
 - All vectors have length 1
 - All pairs are distance √2 apart (since ||eᵢ - eⱼ||² = 2 for i ≠ j)
 - No structure, no clusters, no relationships
@@ -84,6 +85,7 @@ $$E = \begin{bmatrix} 0.2 & -0.5 & 0.1 \\ 0.3 & -0.4 & 0.2 \\ -0.1 & 0.8 & 0.3 \
 
 
 Then:
+
 - embed(a) = [0.2, -0.5, 0.1]
 - embed(b) = [0.3, -0.4, 0.2]
 - embed(c) = [-0.1, 0.8, 0.3]
@@ -165,15 +167,18 @@ Tokens that appear in similar contexts should have similar meanings.
 ### How Training Enforces This
 
 Consider training on:
+
 - "the **cat** sat on the mat"
 - "the **dog** sat on the rug"
 
 Both "cat" and "dog":
+
 1. Follow "the"
 2. Precede "sat"
 3. Appear in similar grammatical positions
 
 During training:
+
 - Both receive gradients pushing them to predict "sat"
 - Both receive gradients from "the" predictions
 - These similar gradient signals push them toward similar embeddings
@@ -280,6 +285,7 @@ $$x = [\text{embed}(t_1); \text{embed}(t_2); \text{embed}(t_3)] \in \mathbb{R}^{
 
 
 This preserves position information:
+
 - Dimensions [0:d] represent first position
 - Dimensions [d:2d] represent second position
 - Dimensions [2d:3d] represent third position
@@ -287,6 +293,7 @@ This preserves position information:
 ### Why Concatenation?
 
 Position matters in language:
+
 - "dog bites man" ≠ "man bites dog"
 
 Concatenation lets the network learn position-specific patterns.
@@ -355,6 +362,7 @@ Another perspective: the embedding matrix E is a **dictionary** mapping tokens t
 | ... | ... | ... |
 
 The difference: the vector "definitions" are:
+
 - Learned from data, not written by humans
 - Optimized for the prediction task
 - Capture statistical patterns, not explicit semantics
@@ -364,6 +372,7 @@ The difference: the vector "definitions" are:
 ### Why Initialization?
 
 Before training, embeddings must start somewhere. The initialization affects:
+
 - How quickly training converges
 - Whether training gets stuck in poor local minima
 - The scale of activations in early layers

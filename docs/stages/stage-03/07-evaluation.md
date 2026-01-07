@@ -274,6 +274,7 @@ Most similar to ' ': [('\n', 0.89), ('.', 0.45), (',', 0.42), ...]
 ```
 
 The model learned:
+
 - Vowels cluster together
 - Consonants that appear in similar positions are similar
 - Whitespace characters are related
@@ -316,6 +317,7 @@ Neural models partition it into continuous regions (similarity in embedding spac
 **Key insight**: In high dimensions, continuous partitioning is exponentially more efficient.
 
 For context length k and vocabulary V:
+
 - N-gram contexts: V^k (exponential)
 - Neural effective contexts: continuous manifold of dimension k × d
 

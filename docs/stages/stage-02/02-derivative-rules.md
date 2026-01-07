@@ -147,6 +147,7 @@ Why isn't the derivative of a product the product of derivatives?
 Think of a rectangle with sides f and g. Its area is f·g.
 
 If both sides grow:
+
 - The area grows by f·Δg (original f, additional g)
 - The area grows by g·Δf (original g, additional f)
 - There's also a tiny Δf·Δg corner (negligible as Δ → 0)

@@ -98,6 +98,7 @@ Our autograd system will:
 ## The Value Class: Core Data Structure
 
 Every value in our system will be a `Value` object that stores:
+
 - The actual numerical data
 - The gradient (accumulated during backward pass)
 - References to parent nodes (for graph traversal)
@@ -131,6 +132,7 @@ class Value:
 Let's start with the simplest operation: addition.
 
 For z = x + y:
+
 - Local gradients: ∂z/∂x = 1, ∂z/∂y = 1
 - Backward: parent.grad += self.grad × local_gradient
 
@@ -159,6 +161,7 @@ def __add__(self, other):
 Consider f(x) = x + x. The variable x is used twice.
 
 If we used `=`, the second path would overwrite the first. With `+=`, both contributions accumulate:
+
 - First x: grad += 1
 - Second x: grad += 1
 - Total: grad = 2
@@ -168,6 +171,7 @@ This is correct: ∂(x+x)/∂x = 2.
 ## Implementing Multiplication
 
 For z = x × y:
+
 - Local gradients: ∂z/∂x = y, ∂z/∂y = x
 - These need the cached values from the forward pass
 
@@ -193,6 +197,7 @@ This is how we "cache" forward pass values for the backward pass—through Pytho
 ## The Backward Pass: Topological Sort
 
 To compute all gradients, we need to:
+
 1. Find all nodes in the graph
 2. Process them in reverse topological order
 3. Call each node's `_backward()` function
@@ -285,6 +290,7 @@ def __rsub__(self, other):  # other - self
 ### Division
 
 For z = x / y = x × y⁻¹:
+
 - ∂z/∂x = 1/y
 - ∂z/∂y = -x/y²
 
@@ -297,6 +303,7 @@ def __truediv__(self, other):
 ### Power
 
 For z = x^n (where n is a constant):
+
 - ∂z/∂x = n × x^(n-1)
 
 ```python
@@ -844,6 +851,7 @@ def draw_graph(root):
 We have a working autograd system. But how do we know it's correct?
 
 In Section 2.7, we'll cover **testing and validation**:
+
 - Numerical gradient checking
 - Unit tests for each operation
 - Property-based testing for compositions

@@ -349,6 +349,7 @@ Memory ≈ batch_size × seq_len × d_model × n_layers × 2
 ```
 
 Techniques to manage memory:
+
 - Gradient checkpointing
 - Mixed precision training
 - Activation recomputation

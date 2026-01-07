@@ -37,6 +37,7 @@ flowchart LR
 ```
 
 Reading the graph:
+
 - x and y are inputs (no incoming edges)
 - a depends on x and y via addition
 - f depends on a and x via multiplication
@@ -61,6 +62,7 @@ Any expression can be decomposed into primitive operations, each becoming a node
 ### Example: f(x) = sin(x²) + x
 
 Decomposition:
+
 1. a = x²
 2. b = sin(a)
 3. f = b + x
@@ -84,6 +86,7 @@ Graph:
 A typical layer computes: y = σ(Wx + b)
 
 Decomposition:
+
 1. a = W × x (matrix multiply)
 2. c = a + b (add bias)
 3. y = σ(c) (activation)
@@ -95,6 +98,7 @@ Each of these becomes a node in the graph.
 **Forward pass** (or forward propagation): Evaluate the graph from inputs to outputs.
 
 Algorithm:
+
 1. Assign values to input nodes
 2. Process nodes in **topological order** (parents before children)
 3. At each node, apply its operation to parent values
@@ -117,6 +121,7 @@ Result: f(3, 2) = 15
 A topological order ensures we process each node only after all its parents.
 
 For a DAG, this is always possible. We can use:
+
 - **Kahn's algorithm**: Repeatedly remove nodes with no incoming edges
 - **DFS**: Post-order traversal gives reverse topological order
 
@@ -166,6 +171,7 @@ Now backward:
 When a node contributes to the output through multiple paths, we **sum** the gradients from each path.
 
 In the example, x contributes to f two ways:
+
 1. Through a (as part of x + y): contributes gradient 3
 2. Directly (as the second operand of multiplication): contributes gradient 5
 3. Total: 8
@@ -207,6 +213,7 @@ During the forward pass, we need to store information for the backward pass:
 ### Example: Multiplication Requires Cached Values
 
 For z = x · y:
+
 - ∂z/∂x = y (need the value of y)
 - ∂z/∂y = x (need the value of x)
 
@@ -215,6 +222,7 @@ So the multiplication node must cache x and y during the forward pass.
 ### Example: Addition Doesn't Need Values
 
 For z = x + y:
+
 - ∂z/∂x = 1
 - ∂z/∂y = 1
 

@@ -80,6 +80,7 @@ def test_multiply_gradient():
 ## Choosing the Right h
 
 The step size h involves a tradeoff:
+
 - **Too large**: Approximation error dominates
 - **Too small**: Floating-point rounding error dominates
 
@@ -619,6 +620,7 @@ if __name__ == '__main__':
 ## What's Next
 
 We now have:
+
 - ✓ Mathematical foundations (Sections 2.1-2.3)
 - ✓ Computational graphs (Section 2.4)
 - ✓ Forward vs reverse mode (Section 2.5)

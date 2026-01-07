@@ -7,6 +7,7 @@ Before we can solve optimization, we need to understand what we're optimizing. T
 ## The Setup
 
 We have:
+
 - A model with parameters θ (weights and biases)
 - A loss function L(θ) that measures how wrong the model is
 - Training data that defines what "wrong" means
@@ -50,6 +51,7 @@ For convex functions, any local minimum is also a global minimum. Life is easy.
 We can't compute the true gradient over all training data (too expensive). Instead, we estimate it using mini-batches, introducing noise.
 
 This noise is both:
+
 - **A problem**: Makes optimization less stable
 - **A feature**: Acts as regularization, helping generalization
 
@@ -71,6 +73,7 @@ For neural networks, the loss landscape has interesting structure:
 ```
 
 **Key features**:
+
 - Many directions to explore (high-dimensional)
 - Valleys that lead toward good solutions
 - Saddle points that can trap gradient descent
@@ -117,6 +120,7 @@ The Hessian matrix H contains all second derivatives:
 $$H_{ij} = \frac{\partial^2 L}{\partial \theta_i \partial \theta_j}$$
 
 The Hessian tells us about curvature:
+
 - Positive eigenvalues → curving up (bowl shape)
 - Negative eigenvalues → curving down (dome shape)
 - Mixed → saddle point

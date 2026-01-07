@@ -24,6 +24,7 @@ That's **100 quintillion** possible contexts.
 ### How Much Data Do We Have?
 
 Wikipedia contains roughly 4 billion characters. Even if we used all of Wikipedia:
+
 - We'd see each specific 10-character context at most a few times
 - Most contexts would never appear
 - For unseen contexts, our count-based model gives probability 0 or falls back to shorter contexts
@@ -52,6 +53,7 @@ Order 5 model: Most 6-grams never appear in training
 ```
 
 For a 5-gram model on typical training data:
+
 - ~90% of test 5-grams are unseen in training
 - Model must constantly back off to shorter contexts
 - The "5-gram" model effectively becomes a mixture of lower-order models
@@ -64,6 +66,7 @@ $$P(w | c) = \frac{\text{count}(c, w) + 1}{\text{count}(c) + |V|}$$
 
 
 This prevents zero probabilities, but:
+
 - Assigns equal probability to all unseen continuations
 - "the cat sat" and "the xyz sat" get the same smoothed probability
 - No notion of similarity between contexts
@@ -75,11 +78,13 @@ Here's what count-based models miss: **similar contexts should give similar pred
 ### An Example
 
 Consider these contexts:
+
 1. "the cat sat on the"
 2. "the dog sat on the"
 3. "a cat sat upon the"
 
 A human knows these should give similar next-character predictions. But to a count-based model:
+
 - These are three completely independent entries in a lookup table
 - Learning from (1) tells us nothing about (2) or (3)
 - Each must be learned separately
@@ -87,6 +92,7 @@ A human knows these should give similar next-character predictions. But to a cou
 ### Why This Matters
 
 Real language has structure:
+
 - "cat" and "dog" are both animals
 - "sat" and "slept" are both past tense verbs
 - "on" and "upon" serve similar grammatical roles
@@ -100,13 +106,16 @@ The core problem is **generalization**: using what we've learned to handle situa
 ### Count-Based Generalization
 
 N-gram models generalize via:
+
 1. **Backoff**: If we haven't seen the long context, use a shorter one
 2. **Interpolation**: Mix predictions from different context lengths
 
 These methods share statistical strength across:
+
 - "the cat sat" → "the cat" → "cat"
 
 But NOT across:
+
 - "the cat" and "the dog" (completely independent)
 
 ### What We Want
@@ -117,6 +126,7 @@ $$\text{similarity}(\text{"the cat"}, \text{"the dog"}) > 0$$
 
 
 And this similarity should affect predictions:
+
 - If we learn that "sat" often follows "the cat"
 - We should automatically infer that "sat" might follow "the dog"
 
@@ -140,6 +150,7 @@ The notation **ℝᵈ** means "d-dimensional space of real numbers"—a vector w
 ### Why Continuous Helps
 
 In a continuous space:
+
 1. **Similar words → similar vectors**: "cat" and "dog" are nearby
 2. **Similar contexts → similar predictions**: Neural network outputs vary smoothly
 3. **Generalization is automatic**: Learning about nearby points affects the whole region
@@ -157,6 +168,7 @@ $$P(w | c) = f_\theta(\text{embed}(c))$$
 
 
 Where:
+
 - embed(c) maps discrete context to continuous vector
 - f_θ is a smooth function (neural network)
 - θ are learnable parameters
@@ -166,6 +178,7 @@ Where:
 ### N-gram Parameter Count
 
 For vocabulary |V| and context length k:
+
 - Need to store P(w | c) for every (c, w) pair
 - Parameters: O(|V|^{k+1})
 
@@ -174,12 +187,14 @@ For |V| = 10,000 and k = 5: 10,000^6 = 10^24 parameters. Impossible.
 ### Neural Parameter Count
 
 For embedding dimension d and hidden size h:
+
 - Embedding matrix: |V| × d
 - Hidden layers: O(h × k × d)
 - Output layer: O(h × |V|)
 - Total: O(|V| × d + h × |V|)
 
 For |V| = 10,000, d = 256, h = 512:
+
 - Embeddings: 2.56M
 - Output: 5.12M
 - Hidden: ~0.5M
@@ -238,9 +253,11 @@ Predict the next character in English text with context length 10.
 ### The Difference in Action
 
 Training data includes:
+
 - "the cat sat on the mat"
 
 Test context:
+
 - "the dog sat on the "
 
 N-gram: Never seen "the dog sat on the " → backs off to "the " → poor prediction

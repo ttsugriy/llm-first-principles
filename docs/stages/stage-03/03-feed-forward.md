@@ -16,6 +16,7 @@ $$y = Wx + b$$
 
 
 Where:
+
 - W ∈ ℝᵐˣⁿ is the **weight matrix**
 - b ∈ ℝᵐ is the **bias vector**
 - x ∈ ℝⁿ is the input
@@ -33,6 +34,7 @@ This is a **linear combination** of the inputs.
 ### Geometric Interpretation
 
 A linear layer performs:
+
 1. **Rotation/scaling**: W rotates and scales the input space
 2. **Translation**: b shifts the result
 
@@ -68,10 +70,12 @@ $$g(f(x)) = W' x + b'$$
 ### Why This Is a Problem
 
 Linear functions can only:
+
 - Draw straight decision boundaries
 - Compute linear combinations
 
 They cannot:
+
 - Compute XOR (or any non-linearly-separable function)
 - Model complex patterns
 - Learn hierarchical features
@@ -130,6 +134,7 @@ $$\text{GELU}(x) \approx 0.5x(1 + \tanh[\sqrt{2/\pi}(x + 0.044715x^3)])$$
 ### ReLU: A Closer Look
 
 ReLU is piecewise linear:
+
 - For x ≤ 0: output = 0
 - For x > 0: output = x
 
@@ -218,6 +223,7 @@ In practice, moderate depth (2-4 layers for character LM) works well.
 ### Statement
 
 A feed-forward network with:
+
 - One hidden layer
 - Sufficient width (number of neurons)
 - Nonlinear activation
@@ -291,6 +297,7 @@ $$P(\text{token} | \text{context}) = \text{softmax}(\text{logits})$$
 
 
 Where:
+
 - h_L ∈ ℝ^h is the final hidden state
 - W_out ∈ ℝ^{|V|×h} projects to vocabulary size
 - logits ∈ ℝ^|V| are unnormalized scores

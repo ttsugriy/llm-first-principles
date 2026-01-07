@@ -23,6 +23,7 @@ Consider minimizing L(x, y) = x² + 100y²:
 ```
 
 The gradient in y is 100× larger than in x, causing:
+
 1. **Oscillation** in the y direction (overshooting)
 2. **Slow progress** in the x direction (undershooting)
 
@@ -51,6 +52,7 @@ $$v_t = \beta v_{t-1} + \eta \nabla L(\theta_t)$$
 $$\theta_{t+1} = \theta_t - v_t$$
 
 Where:
+
 - **v** is the velocity (accumulated gradient)
 - **β** is the momentum coefficient (typically 0.9)
 - **η** is the learning rate
@@ -71,10 +73,12 @@ This is an **exponentially weighted moving average** of gradients!
 ### Intuition 2: Dampening Oscillations
 
 In the oscillating y-direction:
+
 - Gradients alternate signs: +, -, +, -, ...
 - They cancel out: v_y ≈ 0
 
 In the consistent x-direction:
+
 - Gradients have the same sign: +, +, +, +, ...
 - They accumulate: v_x grows large
 
@@ -107,6 +111,7 @@ For a quadratic L(θ) = ½θᵀHθ with eigenvalues λ₁ ≤ ... ≤ λₙ:
 **With optimal momentum**: Convergence rate = (√κ - 1)/(√κ + 1)
 
 For κ = 100:
+
 - Without: rate = 0.98 (slow)
 - With: rate = 0.82 (much faster!)
 
@@ -149,6 +154,7 @@ Standard:                    Nesterov:
 ```
 
 Nesterov "looks ahead" to where momentum will take us, then corrects. This provides:
+
 - **Faster convergence** on convex problems
 - **Better handling of overshooting**
 - **Provably optimal** for smooth convex optimization

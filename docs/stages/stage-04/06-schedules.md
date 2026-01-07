@@ -32,6 +32,7 @@ Reduce learning rate by a factor at fixed intervals:
 $$\eta_t = \eta_0 \cdot \gamma^{\lfloor t / s \rfloor}$$
 
 Where:
+
 - η₀ is the initial learning rate
 - γ is the decay factor (e.g., 0.1)
 - s is the step size (e.g., every 30 epochs)
@@ -134,6 +135,7 @@ def cosine_annealing(step, total_steps, init_lr, min_lr=0):
 ### Why Warmup?
 
 At initialization:
+
 - Weights are random
 - Gradients are unreliable
 - Large steps could be catastrophic
@@ -242,6 +244,7 @@ def cosine_with_restarts(step, init_lr, restart_period, restart_mult=2):
 ```
 
 **Why restarts help**:
+
 - Escape local minima
 - Explore different regions of loss landscape
 - Create "snapshots" at each minimum for ensembling

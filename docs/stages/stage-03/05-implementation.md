@@ -407,6 +407,7 @@ def train(model, examples, epochs, learning_rate, print_every=100):
 ## Text Generation
 
 Once trained, we can generate new text. We use **temperature sampling** (introduced in Section 1.6) to control the randomness of generation:
+
 - Temperature = 1.0: Sample from the model's learned distribution
 - Temperature < 1.0: More deterministic, favors high-probability tokens
 - Temperature > 1.0: More random, explores lower-probability tokens
@@ -541,6 +542,7 @@ Generated: 'The quick brown fox the only thing we that is the question...'
 ```
 
 The model learns common patterns:
+
 - Word boundaries (spaces after words)
 - Common words ("the", "is", "that")
 - Phrase structures
@@ -564,6 +566,7 @@ For our example (vocab=42, embed=32, hidden=128, context=8):
 ### Computational Cost
 
 Per training example:
+
 - Forward: O(context × embed × hidden + hidden² + hidden × vocab)
 - Backward: Same order (automatic via autograd)
 - Memory: Proportional to computation (store activations)
@@ -582,6 +585,7 @@ Per training example:
 **Problem**: Loss becomes NaN
 
 **Solutions**:
+
 - Reduce learning rate
 - Check for division by zero
 - Use gradient clipping (cap gradient magnitudes)
@@ -599,6 +603,7 @@ for p in params:
 **Problem**: Generated text is repetitive or nonsensical
 
 **Solutions**:
+
 - More training data
 - More epochs
 - Adjust temperature during generation
@@ -609,6 +614,7 @@ for p in params:
 **Problem**: Training takes too long
 
 **Solutions**:
+
 - Smaller model (fewer hidden units)
 - Fewer training examples
 - Early stopping when loss plateaus
@@ -644,6 +650,7 @@ We built a complete neural language model:
 ## What's Next
 
 Our model trains, but there's a lot we glossed over:
+
 - How to choose the learning rate?
 - When to stop training?
 - How to prevent overfitting?

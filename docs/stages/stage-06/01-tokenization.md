@@ -402,6 +402,7 @@ Numbers are tricky for tokenizers:
 
 ```
 "12345" might become:
+
 - ["123", "45"]        (inconsistent)
 - ["1", "2", "3", "4", "5"]  (very long)
 - ["12345"]            (rare token, undertrained)

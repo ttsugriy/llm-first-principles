@@ -43,6 +43,7 @@ flowchart TB
 In forward mode, we pick one input xᵢ and compute how it affects everything downstream.
 
 We propagate **derivatives** forward alongside values:
+
 - Each node stores: (value, ∂value/∂xᵢ)
 - This pair flows through the graph
 - At the end, we have ∂output/∂xᵢ
@@ -54,6 +55,7 @@ To get derivatives with respect to *all* inputs, we need *n* forward passes (one
 **Input**: Computational graph, input values, index i of input to differentiate
 
 **Process**:
+
 1. Set derivative of xᵢ to 1, all other inputs to 0
 2. For each node v in topological order:
    - Compute v's value from parents (standard forward pass)
@@ -115,6 +117,7 @@ This matches: d/dx(x²) at x=2 is 2·2 = 4.
 In reverse mode, we pick one output and compute how *all* inputs affect it.
 
 We propagate **gradients** backward from output to inputs:
+
 - Start with ∂output/∂output = 1
 - Work backward through the graph
 - Accumulate ∂output/∂v for each node v
@@ -126,6 +129,7 @@ One backward pass gives derivatives with respect to *all* inputs!
 **Input**: Computational graph (already evaluated), output node
 
 **Process**:
+
 1. Forward pass: compute all values
 2. Set gradient of output to 1
 3. For each node v in reverse topological order:
@@ -158,6 +162,7 @@ Same function: f(x₁, x₂) = x₁·x₂ + sin(x₁), with x₁ = 2, x₂ = 3.
 | 7 | x₁ (total) | 3 + (-0.42) ≈ 2.58 | sum both paths |
 
 **Results from ONE backward pass**:
+
 - ∂f/∂x₁ ≈ 2.58
 - ∂f/∂x₂ = 2
 
@@ -171,6 +176,7 @@ Consider a function f: ℝⁿ → ℝᵐ (n inputs, m outputs).
 | Reverse | m passes | O(m · graph size) |
 
 **For neural networks**:
+
 - n = millions of parameters
 - m = 1 (scalar loss)
 - Forward mode: millions of passes
@@ -229,6 +235,7 @@ The two modes can be understood as different matrix-vector products:
 - "To change output by u, how much does each input contribute?"
 
 For scalar loss with u = 1:
+
 - VJP gives the full gradient
 - This is exactly what we need for gradient descent
 
@@ -242,6 +249,7 @@ For scalar loss with u = 1:
 Reverse mode needs to store intermediate values for the backward pass. For deep networks, this can be significant.
 
 **Techniques to reduce memory**:
+
 - Gradient checkpointing: Recompute some values instead of storing
 - Trading compute for memory
 

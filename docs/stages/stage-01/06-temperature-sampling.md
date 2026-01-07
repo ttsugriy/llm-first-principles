@@ -9,6 +9,7 @@ We've learned how to train a model and evaluate it. Now: how do we use it to gen
 Given a trained model P(next | context), we want to produce new text that "sounds like" the training data.
 
 **Autoregressive generation**:
+
 1. Start with initial context (e.g., ⟨START⟩)
 2. Sample next token from P(token | context)
 3. Append sampled token to context
@@ -50,6 +51,7 @@ $$x_t \sim P(x | \text{context})$$
 This produces samples from the true model distribution—exactly what the model learned.
 
 **How to sample from a discrete distribution**:
+
 1. List all tokens with their probabilities: P(t₁), P(t₂), ...
 2. Draw a random number r uniformly from [0, 1]
 3. Find the token where the cumulative probability crosses r
@@ -126,6 +128,7 @@ $$\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}$$
 This converts arbitrary real numbers into a probability distribution.
 
 **Properties**:
+
 1. All outputs positive (due to exponential)
 2. Outputs sum to 1 (due to normalization)
 3. Larger zᵢ → larger probability
@@ -138,6 +141,7 @@ $$\text{softmax}(z_i / T) = \frac{e^{z_i/T}}{\sum_j e^{z_j/T}}$$
 
 
 **Why this works**:
+
 - Dividing by T > 1 makes logits smaller → differences smaller → distribution flatter
 - Dividing by T < 1 makes logits larger → differences larger → distribution sharper
 
@@ -169,6 +173,7 @@ After temperature scaling:
 | D | 0.01 | 0.05 | 0.14 | 0.25 |
 
 **Observations**:
+
 - T=0.5: "A" dominates even more (69% vs 50%)
 - T=2.0: Distribution is more uniform
 - T→∞: All tokens equally likely (25% each)
@@ -285,6 +290,7 @@ Modern LLMs often use combinations: apply temperature, then top-p, then sample.
 | Top-p | Cumulative probability threshold | Adaptive vocabulary size |
 
 **Key takeaways**:
+
 1. Temperature controls the exploration-exploitation tradeoff
 2. T=1 samples from the learned distribution
 3. Lower T = more deterministic, higher T = more random

@@ -21,6 +21,7 @@ For a curve like f(x) = x², the slope varies. At x=0, the curve is flat (slope 
 Geometrically, f'(x) is the slope of the **tangent line** to f at x.
 
 The tangent line is the straight line that:
+
 1. Touches the curve at point (x, f(x))
 2. Has the same "direction" as the curve at that point
 
@@ -35,6 +36,7 @@ How do we compute the slope at a single point? We can't directly—a single poin
 ### The Difference Quotient
 
 For two points x and x+h on the curve:
+
 - Rise: f(x+h) - f(x)
 - Run: h
 
@@ -59,6 +61,7 @@ $$f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
 if this limit exists.
 
 Alternative notation:
+
 - f'(x) — Lagrange notation
 - df/dx — Leibniz notation (suggests "infinitesimal change in f per infinitesimal change in x")
 - Df(x) — Operator notation
@@ -92,6 +95,7 @@ $$\lim_{h \to 0} (2x + h) = 2x$$
 **Result**: f'(x) = 2x
 
 This means:
+
 - At x=0: slope = 0 (the parabola is flat at the bottom)
 - At x=1: slope = 2 (rising)
 - At x=3: slope = 6 (rising steeply)
@@ -132,6 +136,7 @@ Suppose we want to find the minimum of a function f(x). The derivative tells us 
 - If f'(x) = 0: x might be a minimum (or maximum, or saddle point).
 
 This is the foundation of **gradient descent**:
+
 1. Start at some x
 2. Compute f'(x)
 3. Update: x ← x - α·f'(x) (where α is a small step size)
@@ -142,6 +147,7 @@ The negative sign makes us move opposite to the gradient—toward lower values o
 ### Connection to Machine Learning
 
 In machine learning:
+
 - f is the **loss function** (measures how bad our predictions are)
 - x is all the **parameters** (weights and biases)
 - We want to minimize f (make predictions better)

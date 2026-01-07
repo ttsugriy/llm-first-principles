@@ -74,6 +74,7 @@ $$L(\theta) = \prod_{i=1}^{n} P(x_i | \text{context}_i; \theta)$$
 
 
 Products of many small numbers cause numerical problems:
+
 - 0.1 × 0.1 × 0.1 × ... (100 times) = 10^{-100} ≈ 0 (underflow!)
 
 **Solution**: Work with logarithms.
@@ -82,6 +83,7 @@ $$\log L(\theta) = \log \prod_{i=1}^{n} P(x_i | c_i) = \sum_{i=1}^{n} \log P(x_i
 
 
 **Why this works**:
+
 1. Log transforms products into sums (easier to compute)
 2. Log is monotonically increasing, so max(log L) occurs at same θ as max(L)
 3. Log of small positive numbers is large negative (no underflow)
@@ -104,6 +106,7 @@ We want to find θ_{a→b} = P(b | a) for all a, b.
 ### Constraints
 
 The probabilities must satisfy:
+
 1. θ_{a→b} ≥ 0 for all a, b (non-negativity)
 2. Σ_b θ_{a→b} = 1 for all a (normalization: probabilities sum to 1)
 
@@ -142,6 +145,7 @@ $$\frac{\partial \mathcal{L}}{\partial \theta_{a \rightarrow b}} = \frac{\text{c
 
 
 **Derivation of ∂ℓ/∂θ_{a→b}**:
+
 - ℓ(θ) = Σ_{a',b'} count(a',b') · log θ_{a'→b'}
 - ∂/∂θ_{a→b} of count(a,b) · log θ_{a→b} = count(a,b) / θ_{a→b}
 - All other terms don't involve θ_{a→b}, so their derivatives are 0
@@ -193,6 +197,7 @@ What we've proven: If you just count how often each transition occurs and divide
 This isn't an approximation or heuristic. It's provably optimal.
 
 **Why this matters**:
+
 1. Training a Markov model is O(n) where n is corpus size—just one pass through the data. (The notation O(n), called "Big-O notation," describes how computation time grows with input size. O(n) means time grows linearly with n.)
 2. No iterative optimization needed (unlike neural networks)
 3. The solution is exact, not approximate
@@ -210,11 +215,13 @@ Let's verify with a simple example.
 - (b, END): 1
 
 **Context totals**:
+
 - count(START, ·) = 1
 - count(a, ·) = 2
 - count(b, ·) = 2
 
 **MLE probabilities**:
+
 - P(a | START) = 1/1 = 1.0
 - P(b | a) = 2/2 = 1.0
 - P(a | b) = 1/2 = 0.5
@@ -243,6 +250,7 @@ There's a serious issue: What if we never saw a particular bigram in training?
 **Example**: If "xz" never appears in training, count(x, z) = 0, so P(z | x) = 0.
 
 This means any text containing "xz" gets probability 0, which means:
+
 - Perplexity becomes infinite
 - The model considers valid text impossible
 

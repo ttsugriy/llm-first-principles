@@ -77,6 +77,8 @@ nav:
     - 1.7 Implementation: stages/stage-01/07-implementation.md
     - 1.8 Trade-offs: stages/stage-01/08-trade-offs.md
     - 1.9 Why Neural Networks: stages/stage-01/09-why-neural.md
+    - Exercises: stages/stage-01/exercises.md
+    - Common Mistakes: stages/stage-01/common-mistakes.md
   - Stage 2 - Automatic Differentiation:
     - Overview: stages/stage-02/index.md
     - 2.1 What is a Derivative?: stages/stage-02/01-what-is-derivative.md
@@ -86,6 +88,8 @@ nav:
     - 2.5 Forward vs Reverse Mode: stages/stage-02/05-forward-vs-reverse.md
     - 2.6 Building Autograd: stages/stage-02/06-autograd-from-scratch.md
     - 2.7 Testing and Validation: stages/stage-02/07-testing-validation.md
+    - Exercises: stages/stage-02/exercises.md
+    - Common Mistakes: stages/stage-02/common-mistakes.md
   - Stage 3 - Neural Language Models:
     - Overview: stages/stage-03/index.md
     - 3.1 Why Neural?: stages/stage-03/01-why-neural.md
@@ -95,6 +99,8 @@ nav:
     - 3.5 Implementation: stages/stage-03/05-implementation.md
     - 3.6 Training Dynamics: stages/stage-03/06-training-dynamics.md
     - 3.7 Evaluation: stages/stage-03/07-evaluation.md
+    - Exercises: stages/stage-03/exercises.md
+    - Common Mistakes: stages/stage-03/common-mistakes.md
   - Stage 4 - Optimization:
     - Overview: stages/stage-04/index.md
     - 4.1 The Optimization Problem: stages/stage-04/01-optimization-problem.md
@@ -105,6 +111,8 @@ nav:
     - 4.6 Learning Rate Schedules: stages/stage-04/06-schedules.md
     - 4.7 Implementation: stages/stage-04/07-implementation.md
     - 4.8 Practical Considerations: stages/stage-04/08-practical.md
+    - Exercises: stages/stage-04/exercises.md
+    - Common Mistakes: stages/stage-04/common-mistakes.md
   - Stage 5 - Attention:
     - Overview: stages/stage-05/index.md
     - 5.1 The Attention Problem: stages/stage-05/01-attention-problem.md
@@ -115,6 +123,8 @@ nav:
     - 5.6 Positional Encoding: stages/stage-05/06-positional-encoding.md
     - 5.7 Causal Masking: stages/stage-05/07-causal-masking.md
     - 5.8 Implementation: stages/stage-05/08-implementation.md
+    - Exercises: stages/stage-05/exercises.md
+    - Common Mistakes: stages/stage-05/common-mistakes.md
   - Stage 6 - The Complete Transformer:
     - Overview: stages/stage-06/index.md
     - 6.1 Tokenization: stages/stage-06/01-tokenization.md
@@ -125,6 +135,8 @@ nav:
     - 6.6 Modern Architectures: stages/stage-06/06-architectures.md
     - 6.7 Scaling Laws: stages/stage-06/07-scaling-laws.md
     - 6.8 Implementation: stages/stage-06/08-implementation.md
+    - Exercises: stages/stage-06/exercises.md
+    - Common Mistakes: stages/stage-06/common-mistakes.md
   - Stage 7 - Tokenization:
     - Overview: stages/stage-07/index.md
     - 7.1 The Tokenization Problem: stages/stage-07/01-tokenization-problem.md
@@ -134,6 +146,8 @@ nav:
     - 7.5 Unigram: stages/stage-07/05-unigram.md
     - 7.6 Vocabulary Size: stages/stage-07/06-vocabulary-size.md
     - 7.7 Implementation: stages/stage-07/07-implementation.md
+    - Exercises: stages/stage-07/exercises.md
+    - Common Mistakes: stages/stage-07/common-mistakes.md
   - Stage 8 - Training Dynamics:
     - Overview: stages/stage-08/index.md
     - 8.1 Why Training Fails: stages/stage-08/01-why-training-fails.md
@@ -143,6 +157,8 @@ nav:
     - 8.5 Activation Monitoring: stages/stage-08/05-activation-monitoring.md
     - 8.6 Debugging Strategies: stages/stage-08/06-debugging-strategies.md
     - 8.7 Implementation: stages/stage-08/07-implementation.md
+    - Exercises: stages/stage-08/exercises.md
+    - Common Mistakes: stages/stage-08/common-mistakes.md
   - Stage 9 - Parameter-Efficient Fine-Tuning:
     - Overview: stages/stage-09/index.md
     - 9.1 The Fine-Tuning Problem: stages/stage-09/01-fine-tuning-problem.md
@@ -151,6 +167,8 @@ nav:
     - 9.4 Prefix and Prompt Tuning: stages/stage-09/04-prefix-and-prompt.md
     - 9.5 Choosing a Method: stages/stage-09/05-choosing-a-method.md
     - 9.6 Implementation: stages/stage-09/06-implementation.md
+    - Exercises: stages/stage-09/exercises.md
+    - Common Mistakes: stages/stage-09/common-mistakes.md
   - Stage 10 - Alignment:
     - Overview: stages/stage-10/index.md
     - 10.1 The Alignment Problem: stages/stage-10/01-alignment-problem.md
@@ -159,3 +177,7 @@ nav:
     - 10.4 Direct Preference Optimization: stages/stage-10/04-dpo.md
     - 10.5 Choosing a Method: stages/stage-10/05-choosing-a-method.md
     - 10.6 Implementation: stages/stage-10/06-implementation.md
+    - Exercises: stages/stage-10/exercises.md
+    - Common Mistakes: stages/stage-10/common-mistakes.md
+  - Capstone:
+    - Overview: capstone/index.md

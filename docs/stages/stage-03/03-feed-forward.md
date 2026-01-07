@@ -381,11 +381,11 @@ For context length k, embedding dim d, hidden sizes h₁ and h₂, vocabulary |V
 
 | Component | Parameters |
 |-----------|------------|
-| Embedding | |V| × d |
+| Embedding | &#124;V&#124; × d |
 | Layer 1 | (k·d) × h₁ + h₁ |
 | Layer 2 | h₁ × h₂ + h₂ |
-| Output | h₂ × |V| + |V| |
-| **Total** | |V|d + kdh₁ + h₁ + h₁h₂ + h₂ + h₂|V| + |V| |
+| Output | h₂ × &#124;V&#124; + &#124;V&#124; |
+| **Total** | &#124;V&#124;d + kdh₁ + h₁ + h₁h₂ + h₂ + h₂&#124;V&#124; + &#124;V&#124; |
 
 **Example**: |V| = 80, d = 32, k = 8, h₁ = h₂ = 128
 

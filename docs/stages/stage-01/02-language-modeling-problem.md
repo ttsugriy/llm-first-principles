@@ -94,7 +94,7 @@ With the Markov assumption of order k, how many distinct contexts do we need to 
 
 Each context is a sequence of k tokens, so there are |V|^k possible contexts.
 
-| Order k | Possible contexts (|V|=50,000) |
+| Order k | Possible contexts (&#124;V&#124;=50,000) |
 |---------|-------------------------------|
 | 1 | 50,000 |
 | 2 | 2.5 billion |

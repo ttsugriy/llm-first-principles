@@ -193,7 +193,7 @@ The set of all unique tokens a model can handle. Denoted |V|. Modern LLMs have v
 | P(A) | Probability of event A |
 | P(A\|B) | Probability of A given B |
 | θ | Model parameters |
-| |V| | Vocabulary size |
+| &#124;V&#124; | Vocabulary size |
 | n | Sequence length |
 | k | Context size (Markov order) |
 | H(p) | Entropy of distribution p |

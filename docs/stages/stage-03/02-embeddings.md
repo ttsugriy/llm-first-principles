@@ -95,9 +95,9 @@ Then:
 
 | Property | One-Hot | Embedding |
 |----------|---------|-----------|
-| Dimension | |V| | d << |V| |
+| Dimension | &#124;V&#124; | d << &#124;V&#124; |
 | Similarity | All orthogonal | Learned from data |
-| Parameters | 0 (fixed) | |V| × d (learned) |
+| Parameters | 0 (fixed) | &#124;V&#124; × d (learned) |
 | Structure | None | Emerges from training |
 
 ## Mathematical Formulation
@@ -415,8 +415,8 @@ Small random values that will be refined by training.
 |---------|-------------|
 | One-hot | Sparse, high-dimensional, no similarity |
 | Embedding | Dense, low-dimensional, learned similarity |
-| Embedding matrix | E ∈ ℝ^{|V|×d}, lookup table of vectors |
-| Lookup operation | embed(i) = E[i,:], O(d) not O(|V|d) |
+| Embedding matrix | E ∈ ℝ^{&#124;V&#124;×d}, lookup table of vectors |
+| Lookup operation | embed(i) = E[i,:], O(d) not O(&#124;V&#124;d) |
 | Why it works | Similar contexts → similar gradients → similar embeddings |
 | Geometry | Clusters, directions, linear relationships |
 | Context representation | Concatenate embeddings, preserves position |

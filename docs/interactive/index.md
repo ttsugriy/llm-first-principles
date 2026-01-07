@@ -4,6 +4,26 @@ Explore the concepts from each stage with these interactive tools. All visualiza
 
 <div class="grid cards" markdown>
 
+-   :material-eye:{ .lg .middle } __Attention Visualizer__
+
+    ---
+
+    Explore how self-attention works. See how queries match keys, observe attention weights, and understand causal masking.
+
+    [:octicons-arrow-right-24: Launch Attention Visualizer](./attention.html){ .md-button target="_blank" }
+
+    _From Stage 5: Attention_
+
+-   :material-chart-line:{ .lg .middle } __Gradient Descent Visualizer__
+
+    ---
+
+    Watch optimizers navigate loss landscapes. Compare SGD, momentum, RMSprop, and Adam on different surfaces.
+
+    [:octicons-arrow-right-24: Launch Optimizer Visualizer](./optimizer.html){ .md-button target="_blank" }
+
+    _From Stage 4: Optimization_
+
 -   :material-graph-outline:{ .lg .middle } __Autograd Visualizer__
 
     ---
@@ -34,21 +54,30 @@ Explore the concepts from each stage with these interactive tools. All visualiza
 
     _From Stage 1: Markov Chains_
 
--   :material-chart-line:{ .lg .middle } __Gradient Descent Visualizer__
-
-    ---
-
-    Watch optimizers navigate loss landscapes. Compare SGD, momentum, RMSprop, and Adam on different surfaces.
-
-    [:octicons-arrow-right-24: Launch Optimizer Visualizer](./optimizer.html){ .md-button target="_blank" }
-
-    _From Stage 4: Optimization_
-
 </div>
 
 ## What These Visualizations Teach
 
-### Gradient Descent Visualizer (Stage 4) — NEW
+### Attention Visualizer (Stage 5) — NEW
+
+The attention visualizer demonstrates the core concepts from Sections 5.1-5.7:
+
+- **Query-Key matching**: See how queries find relevant keys
+- **Attention weights**: Observe the softmax distribution over positions
+- **Causal masking**: Enable GPT-style masking to prevent future attention
+- **Temperature effects**: Watch attention sharpen or soften with temperature
+
+Try these experiments:
+
+| Pattern | Masking | What it demonstrates |
+|---------|---------|---------------------|
+| Random | None | Untrained attention, spread distribution |
+| Self-Attention | None | Each position attends to itself |
+| Previous Token | Causal | Local context pattern |
+| Syntactic | None | Content word relationships |
+| Distance-Based | Causal | Positional attention decay |
+
+### Gradient Descent Visualizer (Stage 4)
 
 The optimizer visualizer demonstrates the core concepts from Sections 4.2-4.5:
 

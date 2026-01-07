@@ -104,3 +104,13 @@ nav:
     - 4.6 Learning Rate Schedules: stages/stage-04/06-schedules.md
     - 4.7 Implementation: stages/stage-04/07-implementation.md
     - 4.8 Practical Considerations: stages/stage-04/08-practical.md
+  - Stage 5 - Attention:
+    - Overview: stages/stage-05/index.md
+    - 5.1 The Attention Problem: stages/stage-05/01-attention-problem.md
+    - 5.2 Dot-Product Attention: stages/stage-05/02-dot-product-attention.md
+    - 5.3 Scaled Attention: stages/stage-05/03-scaled-attention.md
+    - 5.4 Self-Attention: stages/stage-05/04-self-attention.md
+    - 5.5 Multi-Head Attention: stages/stage-05/05-multi-head.md
+    - 5.6 Positional Encoding: stages/stage-05/06-positional-encoding.md
+    - 5.7 Causal Masking: stages/stage-05/07-causal-masking.md
+    - 5.8 Implementation: stages/stage-05/08-implementation.md

@@ -98,6 +98,18 @@ python3 tests/test_optimizers.py
 python3 -c "from optimizers import AdamW; print('Optimizers ready!')"
 ```
 
+### Run Stage 5 Code
+
+```bash
+cd code/stage-05
+
+# Run attention tests (53 tests)
+python3 tests/test_attention.py
+
+# Use attention in your code
+python3 -c "from attention import CausalTransformer; model = CausalTransformer(100, 32, 4, 2); print('Attention ready!')"
+```
+
 ### Run Benchmarks
 
 ```bash
@@ -192,7 +204,26 @@ Making learning work:
 - `optimizers.py` — SGD, Adam, AdamW, schedulers
 - `tests/test_optimizers.py` — Comprehensive test suite
 
-### Stages 5-18: Coming Soon
+### Stage 5: Attention Mechanisms ✅
+
+The attention mechanism that powers transformers:
+
+| Section | Topic | Key Concepts |
+|---------|-------|--------------|
+| 5.1 | The Attention Problem | Fixed context limits, information bottleneck |
+| 5.2 | Dot-Product Attention | Query, Key, Value, attention weights |
+| 5.3 | Scaled Attention | √d scaling, variance analysis |
+| 5.4 | Self-Attention | Sequence attending to itself |
+| 5.5 | Multi-Head Attention | Multiple heads, different subspaces |
+| 5.6 | Positional Encoding | Sinusoidal, learned, RoPE, ALiBi |
+| 5.7 | Causal Masking | Autoregressive constraints, KV-cache |
+| 5.8 | Implementation | Complete attention from scratch |
+
+**Code includes:**
+- `attention.py` — Full attention implementation
+- `tests/test_attention.py` — Comprehensive test suite (53 tests)
+
+### Stages 6-18: Coming Soon
 
 | Spiral | Theme | Stages |
 |--------|-------|--------|
@@ -214,12 +245,14 @@ llm-first-principles/
 │   │   ├── autograd.html           # Autograd visualizer
 │   │   ├── temperature.html        # Temperature explorer
 │   │   ├── ngram.html              # N-gram state machine
-│   │   └── optimizer.html          # Gradient descent visualizer
+│   │   ├── optimizer.html          # Gradient descent visualizer
+│   │   └── attention.html          # Attention visualizer
 │   └── stages/                     # Stage content
 │       ├── stage-01/               # Markov chains
 │       ├── stage-02/               # Autodiff
 │       ├── stage-03/               # Neural LMs
-│       └── stage-04/               # Optimization
+│       ├── stage-04/               # Optimization
+│       └── stage-05/               # Attention
 ├── code/
 │   ├── stage-01/                   # Stage 1 implementation
 │   │   ├── markov.py               # Core Markov chain class
@@ -241,6 +274,10 @@ llm-first-principles/
 │       ├── optimizers.py           # All optimizers from scratch
 │       └── tests/
 │           └── test_optimizers.py
+│   └── stage-05/                   # Stage 5 implementation
+│       ├── attention.py            # Complete attention from scratch
+│       └── tests/
+│           └── test_attention.py
 ├── benchmarks/                     # Reproducible benchmarks
 │   ├── run_benchmarks.py           # Run all benchmarks
 │   └── visualize.py                # Generate plots
@@ -275,6 +312,7 @@ llm-first-principles/
 - **Temperature Explorer**: See how temperature affects sampling
 - **N-gram State Machine**: Visualize Markov chains as state machines
 - **Optimizer Visualizer**: Compare SGD, momentum, Adam on different loss surfaces
+- **Attention Visualizer**: See how queries match keys in self-attention
 
 ### Pedagogical Features
 - Reading time estimates for each section
@@ -306,6 +344,10 @@ python3 code/stage-03/tests/test_neural_lm.py
 # Run Stage 4 tests
 python3 code/stage-04/tests/test_optimizers.py
 # Expected output: all tests pass
+
+# Run Stage 5 tests
+python3 code/stage-05/tests/test_attention.py
+# Expected output: "Results: 53 passed, 0 failed"
 ```
 
 ### Building the Book

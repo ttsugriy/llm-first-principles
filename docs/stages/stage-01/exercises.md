@@ -158,3 +158,27 @@ For a vocabulary of size V=10,000:
 - **Test suite**: See `code/stage-01/tests/test_markov.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-01/markov.py`
 - **Self-check**: Verify perplexity calculation matches examples in documentation
+---
+
+## Mini-Project: Shakespeare Generator
+
+Build a complete Markov chain text generator trained on Shakespeare.
+
+### Requirements
+
+1. **Data**: Download a Shakespeare text file (e.g., from Project Gutenberg)
+2. **Model**: Implement a trigram Markov model with Laplace smoothing
+3. **Generation**: Generate 100-word passages at different temperatures
+4. **Evaluation**: Compute perplexity on a held-out test set
+
+### Deliverables
+
+- [ ] Working trigram model with smoothing
+- [ ] Generation function with temperature control
+- [ ] Perplexity evaluation on test data
+- [ ] Comparison: bigram vs. trigram perplexity
+- [ ] Generated samples at T=0.5, T=1.0, T=2.0
+
+### Extension
+
+Try 4-grams and 5-grams. Plot perplexity vs. n-gram order. At what point do you see diminishing returns or overfitting?

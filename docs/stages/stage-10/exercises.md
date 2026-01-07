@@ -326,3 +326,26 @@ class ConstitutionalCritic:
 - **Test suite**: See `code/stage-10/tests/test_alignment.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-10/alignment.py`
 - **Self-check**: Verify DPO loss decreases and accuracy on preference pairs increases
+---
+
+## Mini-Project: Preference Trainer
+
+Implement DPO and use it to align a language model.
+
+### Requirements
+
+1. **Data**: Create or use a preference dataset
+2. **DPO**: Implement DPO training from scratch
+3. **Evaluation**: Compare before/after alignment
+
+### Deliverables
+
+- [ ] Preference data loader
+- [ ] DPO loss implementation with KL penalty
+- [ ] Training loop with proper reference model handling
+- [ ] Before/after comparison on sample prompts
+- [ ] Analysis of what the model learned
+
+### Extension
+
+Implement reward modeling and compare with DPO. Which is easier to tune?

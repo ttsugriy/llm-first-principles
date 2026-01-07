@@ -65,6 +65,8 @@ nav:
   - Home: index.md
   - Interactive Tools: interactive/index.md
   - Glossary: glossary.md
+  - Troubleshooting: troubleshooting.md
+  - Further Reading: resources.md
   - Stage 1 - Markov Chains:
     - Overview: stages/stage-01/index.md
     - 1.1 Probability Foundations: stages/stage-01/01-probability-foundations.md

@@ -69,7 +69,9 @@ Complete all stages and the capstone project, which involves:
 ## Quick Links
 
 - [Glossary](glossary.md) - Key terms and notation reference
+- [Troubleshooting](troubleshooting.md) - When things go wrong
 - [Interactive Tools](interactive/index.md) - Autograd visualizer, temperature explorer
+- [Further Reading](resources.md) - Papers, libraries, and external resources
 - [Capstone Project](capstone/index.md) - Put it all together
 
 ## Prerequisites

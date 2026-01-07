@@ -168,3 +168,25 @@ Train models with different batch sizes: 16, 32, 64, 128, 256.
 - **Test suite**: See `code/stage-04/tests/test_optimizers.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-04/optimizers.py`
 - **Self-check**: Verify optimizers converge on simple quadratic functions
+---
+
+## Mini-Project: Optimizer Comparison
+
+Empirically compare optimizers on a challenging optimization landscape.
+
+### Requirements
+
+1. **Implement**: SGD, Momentum, RMSprop, Adam from scratch
+2. **Benchmark**: Compare on Rosenbrock function and a simple neural network
+3. **Visualize**: Plot optimization trajectories and loss curves
+
+### Deliverables
+
+- [ ] All 4 optimizers implemented
+- [ ] Convergence plot (steps vs. loss) for each
+- [ ] 2D trajectory plot on Rosenbrock function
+- [ ] Hyperparameter sensitivity analysis (learning rate)
+
+### Extension
+
+Implement learning rate warmup and cosine decay. How much do they help?

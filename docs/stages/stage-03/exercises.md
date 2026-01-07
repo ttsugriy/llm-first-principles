@@ -147,3 +147,29 @@ On the same dataset:
 - **Test suite**: See `code/stage-03/tests/test_neural_lm.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-03/neural_lm.py`
 - **Self-check**: Verify loss decreases during training and perplexity is reasonable
+---
+
+## Mini-Project: Neural Bigram Model
+
+Build a neural language model that outperforms your Markov chain from Stage 1.
+
+### Requirements
+
+1. **Architecture**: Embedding → Linear → Softmax
+2. **Training**: Train on the same Shakespeare data from Stage 1
+3. **Comparison**: Compare perplexity with your Stage 1 model
+
+### Deliverables
+
+- [ ] Working neural bigram model
+- [ ] Training loop with loss plotting
+- [ ] Perplexity comparison table:
+  | Model | Perplexity |
+  |-------|------------|
+  | Bigram Markov | ? |
+  | Neural Bigram | ? |
+- [ ] Generated text samples
+
+### Extension
+
+Extend to trigrams (2 token context). How much does adding context help?

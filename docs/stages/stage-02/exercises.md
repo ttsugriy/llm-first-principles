@@ -159,3 +159,25 @@ Consider a 10-layer network where each layer multiplies by 2.
 - **Test suite**: See `code/stage-02/tests/test_value.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-02/value.py`
 - **Self-check**: Use numerical gradient checking to verify your derivatives
+---
+
+## Mini-Project: Autograd Engine
+
+Build a complete automatic differentiation engine that can train a small neural network.
+
+### Requirements
+
+1. **Value class**: Implement forward and backward for +, *, -, /, **
+2. **Activations**: Add tanh, relu, and sigmoid with proper gradients
+3. **Training**: Train a 2-layer MLP to learn XOR
+
+### Deliverables
+
+- [ ] Value class with all basic operations
+- [ ] Gradient checking (numerical vs. autograd)
+- [ ] XOR network that converges to <0.01 loss
+- [ ] Visualization of the computational graph (optional)
+
+### Extension
+
+Add support for matrix operations (matmul, sum, mean). Can you train a simple image classifier?

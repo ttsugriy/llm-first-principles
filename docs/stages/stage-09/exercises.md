@@ -293,3 +293,30 @@ class QLoRALayer:
 - **Test suite**: See `code/stage-09/tests/test_peft.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-09/peft.py`
 - **Self-check**: Verify LoRA merging produces same output as unmerged forward pass
+---
+
+## Mini-Project: LoRA Fine-tuning
+
+Implement LoRA and use it to fine-tune a model for a specific task.
+
+### Requirements
+
+1. **LoRA**: Implement LoRA layers from scratch
+2. **Task**: Fine-tune for a simple task (e.g., sentiment, simple QA)
+3. **Comparison**: Compare parameter count and performance
+
+### Deliverables
+
+- [ ] LoRA implementation with merge capability
+- [ ] Fine-tuned model on chosen task
+- [ ] Comparison table:
+  | Method | Params | Accuracy |
+  |--------|--------|----------|
+  | Full fine-tune | ? | ? |
+  | LoRA r=4 | ? | ? |
+  | LoRA r=16 | ? | ? |
+- [ ] Analysis of rank vs. performance
+
+### Extension
+
+Implement QLoRA with 4-bit quantization of base weights.

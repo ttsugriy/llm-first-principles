@@ -175,3 +175,26 @@ class SwiGLU_FFN:
 - **Test suite**: See `code/stage-06/tests/test_transformer.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-06/transformer.py`
 - **Self-check**: Verify output shapes match expectations and gradients flow correctly
+---
+
+## Mini-Project: Tiny Transformer
+
+Build a complete, working transformer language model from scratch.
+
+### Requirements
+
+1. **Architecture**: At least 2 layers, 2 heads, 64 dimensions
+2. **Training**: Train on a text corpus until loss < 2.0
+3. **Generation**: Generate coherent text
+
+### Deliverables
+
+- [ ] Complete transformer implementation
+- [ ] Training script with logging
+- [ ] Loss curve showing convergence
+- [ ] Generated text samples
+- [ ] Parameter count breakdown
+
+### Extension
+
+Compare pre-norm vs. post-norm. Which trains more stably?

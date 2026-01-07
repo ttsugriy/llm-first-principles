@@ -266,3 +266,28 @@ class AutoTrainer:
 - **Test suite**: See `code/stage-08/tests/test_diagnostics.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-08/diagnostics.py`
 - **Self-check**: Test your diagnostics on simulated healthy and unhealthy training runs
+---
+
+## Mini-Project: Training Dashboard
+
+Build a real-time training diagnostics dashboard.
+
+### Requirements
+
+1. **Metrics**: Track loss, gradient norm, learning rate, throughput
+2. **Alerts**: Detect anomalies (NaN, explosion, plateau)
+3. **Visualization**: Real-time updating plots
+
+### Deliverables
+
+- [ ] TrainingMonitor class that tracks all metrics
+- [ ] Anomaly detection that catches:
+  - NaN loss
+  - Gradient explosion (norm > 100)
+  - Loss plateau (no improvement in N steps)
+- [ ] Summary report at end of training
+- [ ] (Optional) Live plotting with matplotlib
+
+### Extension
+
+Add automatic hyperparameter adjustment (reduce LR on plateau).

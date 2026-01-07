@@ -218,3 +218,28 @@ Explore how tokenization affects different languages:
 - **Test suite**: See `code/stage-07/tests/test_tokenizer.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-07/tokenizer.py`
 - **Self-check**: Verify encode/decode roundtrips correctly: `decode(encode(text)) == text`
+---
+
+## Mini-Project: BPE Tokenizer
+
+Build a complete BPE tokenizer and analyze its behavior.
+
+### Requirements
+
+1. **Training**: Implement BPE training from scratch
+2. **Encoding**: Implement the encoding algorithm
+3. **Analysis**: Compare with tiktoken on the same text
+
+### Deliverables
+
+- [ ] BPE training implementation
+- [ ] Encode/decode that roundtrips correctly
+- [ ] Vocabulary analysis:
+  - Token length distribution
+  - Most common tokens
+  - Tokens per word (fertility)
+- [ ] Comparison with tiktoken
+
+### Extension
+
+Implement byte-level BPE (like GPT-2). How does it handle Unicode?

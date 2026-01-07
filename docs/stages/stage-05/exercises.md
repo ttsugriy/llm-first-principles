@@ -169,3 +169,25 @@ def relative_attention(Q, K, V, pos_embed):
 - **Test suite**: See `code/stage-05/tests/test_attention.py` for expected behavior
 - **Reference implementation**: Compare with `code/stage-05/attention.py`
 - **Self-check**: Verify attention weights sum to 1 and causal mask blocks future positions
+---
+
+## Mini-Project: Attention Visualizer
+
+Build a tool that visualizes attention patterns in trained models.
+
+### Requirements
+
+1. **Model**: Train a small attention-based language model
+2. **Extraction**: Extract attention weights during inference
+3. **Visualization**: Create heatmaps of attention patterns
+
+### Deliverables
+
+- [ ] Trained attention model (even if small)
+- [ ] Attention weight extraction function
+- [ ] Heatmap visualization for sample sentences
+- [ ] Analysis: What patterns do you observe?
+
+### Extension
+
+Compare attention patterns across different heads. Do different heads specialize?

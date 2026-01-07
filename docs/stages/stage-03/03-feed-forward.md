@@ -313,14 +313,14 @@ flowchart LR
         C1["c₁"]
         C2["c₂"]
         C3["..."]
-        C4["c_k"]
+        C4["cₖ"]
     end
 
     subgraph Embed["Embedding Layer"]
         E1["e₁<br/>(d dims)"]
         E2["e₂"]
         E3["..."]
-        E4["e_k"]
+        E4["eₖ"]
     end
 
     subgraph Concat["Concatenation"]

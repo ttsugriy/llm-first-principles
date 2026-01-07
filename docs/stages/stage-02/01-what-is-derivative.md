@@ -206,7 +206,7 @@ In Section 2.3, we'll focus on the **chain rule**—the key to computing derivat
 
 | Concept | Definition | Intuition |
 |---------|------------|-----------|
-| Derivative | lim_{h→0} [f(x+h)-f(x)]/h | Instantaneous rate of change |
+| Derivative | $lim_{h→0}$ [f(x+h)-f(x)]/h | Instantaneous rate of change |
 | Geometric meaning | Slope of tangent line | How steep is the curve? |
 | Partial derivative | Derivative with one variable | Hold others constant |
 | Gradient | Vector of all partials | Direction of steepest ascent |

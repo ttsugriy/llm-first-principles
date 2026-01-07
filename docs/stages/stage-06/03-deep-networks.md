@@ -121,7 +121,7 @@ Without residuals, gradients must flow through many layers:
 
 $$\frac{\partial L}{\partial x_1} = \frac{\partial L}{\partial x_n} \cdot \prod_{i=1}^{n-1} \frac{\partial x_{i+1}}{\partial x_i}$$
 
-If each ∂x_{i+1}/∂x_i < 1, the product vanishes exponentially.
+If each ∂$x_{i+1}$/∂x_i < 1, the product vanishes exponentially.
 
 ### Residual Connections Save the Day
 

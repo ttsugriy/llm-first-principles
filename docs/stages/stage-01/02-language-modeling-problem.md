@@ -69,14 +69,14 @@ The following diagram illustrates what gets "kept" versus "discarded":
 ```mermaid
 flowchart LR
     subgraph "Full History (Intractable)"
-        H1["x₁"] --- H2["x₂"] --- H3["x₃"] --- H4["..."] --- H5["x_{i-2}"] --- H6["x_{i-1}"]
+        H1["x₁"] --- H2["x₂"] --- H3["x₃"] --- H4["..."] --- H5["xᵢ₋₂"] --- H6["xᵢ₋₁"]
     end
-    H6 --> Q["Predict x_i?"]
+    H6 --> Q["Predict xᵢ?"]
 
     subgraph "Order-2 Markov (Tractable)"
-        M1["x₁"]:::discarded --- M2["x₂"]:::discarded --- M3["x₃"]:::discarded --- M4["..."]:::discarded --- M5["x_{i-2}"]:::kept --- M6["x_{i-1}"]:::kept
+        M1["x₁"]:::discarded --- M2["x₂"]:::discarded --- M3["x₃"]:::discarded --- M4["..."]:::discarded --- M5["xᵢ₋₂"]:::kept --- M6["xᵢ₋₁"]:::kept
     end
-    M6 --> Q2["Predict x_i"]
+    M6 --> Q2["Predict xᵢ"]
 
     classDef discarded fill:#ffcccc,stroke:#cc0000,stroke-dasharray: 5 5
     classDef kept fill:#ccffcc,stroke:#00cc00
@@ -183,8 +183,8 @@ $$\theta_{c \rightarrow t} = P(t | c)$$
 
 
 4. Constraints:
-   - All probabilities non-negative: θ_{c→t} ≥ 0
-   - Probabilities sum to 1 for each context: ∑_t θ_{c→t} = 1
+   - All probabilities non-negative: $θ_{c→t}$ ≥ 0
+   - Probabilities sum to 1 for each context: ∑_t $θ_{c→t}$ = 1
 
 The probability of a sequence x₁, x₂, ..., xₙ is:
 
@@ -193,8 +193,8 @@ $$P(x_1, \ldots, x_n) = \prod_{i=1}^{n+1} \theta_{c_i \rightarrow x_i}$$
 
 where:
 
-- x_{n+1} = ⟨END⟩
-- cᵢ = (x_{i-k}, ..., x_{i-1}) with padding using ⟨START⟩ for i ≤ k
+- $x_{n+1}$ = ⟨END⟩
+- cᵢ = ($x_{i-k}$, ..., $x_{i-1}$) with padding using ⟨START⟩ for i ≤ k
 
 ## What We Need to Learn
 

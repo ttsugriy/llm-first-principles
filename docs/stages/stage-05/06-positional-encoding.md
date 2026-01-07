@@ -196,7 +196,7 @@ $$\text{score}_{ij} = q_i^T k_j + q_i^T r_{i-j} + u^T k_j + v^T r_{i-j}$$
 
 Where:
 
-- r_{i-j}: relative position embedding
+- $r_{i-j}$: relative position embedding
 - u, v: learnable global biases
 
 ### T5 Style (Simplified)
@@ -246,7 +246,7 @@ $$q_m' = R_m q_m, \quad k_n' = R_n k_n$$
 
 $$q_m' \cdot k_n' = q_m^T R_m^T R_n k_n = q_m^T R_{n-m} k_n$$
 
-The rotation difference R_{n-m} depends only on relative position!
+The rotation difference $R_{n-m}$ depends only on relative position!
 
 ### How Rotation Works
 

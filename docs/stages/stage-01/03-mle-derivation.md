@@ -10,9 +10,9 @@ This section derives *from first principles* why counting is the optimal way to 
 
 A **parameter** is a number that defines our model's behavior. For a bigram model, the parameters are all the transition probabilities:
 
-θ = {θ_{a→b} : for all a ∈ V, b ∈ V ∪ {⟨END⟩}}
+θ = {$θ_{a→b}$ : for all a ∈ V, b ∈ V ∪ {⟨END⟩}}
 
-where θ_{a→b} = P(b | a).
+where $θ_{a→b}$ = P(b | a).
 
 For a vocabulary of size |V|, we have |V| × (|V| + 1) parameters (each of |V| contexts can transition to |V| tokens plus END).
 
@@ -41,12 +41,12 @@ This reads: "The probability of observing data D, if the true parameters were θ
 $$L(\theta) = P(\text{"ab"} | \theta) = \theta_{\text{START} \rightarrow a} \cdot \theta_{a \rightarrow b} \cdot \theta_{b \rightarrow \text{END}}$$
 
 
-If θ_{START→a} = 0.1, θ_{a→b} = 0.2, θ_{b→END} = 0.5:
+If $θ_{START→a}$ = 0.1, $θ_{a→b}$ = 0.2, $θ_{b→END}$ = 0.5:
 
 $$L(\theta) = 0.1 \times 0.2 \times 0.5 = 0.01$$
 
 
-If θ_{START→a} = 0.5, θ_{a→b} = 0.8, θ_{b→END} = 0.5:
+If $θ_{START→a}$ = 0.5, $θ_{a→b}$ = 0.8, $θ_{b→END}$ = 0.5:
 
 $$L(\theta) = 0.5 \times 0.8 \times 0.5 = 0.2$$
 
@@ -101,14 +101,14 @@ We have training data: a sequence x₁, x₂, ..., xₙ.
 Let count(a, b) = number of times token b follows token a in training data.
 Let count(a, ·) = number of times token a appears (followed by anything) = Σ_b count(a, b).
 
-We want to find θ_{a→b} = P(b | a) for all a, b.
+We want to find $θ_{a→b}$ = P(b | a) for all a, b.
 
 ### Constraints
 
 The probabilities must satisfy:
 
-1. θ_{a→b} ≥ 0 for all a, b (non-negativity)
-2. Σ_b θ_{a→b} = 1 for all a (normalization: probabilities sum to 1)
+1. $θ_{a→b}$ ≥ 0 for all a, b (non-negativity)
+2. Σ_b $θ_{a→b}$ = 1 for all a (normalization: probabilities sum to 1)
 
 ### The Log-Likelihood
 
@@ -122,11 +122,11 @@ We can rewrite this by grouping identical bigrams:
 $$\ell(\theta) = \sum_{a \in V} \sum_{b \in V \cup \{\text{END}\}} \text{count}(a, b) \cdot \log \theta_{a \rightarrow b}$$
 
 
-Each unique bigram (a, b) contributes count(a, b) × log θ_{a→b} to the total.
+Each unique bigram (a, b) contributes count(a, b) × log $θ_{a→b}$ to the total.
 
 ### Optimization with Constraints: Lagrange Multipliers
 
-We want to maximize ℓ(θ) subject to the constraints Σ_b θ_{a→b} = 1.
+We want to maximize ℓ(θ) subject to the constraints Σ_b $θ_{a→b}$ = 1.
 
 **Lagrange multipliers**: To optimize f(x) subject to g(x) = 0, we find where ∇f = λ∇g.
 
@@ -139,30 +139,30 @@ We have one Lagrange multiplier λₐ for each context a (one constraint per con
 
 ### Taking Derivatives
 
-For each parameter θ_{a→b}, we take the partial derivative and set it to zero:
+For each parameter $θ_{a→b}$, we take the partial derivative and set it to zero:
 
 $$\frac{\partial \mathcal{L}}{\partial \theta_{a \rightarrow b}} = \frac{\text{count}(a, b)}{\theta_{a \rightarrow b}} - \lambda_a = 0$$
 
 
-**Derivation of ∂ℓ/∂θ_{a→b}**:
+**Derivation of ∂ℓ/∂$θ_{a→b}$**:
 
-- ℓ(θ) = Σ_{a',b'} count(a',b') · log θ_{a'→b'}
-- ∂/∂θ_{a→b} of count(a,b) · log θ_{a→b} = count(a,b) / θ_{a→b}
-- All other terms don't involve θ_{a→b}, so their derivatives are 0
+- ℓ(θ) = $Σ_{a',b'}$ count(a',b') · log $θ_{a'→b'}$
+- ∂/∂$θ_{a→b}$ of count(a,b) · log $θ_{a→b}$ = count(a,b) / $θ_{a→b}$
+- All other terms don't involve $θ_{a→b}$, so their derivatives are 0
 
 From the derivative equation:
 
 $$\frac{\text{count}(a, b)}{\theta_{a \rightarrow b}} = \lambda_a$$
 
 
-Solving for θ_{a→b}:
+Solving for $θ_{a→b}$:
 
 $$\theta_{a \rightarrow b} = \frac{\text{count}(a, b)}{\lambda_a}$$
 
 
 ### Finding λₐ Using the Constraint
 
-We know Σ_b θ_{a→b} = 1. Substituting:
+We know Σ_b $θ_{a→b}$ = 1. Substituting:
 
 $$\sum_b \frac{\text{count}(a, b)}{\lambda_a} = 1$$
 
@@ -281,9 +281,9 @@ For now, we note this limitation and move on.
 
     A frequent error when implementing MLE by hand:
 
-    ❌ **Wrong**: Setting each θ_{a→b} = count(a,b) and forgetting to normalize
+    ❌ **Wrong**: Setting each $θ_{a→b}$ = count(a,b) and forgetting to normalize
 
-    ✓ **Right**: θ_{a→b} = count(a,b) / count(a,·)
+    ✓ **Right**: $θ_{a→b}$ = count(a,b) / count(a,·)
 
     Without normalization, the "probabilities" won't sum to 1 and won't be valid probability distributions. The Lagrange multiplier in our derivation enforces this constraint.
 

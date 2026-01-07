@@ -69,8 +69,8 @@ $$\alpha_{ij} = \frac{\exp(\text{score}_{ij})}{\sum_{k=1}^{n} \exp(\text{score}_
 
 Properties of attention weights α:
 
-- Non-negative: α_{ij} ≥ 0
-- Normalized: Σ_j α_{ij} = 1
+- Non-negative: $α_{ij}$ ≥ 0
+- Normalized: Σ_j $α_{ij}$ = 1
 - Differentiable: We can backpropagate through them
 
 ### Step 3: Weighted Sum of Values

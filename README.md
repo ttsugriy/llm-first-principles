@@ -62,6 +62,30 @@ python3 tests/test_markov.py
 python3 data.py
 ```
 
+### Run Stage 2 Code
+
+```bash
+cd code/stage-02
+
+# Run autograd tests (50 tests)
+python3 tests/test_value.py
+
+# Use autograd in your code
+python3 -c "from value import Value; x = Value(3.0); y = x**2; y.backward(); print(f'dy/dx = {x.grad}')"
+```
+
+### Run Stage 3 Code
+
+```bash
+cd code/stage-03
+
+# Run neural LM tests (26 tests)
+python3 tests/test_neural_lm.py
+
+# Run the demo (trains a small character-level LM)
+python3 neural_lm.py
+```
+
 ### Run Stage 4 Code
 
 ```bash
@@ -132,6 +156,10 @@ Understanding how neural networks learn:
 - Forward vs. reverse mode autodiff
 - Building autograd from scratch
 
+**Code includes:**
+- `value.py` — Value class with automatic differentiation
+- `tests/test_value.py` — Comprehensive test suite (50 tests)
+
 ### Stage 3: Neural Language Models ✅
 
 Building neural approaches:
@@ -140,6 +168,10 @@ Building neural approaches:
 - Feed-forward language models
 - Cross-entropy loss
 - Training dynamics
+
+**Code includes:**
+- `neural_lm.py` — CharacterLM, Embedding, Linear layers
+- `tests/test_neural_lm.py` — Comprehensive test suite (26 tests)
 
 ### Stage 4: Optimization ✅
 
@@ -197,6 +229,14 @@ llm-first-principles/
 │   │   ├── main.py                 # Demo script
 │   │   └── tests/                  # Test suite
 │   │       └── test_markov.py
+│   ├── stage-02/                   # Stage 2 implementation
+│   │   ├── value.py                # Autograd Value class
+│   │   └── tests/
+│   │       └── test_value.py
+│   ├── stage-03/                   # Stage 3 implementation
+│   │   ├── neural_lm.py            # Neural language model
+│   │   └── tests/
+│   │       └── test_neural_lm.py
 │   └── stage-04/                   # Stage 4 implementation
 │       ├── optimizers.py           # All optimizers from scratch
 │       └── tests/
@@ -254,6 +294,14 @@ llm-first-principles/
 # Run Stage 1 tests
 python3 code/stage-01/tests/test_markov.py
 # Expected output: "Results: 19/19 tests passed"
+
+# Run Stage 2 tests
+python3 code/stage-02/tests/test_value.py
+# Expected output: "Results: 50 passed, 0 failed"
+
+# Run Stage 3 tests
+python3 code/stage-03/tests/test_neural_lm.py
+# Expected output: "Results: 26 passed, 0 failed"
 
 # Run Stage 4 tests
 python3 code/stage-04/tests/test_optimizers.py

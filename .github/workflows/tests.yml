@@ -39,6 +39,16 @@ jobs:
           cd code/stage-01
           python tests/test_markov.py
 
+      - name: Run Stage 2 tests
+        run: |
+          cd code/stage-02
+          python tests/test_value.py
+
+      - name: Run Stage 3 tests
+        run: |
+          cd code/stage-03
+          python tests/test_neural_lm.py
+
       - name: Run Stage 4 tests
         run: |
           cd code/stage-04
@@ -70,5 +80,7 @@ jobs:
           python -m py_compile code/stage-01/evaluate.py
           python -m py_compile code/stage-01/generate.py
           python -m py_compile code/stage-01/data.py
+          python -m py_compile code/stage-02/value.py
+          python -m py_compile code/stage-03/neural_lm.py
           python -m py_compile code/stage-04/optimizers.py
           python -m py_compile benchmarks/run_benchmarks.py

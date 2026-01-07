@@ -76,7 +76,7 @@ After softmax:
     pos4 [ 0.16  0.18  0.22  0.44 ]  ← pos4 sees all (no future)
 ```
 
-The -∞ values become 0 after softmax (e^{-∞} = 0).
+The -∞ values become 0 after softmax ($e^{-∞}$ = 0).
 
 ## Causal vs. Bidirectional Attention
 

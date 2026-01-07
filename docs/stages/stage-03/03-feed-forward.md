@@ -298,8 +298,8 @@ $$P(\text{token} | \text{context}) = \text{softmax}(\text{logits})$$
 
 Where:
 
-- h_L ∈ ℝ^h is the final hidden state
-- W_out ∈ ℝ^{|V|×h} projects to vocabulary size
+- h_L ∈ $ℝ^h$ is the final hidden state
+- W_out ∈ $ℝ^{|V|×h}$ projects to vocabulary size
 - logits ∈ ℝ^|V| are unnormalized scores
 - softmax normalizes to probabilities
 
@@ -396,7 +396,7 @@ For context length k, embedding dim d, hidden sizes h₁ and h₂, vocabulary |V
 
 **Total: ~62,000 parameters**
 
-Compare to 5-gram: 80^6 ≈ 262 billion parameters. Neural wins by a factor of 4 million!
+Compare to 5-gram: $80^6$ ≈ 262 billion parameters. Neural wins by a factor of 4 million!
 
 ## Implementing a Layer
 

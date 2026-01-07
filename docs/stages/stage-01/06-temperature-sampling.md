@@ -187,7 +187,7 @@ As T → 0, the distribution becomes a one-hot vector pointing at the highest-pr
 $$\lim_{T \to 0} \frac{e^{z_i/T}}{\sum_j e^{z_j/T}} = \lim_{T \to 0} \frac{e^{z_i/T}}{e^{z_1/T}(1 + \sum_{j>1} e^{(z_j-z_1)/T})}$$
 
 
-Since z₁ > zⱼ for j > 1, the terms e^{(zⱼ-z₁)/T} → 0 as T → 0.
+Since z₁ > zⱼ for j > 1, the terms $e^{(zⱼ-z₁)/T}$ → 0 as T → 0.
 
 For i = 1: limit = 1
 For i > 1: limit = 0

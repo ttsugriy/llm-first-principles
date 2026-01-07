@@ -143,8 +143,8 @@ Laplace smoothing is simple but crude. More sophisticated approaches:
 When an n-gram is unseen, "back off" to a shorter context:
 
 $$P(w | w_{-2}, w_{-1}) = \begin{cases}
-$P_{\text{trigram}$}(w | $w_{-2}$, $w_{-1}$) & \text{if count} > 0 \\
-$P_{\text{bigram}$}(w | $w_{-1}$) & \text{otherwise}
+P_{\text{trigram}}(w | w_{-2}, w_{-1}) & \text{if count} > 0 \\
+P_{\text{bigram}}(w | w_{-1}) & \text{otherwise}
 \end{cases}$$
 
 **Intuition**: If we haven't seen "cat lay" as a bigram, at least we know something about how often "lay" appears in general.

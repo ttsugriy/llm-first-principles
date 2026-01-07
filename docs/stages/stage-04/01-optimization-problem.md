@@ -162,7 +162,7 @@ In the elongated case, the gradient points sideways, not toward the minimum. Thi
 |-----------|------|-------|
 | Compute gradient | O(n) | One backward pass |
 | Compute full Hessian | O(n²) | Prohibitive for large n |
-| Store Hessian | O(n²) | 100M params = 10^16 bytes |
+| Store Hessian | O(n²) | 100M params = $10^16$ bytes |
 | Hessian-vector product | O(n) | Used in some methods |
 
 This is why first-order methods dominate deep learning.

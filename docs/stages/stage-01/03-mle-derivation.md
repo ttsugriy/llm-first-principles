@@ -75,7 +75,7 @@ $$L(\theta) = \prod_{i=1}^{n} P(x_i | \text{context}_i; \theta)$$
 
 Products of many small numbers cause numerical problems:
 
-- 0.1 × 0.1 × 0.1 × ... (100 times) = 10^{-100} ≈ 0 (underflow!)
+- 0.1 × 0.1 × 0.1 × ... (100 times) = $10^{-100}$ ≈ 0 (underflow!)
 
 **Solution**: Work with logarithms.
 
@@ -99,7 +99,7 @@ Now we derive the MLE solution for bigram models. This is the mathematical core 
 We have training data: a sequence x₁, x₂, ..., xₙ.
 
 Let count(a, b) = number of times token b follows token a in training data.
-Let count(a, ·) = number of times token a appears (followed by anything) = Σ_b count(a, b).
+Let count(a, ·) = number of times token a appears (followed by anything) = $Σ_b$ count(a, b).
 
 We want to find $θ_{a→b}$ = P(b | a) for all a, b.
 
@@ -108,7 +108,7 @@ We want to find $θ_{a→b}$ = P(b | a) for all a, b.
 The probabilities must satisfy:
 
 1. $θ_{a→b}$ ≥ 0 for all a, b (non-negativity)
-2. Σ_b $θ_{a→b}$ = 1 for all a (normalization: probabilities sum to 1)
+2. $Σ_b$ $θ_{a→b}$ = 1 for all a (normalization: probabilities sum to 1)
 
 ### The Log-Likelihood
 
@@ -126,7 +126,7 @@ Each unique bigram (a, b) contributes count(a, b) × log $θ_{a→b}$ to the tot
 
 ### Optimization with Constraints: Lagrange Multipliers
 
-We want to maximize ℓ(θ) subject to the constraints Σ_b $θ_{a→b}$ = 1.
+We want to maximize ℓ(θ) subject to the constraints $Σ_b$ $θ_{a→b}$ = 1.
 
 **Lagrange multipliers**: To optimize f(x) subject to g(x) = 0, we find where ∇f = λ∇g.
 
@@ -162,7 +162,7 @@ $$\theta_{a \rightarrow b} = \frac{\text{count}(a, b)}{\lambda_a}$$
 
 ### Finding λₐ Using the Constraint
 
-We know Σ_b $θ_{a→b}$ = 1. Substituting:
+We know $Σ_b$ $θ_{a→b}$ = 1. Substituting:
 
 $$\sum_b \frac{\text{count}(a, b)}{\lambda_a} = 1$$
 

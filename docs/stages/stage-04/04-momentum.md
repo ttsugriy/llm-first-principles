@@ -27,7 +27,7 @@ The gradient in y is 100× larger than in x, causing:
 1. **Oscillation** in the y direction (overshooting)
 2. **Slow progress** in the x direction (undershooting)
 
-This is the **condition number problem**: κ = λ_max/λ_min = 100.
+This is the **condition number problem**: κ = $λ_max$/$λ_min$ = 100.
 
 ## The Physics Analogy
 
@@ -68,7 +68,7 @@ $$v_t = \eta \nabla L_t + \beta \eta \nabla L_{t-1} + \beta^2 \eta \nabla L_{t-2
 This is an **exponentially weighted moving average** of gradients!
 
 - Recent gradients have weight ~1
-- Old gradients have weight ~β^t → 0
+- Old gradients have weight ~$β^t$ → 0
 
 ### Intuition 2: Dampening Oscillations
 

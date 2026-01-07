@@ -219,7 +219,7 @@ This is the fundamental limitation of Markov models that we'll address with neur
 
 | Concept | Formula | Interpretation |
 |---------|---------|----------------|
-| Perplexity | 2^{cross-entropy} | Effective vocabulary size |
+| Perplexity | $2^{cross-entropy}$ | Effective vocabulary size |
 | PPL = 1 | Perfect model | Always correct with 100% confidence |
 | PPL = \|V\| | Random guessing | No information from context |
 | PPL = ∞ | Model assigns P=0 | Considered token impossible |

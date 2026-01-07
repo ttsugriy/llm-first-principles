@@ -101,7 +101,7 @@ The scaled version allows attention to spread across multiple positions, enablin
 
 ### Setup
 
-Let q, k ∈ ℝ^{d_k} with components:
+Let q, k ∈ $ℝ^{d_k}$ with components:
 
 - q_i ~ N(0, 1) independently
 - k_i ~ N(0, 1) independently
@@ -246,7 +246,7 @@ When softmax ≈ [0.3, 0.3, 0.2, 0.2]:
 | Score variance | Var(q·k) = d_k | Grows with dimension |
 | Scaling factor | 1/√d_k | Normalize variance to 1 |
 | Softmax saturation | Peaked outputs | Vanishing gradients |
-| Scaled attention | softmax(QK^T/√d_k)V | Stable training |
+| Scaled attention | softmax($QK^T$/√d_k)V | Stable training |
 
 **Key takeaway**: Dot product variance scales with dimension, causing softmax to saturate and gradients to vanish. Dividing by √d_k normalizes variance to 1, ensuring stable training regardless of dimension. This simple fix is essential for attention to work in practice.
 

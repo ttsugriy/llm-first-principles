@@ -238,13 +238,13 @@ Each operation has a **local gradient**: the derivative of its output with respe
 | Subtract | x - y | 1 | -1 | Constant |
 | Multiply | x · y | y | x | Need cached values |
 | Divide | x / y | 1/y | -x/y² | Need cached values |
-| Power | x^n | n·x^{n-1} | - | Need cached value |
-| Exp | e^x | e^x | - | Can use output z |
+| Power | $x^n$ | n·$x^{n-1}$ | - | Need cached value |
+| Exp | $e^x$ | $e^x$ | - | Can use output z |
 | Log | ln(x) | 1/x | - | Need cached value |
 | Sin | sin(x) | cos(x) | - | Need cached value |
 | ReLU | max(0,x) | 1 if x>0, else 0 | - | Need sign of x |
 
-**Note**: For exp, we can use the output: ∂(e^x)/∂x = e^x = z. This saves memory.
+**Note**: For exp, we can use the output: ∂($e^x$)/∂x = $e^x$ = z. This saves memory.
 
 ## A Complete Walkthrough
 

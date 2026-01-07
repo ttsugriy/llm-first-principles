@@ -16,7 +16,7 @@ Where:
 - N = Number of parameters
 - D = Number of training tokens
 - N_c, D_c = Critical scaling constants
-- α_N, α_D = Scaling exponents (~0.076, ~0.095)
+- $α_N$, $α_D$ = Scaling exponents (~0.076, ~0.095)
 - L_∞ = Irreducible loss (entropy of natural text)
 
 ## The Three Axes of Scaling
@@ -333,7 +333,7 @@ Still seeing:
 
 | Concept | Definition | Implication |
 |---------|------------|-------------|
-| Scaling law | L ∝ N^{-α} | Performance predictable |
+| Scaling law | L ∝ $N^{-α}$ | Performance predictable |
 | Chinchilla rule | D ≈ 20N | Train longer on less data |
 | Compute-optimal | Balance N and D | Don't over-parameterize |
 | Emergence | Sudden capability gain | Scale unlocks abilities |

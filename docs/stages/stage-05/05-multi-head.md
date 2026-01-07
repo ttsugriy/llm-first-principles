@@ -37,9 +37,9 @@ Each head learns to focus on different aspects of the input.
 
 For each head i:
 
-- Q_i = QW_i^Q ∈ ℝ^{n × d_k}
-- K_i = KW_i^K ∈ ℝ^{n × d_k}
-- V_i = VW_i^V ∈ ℝ^{n × d_v}
+- Q_i = $QW_i^Q$ ∈ $ℝ^{n × d_k}$
+- K_i = $KW_i^K$ ∈ $ℝ^{n × d_k}$
+- V_i = $VW_i^V$ ∈ $ℝ^{n × d_v}$
 
 Where d_k = d_v = d/h typically.
 
@@ -55,7 +55,7 @@ Combine all heads and project back:
 
 $$\text{output} = [head_1; head_2; ...; head_h] W^O$$
 
-Where W^O ∈ ℝ^{hd_v × d} projects back to model dimension.
+Where $W^O$ ∈ $ℝ^{hd_v × d}$ projects back to model dimension.
 
 ## Visual Representation
 
@@ -217,13 +217,13 @@ For multi-head attention with:
 
 **Per-head parameters**:
 
-- W_i^Q: d × d_k = d × d/h = d²/h
-- W_i^K: d × d_k = d²/h
-- W_i^V: d × d_v = d²/h
+- $W_i^Q$: d × d_k = d × d/h = d²/h
+- $W_i^K$: d × d_k = d²/h
+- $W_i^V$: d × d_v = d²/h
 
 **Total for all heads**: h × 3 × d²/h = 3d²
 
-**Output projection**: W^O: hd_v × d = d × d = d²
+**Output projection**: $W^O$: hd_v × d = d × d = d²
 
 **Grand total**: 3d² + d² = **4d²**
 
@@ -471,7 +471,7 @@ The head dimension is often kept constant (64) while scaling the number of heads
 | Multi-head attention | h parallel attention mechanisms | Multiple representation subspaces |
 | Head dimension | d_k = d/h | Reduced per-head computation |
 | Concatenation | [head_1; ...; head_h] | Combine all perspectives |
-| Output projection | W^O | Mix head outputs |
+| Output projection | $W^O$ | Mix head outputs |
 
 **Key takeaway**: Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions. Each head can specialize in different types of relationships (syntactic, positional, semantic), enabling richer modeling of language structure than a single attention mechanism could achieve.
 

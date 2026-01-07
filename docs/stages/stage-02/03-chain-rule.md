@@ -105,12 +105,12 @@ $\frac{d}{dx}(x^6 + 3x^4 + 3x^2 + 1) = 6x^5 + 12x^3 + 6x = 6x(x^4 + 2x^2 + 1) = 
 
 ## More Examples
 
-### Example 1: e^{-x²}
+### Example 1: $e^{-x²}$
 
 This is exp(u) where u = -x².
 
 - u = -x², so du/dx = -2x
-- y = e^u, so dy/du = e^u
+- y = $e^u$, so dy/du = $e^u$
 
 $$\frac{dy}{dx} = e^{-x^2} \cdot (-2x) = -2x e^{-x^2}$$
 
@@ -137,12 +137,12 @@ $$\frac{d}{dx}\ln(x^2+1) = \frac{1}{x^2+1} \cdot 2x = \frac{2x}{x^2+1}$$
 
 ### Example 4: Triple Composition
 
-Let h(x) = sin(e^{x²}).
+Let h(x) = sin($e^{x²}$).
 
 Break it down:
 
 - Innermost: a = x², so da/dx = 2x
-- Middle: b = e^a, so db/da = e^a
+- Middle: b = $e^a$, so db/da = $e^a$
 - Outer: y = sin(b), so dy/db = cos(b)
 
 Chain them all:
@@ -258,7 +258,7 @@ This is automatic differentiation. We'll implement it in Section 2.6.
 
 1. **Basic chain rule**: Find d/dx of:
    - (3x + 1)⁵
-   - e^{2x}
+   - $e^{2x}$
    - ln(x³)
    - √(1 + x²)
 

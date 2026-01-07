@@ -302,7 +302,7 @@ def __truediv__(self, other):
 
 ### Power
 
-For z = x^n (where n is a constant):
+For z = $x^n$ (where n is a constant):
 
 - ∂z/∂x = n × x^(n-1)
 

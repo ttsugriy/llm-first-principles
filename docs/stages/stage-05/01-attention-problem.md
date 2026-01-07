@@ -185,7 +185,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
 Each part serves a purpose:
 
-- **QK^T**: Compute similarity between queries and keys
+- **$QK^T$**: Compute similarity between queries and keys
 - **softmax**: Convert similarities to probabilities (sum to 1)
 - **√d_k**: Scaling factor (we'll explain why)
 - **× V**: Weighted sum of values

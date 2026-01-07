@@ -52,7 +52,7 @@ The derivative of a sum is the sum of derivatives. This is called **linearity**�
 
 ## The Power Rule
 
-The power rule states: if f(x) = x^n, then f'(x) = n·x^{n-1}.
+The power rule states: if f(x) = $x^n$, then f'(x) = n·$x^{n-1}$.
 
 Let's prove this for positive integers using the binomial theorem.
 
@@ -78,7 +78,7 @@ $$\lim_{h \to 0} \left[ nx^{n-1} + \frac{n(n-1)}{2}x^{n-2}h + \cdots + h^{n-1} \
 
 All terms with h vanish, leaving only the first term.
 
-**Result**: d/dx(x^n) = n·x^{n-1}
+**Result**: d/dx($x^n$) = n·$x^{n-1}$
 
 ### Examples
 
@@ -87,7 +87,7 @@ All terms with h vanish, leaving only the first term.
 | x¹ | 1·x⁰ = 1 |
 | x² | 2x |
 | x³ | 3x² |
-| x^{10} | 10x⁹ |
+| $x^{10}$ | 10x⁹ |
 
 ### Extension to Negative and Fractional Powers
 
@@ -95,7 +95,7 @@ The power rule also works for negative and fractional exponents. Let's verify fo
 
 We already proved: d/dx(1/x) = -1/x²
 
-Using the power rule: d/dx(x^{-1}) = -1·x^{-2} = -1/x² ✓
+Using the power rule: d/dx($x^{-1}$) = -1·$x^{-2}$ = -1/x² ✓
 
 For n = 1/2 (square root):
 
@@ -204,7 +204,7 @@ $$\frac{d}{dx}\frac{f}{g} = \frac{g \cdot f' - f \cdot g'}{g^2}$$
 
 ## The Exponential Function
 
-The exponential function e^x is special: it's its own derivative.
+The exponential function $e^x$ is special: it's its own derivative.
 
 ### What is e?
 
@@ -218,7 +218,7 @@ Or equivalently, e is the unique number such that:
 $$\lim_{h \to 0} \frac{e^h - 1}{h} = 1$$
 
 
-### Derivative of e^x
+### Derivative of $e^x$
 
 $$\frac{d}{dx}e^x = \lim_{h \to 0} \frac{e^{x+h} - e^x}{h} = \lim_{h \to 0} \frac{e^x \cdot e^h - e^x}{h}$$
 
@@ -226,15 +226,15 @@ $$\frac{d}{dx}e^x = \lim_{h \to 0} \frac{e^{x+h} - e^x}{h} = \lim_{h \to 0} \fra
 $$= e^x \cdot \lim_{h \to 0} \frac{e^h - 1}{h} = e^x \cdot 1 = e^x$$
 
 
-**Result**: d/dx(e^x) = e^x
+**Result**: d/dx($e^x$) = $e^x$
 
-This is why e^x is so important in mathematics—it's the unique function (up to scaling) that equals its own derivative.
+This is why $e^x$ is so important in mathematics—it's the unique function (up to scaling) that equals its own derivative.
 
 ### General Exponential
 
-For a^x where a > 0:
+For $a^x$ where a > 0:
 
-Using a^x = e^{x·ln(a)} and the chain rule (next section):
+Using $a^x$ = $e^{x·ln(a)}$ and the chain rule (next section):
 
 $$\frac{d}{dx}a^x = a^x \cdot \ln(a)$$
 
@@ -245,7 +245,7 @@ If y = ln(x), what is dy/dx?
 
 ### Derivation Using Inverse Functions
 
-Since e^{ln(x)} = x, differentiate both sides:
+Since $e^{ln(x)}$ = x, differentiate both sides:
 
 $$e^{\ln(x)} \cdot \frac{d}{dx}\ln(x) = 1$$
 
@@ -270,16 +270,16 @@ $$\frac{d}{dx}\log_a(x) = \frac{1}{x \cdot \ln(a)}$$
 | Rule | Formula | Derived From |
 |------|---------|--------------|
 | Constant | (c)' = 0 | Limit definition |
-| Power | (x^n)' = nx^{n-1} | Binomial theorem |
+| Power | ($x^n$)' = $nx^{n-1}$ | Binomial theorem |
 | Sum | (f+g)' = f'+g' | Linearity of limits |
 | Product | (fg)' = fg' + f'g | Add-subtract trick |
 | Quotient | (f/g)' = (f'g-fg')/g² | Product rule + reciprocal |
-| Exponential | (e^x)' = e^x | Definition of e |
+| Exponential | ($e^x$)' = $e^x$ | Definition of e |
 | Logarithm | (ln x)' = 1/x | Inverse function |
 
 ## What's Missing: The Chain Rule
 
-Notice we haven't handled **compositions** like sin(x²) or e^{-x²} or ln(1+x).
+Notice we haven't handled **compositions** like sin(x²) or $e^{-x²}$ or ln(1+x).
 
 These require the **chain rule**, which is so important it gets its own section. The chain rule is the heart of automatic differentiation.
 
@@ -287,7 +287,7 @@ These require the **chain rule**, which is so important it gets its own section.
 
 1. **Derive the power rule for n=3** by directly expanding (x+h)³ - x³.
 
-2. **Product rule practice**: Find d/dx(x³·e^x).
+2. **Product rule practice**: Find d/dx(x³·$e^x$).
 
 3. **Quotient rule practice**: Find d/dx(x²/(1+x)).
 
@@ -303,7 +303,7 @@ We derived all fundamental derivative rules from the limit definition:
 - The power rule handles polynomials
 - The product rule handles products (it's not just f'g')
 - The quotient rule is the product rule for reciprocals
-- e^x is its own derivative (remarkable!)
+- $e^x$ is its own derivative (remarkable!)
 - ln(x) differentiates to 1/x
 
 With these rules, we can differentiate any polynomial, rational function, or expression involving exponentials and logarithms—**as long as there's no function composition**.

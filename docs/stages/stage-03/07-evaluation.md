@@ -318,7 +318,7 @@ Neural models partition it into continuous regions (similarity in embedding spac
 
 For context length k and vocabulary V:
 
-- N-gram contexts: V^k (exponential)
+- N-gram contexts: $V^k$ (exponential)
 - Neural effective contexts: continuous manifold of dimension k × d
 
 ### Empirical Evidence

@@ -125,3 +125,37 @@ nav:
     - 6.6 Modern Architectures: stages/stage-06/06-architectures.md
     - 6.7 Scaling Laws: stages/stage-06/07-scaling-laws.md
     - 6.8 Implementation: stages/stage-06/08-implementation.md
+  - Stage 7 - Tokenization:
+    - Overview: stages/stage-07/index.md
+    - 7.1 The Tokenization Problem: stages/stage-07/01-tokenization-problem.md
+    - 7.2 Character vs Subword: stages/stage-07/02-character-vs-subword.md
+    - 7.3 BPE Algorithm: stages/stage-07/03-bpe.md
+    - 7.4 WordPiece: stages/stage-07/04-wordpiece.md
+    - 7.5 Unigram: stages/stage-07/05-unigram.md
+    - 7.6 Vocabulary Size: stages/stage-07/06-vocabulary-size.md
+    - 7.7 Implementation: stages/stage-07/07-implementation.md
+  - Stage 8 - Training Dynamics:
+    - Overview: stages/stage-08/index.md
+    - 8.1 Why Training Fails: stages/stage-08/01-why-training-fails.md
+    - 8.2 Loss Curve Analysis: stages/stage-08/02-loss-curve-analysis.md
+    - 8.3 Gradient Statistics: stages/stage-08/03-gradient-statistics.md
+    - 8.4 Learning Rate Finding: stages/stage-08/04-learning-rate-finding.md
+    - 8.5 Activation Monitoring: stages/stage-08/05-activation-monitoring.md
+    - 8.6 Debugging Strategies: stages/stage-08/06-debugging-strategies.md
+    - 8.7 Implementation: stages/stage-08/07-implementation.md
+  - Stage 9 - Parameter-Efficient Fine-Tuning:
+    - Overview: stages/stage-09/index.md
+    - 9.1 The Fine-Tuning Problem: stages/stage-09/01-fine-tuning-problem.md
+    - 9.2 LoRA: stages/stage-09/02-lora.md
+    - 9.3 Adapters: stages/stage-09/03-adapters.md
+    - 9.4 Prefix and Prompt Tuning: stages/stage-09/04-prefix-and-prompt.md
+    - 9.5 Choosing a Method: stages/stage-09/05-choosing-a-method.md
+    - 9.6 Implementation: stages/stage-09/06-implementation.md
+  - Stage 10 - Alignment:
+    - Overview: stages/stage-10/index.md
+    - 10.1 The Alignment Problem: stages/stage-10/01-alignment-problem.md
+    - 10.2 Reward Modeling: stages/stage-10/02-reward-modeling.md
+    - 10.3 RLHF with PPO: stages/stage-10/03-rlhf.md
+    - 10.4 Direct Preference Optimization: stages/stage-10/04-dpo.md
+    - 10.5 Choosing a Method: stages/stage-10/05-choosing-a-method.md
+    - 10.6 Implementation: stages/stage-10/06-implementation.md

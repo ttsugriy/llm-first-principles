@@ -94,7 +94,7 @@ The noise in SGD estimates acts as regularization:
 
 The variance of our gradient estimate is:
 
-$$\text{Var}[\nabla \tilde{L}] = \frac{\$sigma^2$}{B}$$
+$$\text{Var}[\nabla \tilde{L}] = \frac{\sigma^2}{B}$$
 
 where σ² is the variance of individual gradients and B is batch size.
 
@@ -146,7 +146,7 @@ This means the gradient magnitude goes to zero — we reach a critical point.
 For SGD to converge, we often need to decrease the learning rate over time:
 
 **Robbins-Monro conditions**:
-$$\sum_{t=1}^{\infty} \eta_t = \infty \quad \text{and} \quad \sum_{t=1}^{\infty} \$eta_t^2$ < \infty$$
+$$\sum_{t=1}^{\infty} \eta_t = \infty \quad \text{and} \quad \sum_{t=1}^{\infty} \eta_t^2 < \infty$$
 
 **Common schedules**:
 

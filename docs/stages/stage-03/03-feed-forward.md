@@ -104,7 +104,7 @@ $$\text{ReLU}(x) = \max(0, x)$$
 
 **Sigmoid**:
 
-$$\sigma(x) = \frac{1}{1 + $e^{-x}$}$$
+$$\sigma(x) = \frac{1}{1 + e^{-x}}$$
 
 
 - Outputs between 0 and 1
@@ -112,7 +112,7 @@ $$\sigma(x) = \frac{1}{1 + $e^{-x}$}$$
 
 **Tanh**:
 
-$$\tanh(x) = \frac{$e^x$ - $e^{-x}$}{$e^x$ + $e^{-x}$}$$
+$$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$
 
 
 - Outputs between -1 and 1
@@ -125,7 +125,7 @@ $$\text{GELU}(x) = x \cdot \Phi(x)$$
 
 Where Φ is the standard normal CDF (cumulative distribution function)—the probability that a standard normal random variable is less than x. Approximation:
 
-$$\text{GELU}(x) \approx 0.5x(1 + \tanh[\sqrt{2/\pi}(x + 0.$044715x^3$)])$$
+$$\text{GELU}(x) \approx 0.5x(1 + \tanh[\sqrt{2/\pi}(x + 0.044715x^3)])$$
 
 
 - Used in transformers
@@ -268,7 +268,7 @@ For language modeling, we need to output a probability distribution over the voc
 
 Given logits z ∈ ℝ^|V|, softmax converts to probabilities:
 
-$$\text{softmax}(z)_i = \frac{$e^{z_i}$}{\sum_{j=1}^{|V|} $e^{z_j}$}$$
+$$\text{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{|V|} e^{z_j}}$$
 
 
 ### Properties of Softmax
@@ -298,8 +298,8 @@ $$P(\text{token} | \text{context}) = \text{softmax}(\text{logits})$$
 
 Where:
 
-- h_L ∈ $ℝ^h$ is the final hidden state
-- W_out ∈ $ℝ^{|V|×h}$ projects to vocabulary size
+- h_L ∈ ℝ^h is the final hidden state
+- W_out ∈ ℝ^{|V|×h} projects to vocabulary size
 - logits ∈ ℝ^|V| are unnormalized scores
 - softmax normalizes to probabilities
 
@@ -396,7 +396,7 @@ For context length k, embedding dim d, hidden sizes h₁ and h₂, vocabulary |V
 
 **Total: ~62,000 parameters**
 
-Compare to 5-gram: $80^6$ ≈ 262 billion parameters. Neural wins by a factor of 4 million!
+Compare to 5-gram: 80^6 ≈ 262 billion parameters. Neural wins by a factor of 4 million!
 
 ## Implementing a Layer
 
@@ -472,12 +472,12 @@ $$\text{softmax}(z - c) = \text{softmax}(z)$$
 
 **Proof**:
 
-$$\frac{$e^{z_i - c}$}{\sum_j $e^{z_j - c}$} = \frac{$e^{z_i}$ $e^{-c}$}{\sum_j $e^{z_j}$ $e^{-c}$} = \frac{$e^{z_i}$}{\sum_j $e^{z_j}$}$$
+$$\frac{e^{z_i - c}}{\sum_j e^{z_j - c}} = \frac{e^{z_i} e^{-c}}{\sum_j e^{z_j} e^{-c}} = \frac{e^{z_i}}{\sum_j e^{z_j}}$$
 
 
 So we compute:
 
-$$\text{softmax}(z)_i = \frac{$e^{z_i - \max(z)}$}{\sum_j $e^{z_j - \max(z)}$}$$
+$$\text{softmax}(z)_i = \frac{e^{z_i - \max(z)}}{\sum_j e^{z_j - \max(z)}}$$
 
 
 After subtracting max, all exponents are ≤ 0, preventing overflow.
@@ -491,7 +491,7 @@ $$\log \text{softmax}(z)_i = z_i - \log\sum_j e^{z_j}$$
 
 The log-sum-exp (LSE) function:
 
-$$\text{LSE}(z) = \log\sum_j $e^{z_j}$ = \max(z) + \log\sum_j e^{z_j - \max(z)}$$
+$$\text{LSE}(z) = \log\sum_j e^{z_j} = \max(z) + \log\sum_j e^{z_j - \max(z)}$$
 
 
 This is numerically stable.

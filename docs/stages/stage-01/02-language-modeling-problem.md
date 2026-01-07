@@ -31,10 +31,10 @@ Here's the fundamental challenge. Suppose our vocabulary has |V| = 50,000 tokens
 |----------|-------------------|
 | 1 | 50,000 |
 | 2 | 2.5 billion |
-| 10 | $10^47$ |
-| 100 | $10^470$ |
+| 10 | 10^47 |
+| 100 | 10^470 |
 
-For comparison, there are approximately $10^80$ atoms in the observable universe.
+For comparison, there are approximately 10^80 atoms in the observable universe.
 
 We cannot possibly store a probability for each sequence. Even for length-10 sequences, we'd need more storage than atoms in the universe.
 
@@ -49,7 +49,7 @@ Now we need to model n conditional distributions instead of one joint distributi
 
 But wait—each conditional P(xᵢ | x₁, ..., xᵢ₋₁) still depends on a variable-length history. For a sequence of length 100, the last prediction conditions on 99 previous tokens. How many possible 99-token histories exist?
 
-Still $50,000^99$ ≈ $10^465$. We haven't solved the problem!
+Still 50,000^99 ≈ 10^465. We haven't solved the problem!
 
 ## The Markov Assumption: A Simplification
 
@@ -99,7 +99,7 @@ Each context is a sequence of k tokens, so there are |V|^k possible contexts.
 | 1 | 50,000 |
 | 2 | 2.5 billion |
 | 3 | 125 trillion |
-| 4 | 6.25 × $10^18$ |
+| 4 | 6.25 × 10^18 |
 
 Even k=2 is stretching it for explicit storage. k=3 or higher requires sparse representations (storing only contexts we've actually seen).
 
@@ -111,7 +111,7 @@ For character-level models with |V| ≈ 100:
 | 2 | 10,000 |
 | 3 | 1,000,000 |
 | 5 | 10 billion |
-| 10 | $10^20$ |
+| 10 | 10^20 |
 
 Character-level models can use higher orders because the vocabulary is smaller.
 
@@ -178,7 +178,7 @@ An **order-k Markov language model** is defined by:
 
 1. A vocabulary V (finite set of tokens)
 2. A special start token ⟨START⟩ and end token ⟨END⟩
-3. A set of transition probabilities: for each context c ∈ $V^k$ and each token t ∈ V ∪ {⟨END⟩}:
+3. A set of transition probabilities: for each context c ∈ V^k and each token t ∈ V ∪ {⟨END⟩}:
 
 $$\theta_{c \rightarrow t} = P(t | c)$$
 

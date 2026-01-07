@@ -72,19 +72,19 @@ Let's derive the derivative of f(x) = x² from first principles.
 
 **Step 1**: Write the difference quotient.
 
-$$\frac{f(x+h) - f(x)}{h} = \frac{(x+h)^2 - $x^2$}{h}$$
+$$\frac{f(x+h) - f(x)}{h} = \frac{(x+h)^2 - x^2}{h}$$
 
 
 **Step 2**: Expand the numerator.
 
-$$(x+h)^2 = $x^2$ + 2xh + h^2$$
+$$(x+h)^2 = x^2 + 2xh + h^2$$
 
-$$\frac{$x^2$ + 2xh + $h^2$ - $x^2$}{h} = \frac{2xh + $h^2$}{h}$$
+$$\frac{x^2 + 2xh + h^2 - x^2}{h} = \frac{2xh + h^2}{h}$$
 
 
 **Step 3**: Simplify.
 
-$$\frac{2xh + $h^2$}{h} = \frac{h(2x + h)}{h} = 2x + h$$
+$$\frac{2xh + h^2}{h} = \frac{h(2x + h)}{h} = 2x + h$$
 
 
 **Step 4**: Take the limit as h → 0.
@@ -122,7 +122,7 @@ $$\frac{-h}{h \cdot x(x+h)} = \frac{-1}{x(x+h)}$$
 
 **Step 4**: Take limit.
 
-$$\lim_{h \to 0} \frac{-1}{x(x+h)} = \frac{-1}{x \cdot x} = -\frac{1}{$x^2$}$$
+$$\lim_{h \to 0} \frac{-1}{x(x+h)} = \frac{-1}{x \cdot x} = -\frac{1}{x^2}$$
 
 
 **Result**: If f(x) = 1/x, then f'(x) = -1/x²
@@ -170,7 +170,7 @@ We treat y as a constant and differentiate only with respect to x.
 $$\frac{\partial f}{\partial x} = 2xy$$
 
 
-$$\frac{\partial f}{\partial y} = $x^2$ + 3y^2$$
+$$\frac{\partial f}{\partial y} = x^2 + 3y^2$$
 
 
 **The Gradient**: The gradient collects all partial derivatives into a single object. We denote it with the symbol ∇ (called "nabla" or "del"):

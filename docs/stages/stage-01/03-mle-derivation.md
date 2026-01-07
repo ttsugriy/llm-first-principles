@@ -75,7 +75,7 @@ $$L(\theta) = \prod_{i=1}^{n} P(x_i | \text{context}_i; \theta)$$
 
 Products of many small numbers cause numerical problems:
 
-- 0.1 × 0.1 × 0.1 × ... (100 times) = $10^{-100}$ ≈ 0 (underflow!)
+- 0.1 × 0.1 × 0.1 × ... (100 times) = 10^{-100} ≈ 0 (underflow!)
 
 **Solution**: Work with logarithms.
 

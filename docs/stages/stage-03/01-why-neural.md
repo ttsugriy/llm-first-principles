@@ -16,7 +16,7 @@ Consider modeling the probability of the next character given the previous 10 ch
 
 With a vocabulary of |V| = 100 characters (letters, digits, punctuation, space):
 
-$$\text{Number of possible 10-character contexts} = $100^{10}$ = 10^{20}$$
+$$\text{Number of possible 10-character contexts} = 100^{10} = 10^{20}$$
 
 
 That's **100 quintillion** possible contexts.
@@ -34,9 +34,9 @@ Wikipedia contains roughly 4 billion characters. Even if we used all of Wikipedi
 | Context Length | Possible Contexts | Data Needed for Coverage |
 |----------------|-------------------|--------------------------|
 | 2 | 10,000 | ~10,000 |
-| 5 | $10^10$ | ~$10^10$ |
-| 10 | $10^20$ | ~$10^20$ |
-| 20 | $10^40$ | Impossible |
+| 5 | 10^10 | ~10^10 |
+| 10 | 10^20 | ~10^20 |
+| 20 | 10^40 | Impossible |
 
 This is the **curse of dimensionality**: the number of possible configurations grows exponentially with context length, while our data grows at best linearly.
 
@@ -182,7 +182,7 @@ For vocabulary |V| and context length k:
 - Need to store P(w | c) for every (c, w) pair
 - Parameters: O(|V|^{k+1})
 
-For |V| = 10,000 and k = 5: $10,000^6$ = $10^24$ parameters. Impossible.
+For |V| = 10,000 and k = 5: 10,000^6 = 10^24 parameters. Impossible.
 
 ### Neural Parameter Count
 
@@ -200,7 +200,7 @@ For |V| = 10,000, d = 256, h = 512:
 - Hidden: ~0.5M
 - Total: ~8M parameters
 
-**From $10^24$ to 8 million**: a reduction by a factor of $10^17$!
+**From 10^24 to 8 million**: a reduction by a factor of 10^17!
 
 ## The Trade-off
 

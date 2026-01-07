@@ -729,7 +729,7 @@ We've built a complete attention implementation with:
 
 | Component | Purpose | Key Details |
 |-----------|---------|-------------|
-| Scaled dot-product attention | Core attention computation | $QK^T$/√d_k, softmax, × V |
+| Scaled dot-product attention | Core attention computation | QK^T/√d_k, softmax, × V |
 | Multi-head attention | Multiple attention patterns | Split into h heads, concatenate |
 | Positional encoding | Position information | Sinusoidal or learned |
 | Layer normalization | Training stability | Normalize, scale, shift |

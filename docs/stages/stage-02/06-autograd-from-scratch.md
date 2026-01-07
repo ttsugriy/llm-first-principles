@@ -302,7 +302,7 @@ def __truediv__(self, other):
 
 ### Power
 
-For z = $x^n$ (where n is a constant):
+For z = x^n (where n is a constant):
 
 - ∂z/∂x = n × x^(n-1)
 
@@ -359,12 +359,12 @@ def relu(self):
 
 ### Tanh
 
-$$\tanh(x) = \frac{$e^x$ - $e^{-x}$}{$e^x$ + $e^{-x}$}$$
+$$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$
 
 
 Derivative:
 
-$$\frac{\partial}{\partial x}\tanh(x) = 1 - \$tanh^2$(x)$$
+$$\frac{\partial}{\partial x}\tanh(x) = 1 - \tanh^2(x)$$
 
 
 ```python
@@ -385,7 +385,7 @@ def tanh(self):
 
 ### Sigmoid
 
-$$\sigma(x) = \frac{1}{1 + $e^{-x}$}$$
+$$\sigma(x) = \frac{1}{1 + e^{-x}}$$
 
 
 Derivative:

@@ -45,7 +45,7 @@ If position i attends to position j, it receives j's value.
 
 How relevant is position j to position i? Use the dot product:
 
-$$\text{score}_{ij} = q_i \cdot k_j = $q_i^T$ k_j$$
+$$\text{score}_{ij} = q_i \cdot k_j = q_i^T k_j$$
 
 Why dot product?
 - Positive when vectors point in similar directions
@@ -85,13 +85,13 @@ This is a weighted average of all values, where the weights are the attention pr
 
 Putting it together for all positions simultaneously:
 
-$$\text{Attention}(Q, K, V) = \text{softmax}($QK^T$) V$$
+$$\text{Attention}(Q, K, V) = \text{softmax}(QK^T) V$$
 
 Where:
 
-- Q = $XW^Q$ ∈ $ℝ^{n×d_k}$ (all queries)
-- K = $XW^K$ ∈ $ℝ^{n×d_k}$ (all keys)
-- V = $XW^V$ ∈ $ℝ^{n×d_v}$ (all values)
+- Q = XW^Q ∈ ℝ^{n×d_k} (all queries)
+- K = XW^K ∈ ℝ^{n×d_k} (all keys)
+- V = XW^V ∈ ℝ^{n×d_v} (all values)
 
 ### Matrix Dimensions
 
@@ -125,7 +125,7 @@ W^Q = W^K = W^V = I
 
 So Q = K = V = X.
 
-**Step 1: Compute scores** ($QK^T$):
+**Step 1: Compute scores** (QK^T):
 ```
            cat  sat  mat
     cat [  1    0    1  ]   (cat·cat, cat·sat, cat·mat)
@@ -225,7 +225,7 @@ Different output positions attend to different input positions based on what the
 
 | Operation | Complexity | Notes |
 |-----------|------------|-------|
-| $QK^T$ | O(n²d_k) | Matrix multiplication |
+| QK^T | O(n²d_k) | Matrix multiplication |
 | Softmax | O(n²) | Per row |
 | Attention × V | O(n²d_v) | Matrix multiplication |
 | **Total** | **O(n²d)** | Quadratic in sequence length! |
@@ -274,7 +274,7 @@ All of this is **learned end-to-end** through backpropagation. The model discove
 
 There's one problem we haven't addressed. The next section shows why we need to divide by √d_k:
 
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{$QK^T$}{\sqrt{d_k}}\right) V$$
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
 
 ## Exercises
 
@@ -284,7 +284,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{$QK^T$}{\sqrt{d_k}}\righ
 
 3. **Complexity**: For n=1000, d=512, how many floating-point operations is attention?
 
-4. **Separate projections**: What happens if $W^Q$ = $W^K$? When might this be desirable?
+4. **Separate projections**: What happens if W^Q = W^K? When might this be desirable?
 
 5. **Attention entropy**: Compute the entropy of attention weights. What does high/low entropy mean?
 
@@ -292,9 +292,9 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{$QK^T$}{\sqrt{d_k}}\righ
 
 | Concept | Definition | Role |
 |---------|------------|------|
-| Query (Q) | q = $xW^Q$ | What am I looking for? |
-| Key (K) | k = $xW^K$ | What do I contain? |
-| Value (V) | v = $xW^V$ | What should I return? |
+| Query (Q) | q = xW^Q | What am I looking for? |
+| Key (K) | k = xW^K | What do I contain? |
+| Value (V) | v = xW^V | What should I return? |
 | Score | q·k | Similarity between query and key |
 | Weight | softmax(scores) | How much to attend |
 | Output | Σ α_j v_j | Weighted combination of values |

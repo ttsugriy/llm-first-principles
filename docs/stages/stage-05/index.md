@@ -38,7 +38,7 @@ By the end of this stage, you'll understand:
 
 ### Scaled Dot-Product Attention
 
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{$QK^T$}{\sqrt{d_k}}\right) V$$
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
 
 Where:
 

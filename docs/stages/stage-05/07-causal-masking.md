@@ -42,7 +42,7 @@ $$\text{mask}_{ij} = \begin{cases} 0 & \text{if } j \leq i \text{ (past or prese
 
 Apply this mask to attention scores before softmax:
 
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{$QK^T$}{\sqrt{d_k}} + \text{mask}\right) V$$
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + \text{mask}\right) V$$
 
 ### How Masking Works
 
@@ -76,7 +76,7 @@ After softmax:
     pos4 [ 0.16  0.18  0.22  0.44 ]  ← pos4 sees all (no future)
 ```
 
-The -∞ values become 0 after softmax ($e^{-∞}$ = 0).
+The -∞ values become 0 after softmax (e^{-∞} = 0).
 
 ## Causal vs. Bidirectional Attention
 

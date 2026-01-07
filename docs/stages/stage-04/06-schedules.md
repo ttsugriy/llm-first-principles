@@ -69,7 +69,7 @@ $$\eta_t = \eta_0 \cdot \frac{1}{\sqrt{t}}$$
 
 Or with warmup:
 
-$$\eta_t = \eta_0 \cdot \min\left($t^{-0.5}$, t \cdot \text{warmup}^{-1.5}\right)$$
+$$\eta_t = \eta_0 \cdot \min\left(t^{-0.5}, t \cdot \text{warmup}^{-1.5}\right)$$
 
 ```python
 def inverse_sqrt_decay(step, init_lr, warmup_steps=4000):

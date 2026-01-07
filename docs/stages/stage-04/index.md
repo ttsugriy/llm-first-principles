@@ -46,7 +46,7 @@ where μ is the strong convexity parameter. This gives the optimal learning rate
 
 $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t$$
 $$v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2$$
-$$\hat{m}_t = \frac{m_t}{1-\$beta_1^t$}, \quad \hat{v}_t = \frac{v_t}{1-\$beta_2^t$}$$
+$$\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t}$$
 $$\theta_t = \theta_{t-1} - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
 
 We'll derive this step by step and explain why each component is necessary.

@@ -39,15 +39,15 @@ Every position can attend to every other position (including itself)!
 
 ### The Complete Setup
 
-Given input sequence X ∈ ℝ^{n×d}:
+Given input sequence X ∈ $ℝ^{n×d}$:
 
 1. **Project to Q, K, V**:
-   - Q = XW^Q (queries)
-   - K = XW^K (keys)
-   - V = XW^V (values)
+   - Q = $XW^Q$ (queries)
+   - K = $XW^K$ (keys)
+   - V = $XW^V$ (values)
 
 2. **Compute attention**:
-$$\text{SelfAttention}(X) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
+$$\text{SelfAttention}(X) = \text{softmax}\left(\frac{$QK^T$}{\sqrt{d_k}}\right) V$$
 
 3. **Output**: Each position gets a weighted combination of all values.
 
@@ -84,7 +84,7 @@ After:  output_i = Σⱼ α_ij · v_j
 
 ### Learned Relevance
 
-The model learns what's relevant through W^Q, W^K, W^V:
+The model learns what's relevant through $W^Q$, $W^K$, $W^V$:
 
 ```
 Position i asks: "What's relevant to me?"  → query q_i
@@ -136,7 +136,7 @@ V = X @ W_V = [
 
 ### Attention Scores
 
-Compute QK^T (before scaling):
+Compute $QK^T$ (before scaling):
 
 ```
            The   cat   sat
@@ -257,9 +257,9 @@ For self-attention with:
 
 Parameters:
 
-- W^Q: d × d_k
-- W^K: d × d_k
-- W^V: d × d_v
+- $W^Q$: d × d_k
+- $W^K$: d × d_k
+- $W^V$: d × d_v
 - **Total**: d(2d_k + d_v)
 
 Typical setting (d = d_k = d_v = 512):
@@ -271,7 +271,7 @@ Typical setting (d = d_k = d_v = 512):
 | Operation | FLOPs | Memory |
 |-----------|-------|--------|
 | Q, K, V projection | O(nd²) | O(nd) |
-| QK^T | O(n²d) | O(n²) |
+| $QK^T$ | O(n²d) | O(n²) |
 | Softmax | O(n²) | O(n²) |
 | Attention × V | O(n²d) | O(nd) |
 | **Total** | **O(n²d)** | **O(n² + nd)** |
@@ -400,7 +400,7 @@ This allows gradients to flow directly and helps with training deep networks.
 
 2. **Visualize attention**: For the sentence "The cat sat on the mat", plot the attention matrix.
 
-3. **Symmetry breaking**: If W^Q = W^K, what happens? When might this be useful?
+3. **Symmetry breaking**: If $W^Q$ = $W^K$, what happens? When might this be useful?
 
 4. **Complexity analysis**: For n=1000, d=512, compute the number of FLOPs.
 
@@ -411,7 +411,7 @@ This allows gradients to flow directly and helps with training deep networks.
 | Concept | Definition | Purpose |
 |---------|------------|---------|
 | Self-attention | Sequence attends to itself | Capture relationships within sequence |
-| Q, K, V projections | XW^Q, XW^K, XW^V | Different roles for matching and retrieval |
+| Q, K, V projections | $XW^Q$, $XW^K$, $XW^V$ | Different roles for matching and retrieval |
 | Attention matrix | [n × n] weights | Shows what each position attends to |
 | Output | Weighted sum of values | Contextualized representations |
 

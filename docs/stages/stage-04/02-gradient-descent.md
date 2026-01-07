@@ -38,13 +38,13 @@ This is exactly the negative gradient direction (normalized). Taking Δθ = -η�
 
 Let's be more rigorous. The second-order Taylor expansion is:
 
-$$L(\theta + \Delta\theta) = L(\theta) + \nabla L(\theta)^T \Delta\theta + \frac{1}{2} \Delta\theta^T H \Delta\theta + O(\|\Delta\theta\|^3)$$
+$$L(\theta + \Delta\theta) = L(\theta) + \nabla L(\theta)^T \Delta\theta + \frac{1}{2} \Delta\$theta^T$ H \Delta\theta + O(\|\Delta\theta\|^3)$$
 
 where H is the Hessian matrix.
 
 Setting Δθ = -η∇L:
 
-$$L(\theta - \eta\nabla L) = L(\theta) - \eta \|\nabla L\|^2 + \frac{\eta^2}{2} \nabla L^T H \nabla L + O(\eta^3)$$
+$$L(\theta - \eta\nabla L) = L(\theta) - \eta \|\nabla L\|^2 + \frac{\$eta^2$}{2} \nabla $L^T$ H \nabla L + O(\$eta^3$)$$
 
 For small η, the dominant term is $-\eta \|\nabla L\|^2 < 0$.
 

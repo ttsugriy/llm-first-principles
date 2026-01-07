@@ -105,10 +105,10 @@ Training in lower precision saves memory and compute.
 
 | Type | Bits | Range | Used For |
 |------|------|-------|----------|
-| FP32 | 32 | 10^38 | Original training |
-| FP16 | 16 | 10^4 | Forward/backward |
-| BF16 | 16 | 10^38 | Modern default |
-| FP8 | 8 | 10^2 | Emerging |
+| FP32 | 32 | $10^38$ | Original training |
+| FP16 | 16 | $10^4$ | Forward/backward |
+| BF16 | 16 | $10^38$ | Modern default |
+| FP8 | 8 | $10^2$ | Emerging |
 
 ### FP16 vs BF16
 

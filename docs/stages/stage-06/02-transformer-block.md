@@ -165,7 +165,7 @@ Research suggests FFN layers store factual knowledge, while attention handles ro
 | SwiGLU | Swish(xW) × (xV) | LLaMA, PaLM |
 
 **GELU** (Gaussian Error Linear Unit):
-$$\text{GELU}(x) = x \cdot \Phi(x) \approx 0.5x(1 + \tanh(\sqrt{2/\pi}(x + 0.044715x^3)))$$
+$$\text{GELU}(x) = x \cdot \Phi(x) \approx 0.5x(1 + \tanh(\sqrt{2/\pi}(x + 0.$044715x^3$)))$$
 
 **SwiGLU** (Gated Linear Unit with Swish):
 $$\text{SwiGLU}(x) = \text{Swish}(xW_1) \odot (xW_2)$$
@@ -176,7 +176,7 @@ SwiGLU has become popular because it empirically works better, though at the cos
 
 Layer normalization normalizes across the feature dimension:
 
-$$\text{LayerNorm}(x) = \gamma \odot \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta$$
+$$\text{LayerNorm}(x) = \gamma \odot \frac{x - \mu}{\sqrt{\$sigma^2$ + \epsilon}} + \beta$$
 
 Where:
 
@@ -203,7 +203,7 @@ LayerNorm is essential for:
 
 A simpler variant used by LLaMA:
 
-$$\text{RMSNorm}(x) = \frac{x}{\sqrt{\text{mean}(x^2) + \epsilon}} \cdot \gamma$$
+$$\text{RMSNorm}(x) = \frac{x}{\sqrt{\text{mean}($x^2$) + \epsilon}} \cdot \gamma$$
 
 No mean subtraction, no bias term. Faster and works just as well.
 
@@ -329,7 +329,7 @@ For one Transformer block:
 
 With d_ff = 4 × d_model:
 
-$$\text{Params per block} \approx 4d^2 + 8d^2 = 12d^2$$
+$$\text{Params per block} \approx $4d^2$ + $8d^2$ = 12d^2$$
 
 For d_model = 768 (GPT-2 small): ~7M parameters per block
 

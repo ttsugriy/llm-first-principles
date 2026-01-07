@@ -183,19 +183,19 @@ $$L = -\log \hat{P}(y | x; \theta)$$
 
 Recall that the model computes:
 
-$$\hat{P}(c | x; \theta) = \text{softmax}(\text{logits})_c = \frac{e^{z_c}}{\sum_{c'} e^{z_{c'}}}$$
+$$\hat{P}(c | x; \theta) = \text{softmax}(\text{logits})_c = \frac{$e^{z_c}$}{\sum_{c'} $e^{z_{c'}$}}$$
 
 
 Where z are the logits (outputs of the final linear layer).
 
 Substituting:
 
-$$L = -\log \frac{e^{z_y}}{\sum_c e^{z_c}}$$
+$$L = -\log \frac{$e^{z_y}$}{\sum_c $e^{z_c}$}$$
 
 
 ### Simplifying
 
-$$L = -\log e^{z_y} + \log \sum_c e^{z_c}$$
+$$L = -\log $e^{z_y}$ + \log \sum_c e^{z_c}$$
 
 
 $$L = -z_y + \log \sum_c e^{z_c}$$
@@ -212,7 +212,7 @@ $$\text{LSE}(z) = \log \sum_c e^{z_c}$$
 
 For N examples:
 
-$$L = \frac{1}{N}\sum_{i=1}^{N} \left( -z_{y_i}^{(i)} + \text{LSE}(z^{(i)}) \right)$$
+$$L = \frac{1}{N}\sum_{i=1}^{N} \left( -z_{y_i}^{(i)} + \text{LSE}($z^{(i)}$) \right)$$
 
 
 Where $z^{(i)}$ are the logits for example i, and $y_i$ is the true character index.
@@ -239,12 +239,12 @@ $$L = -z_y + \log \sum_c e^{z_c}$$
 
 For the logit of the true class:
 
-$$\frac{\partial L}{\partial z_y} = -1 + \frac{e^{z_y}}{\sum_c e^{z_c}} = -1 + \hat{P}(y | x)$$
+$$\frac{\partial L}{\partial z_y} = -1 + \frac{$e^{z_y}$}{\sum_c $e^{z_c}$} = -1 + \hat{P}(y | x)$$
 
 
 For any other logit $z_c$ where c ≠ y:
 
-$$\frac{\partial L}{\partial z_c} = 0 + \frac{e^{z_c}}{\sum_c e^{z_c}} = \hat{P}(c | x)$$
+$$\frac{\partial L}{\partial z_c} = 0 + \frac{$e^{z_c}$}{\sum_c $e^{z_c}$} = \hat{P}(c | x)$$
 
 
 ### The Beautiful Result
@@ -280,19 +280,19 @@ Let's prove the result rigorously.
 
 Given logits $z \in \mathbb{R}^{|V|}$ and true class y:
 
-$$\hat{P}(c | x) = \frac{e^{z_c}}{\sum_{c'} e^{z_{c'}}} = \frac{e^{z_c}}{Z}$$
+$$\hat{P}(c | x) = \frac{$e^{z_c}$}{\sum_{c'} $e^{z_{c'}$}} = \frac{$e^{z_c}$}{Z}$$
 
 
 Where $Z = \sum_c e^{z_c}$ (partition function).
 
 Loss:
 
-$$L = -\log \hat{P}(y | x) = -\log e^{z_y} + \log Z = -z_y + \log Z$$
+$$L = -\log \hat{P}(y | x) = -\log $e^{z_y}$ + \log Z = -z_y + \log Z$$
 
 
 ### Derivative of Partition Function
 
-$$\frac{\partial}{\partial z_c} \log Z = \frac{1}{Z} \frac{\partial Z}{\partial z_c} = \frac{1}{Z} e^{z_c} = \hat{P}(c | x)$$
+$$\frac{\partial}{\partial z_c} \log Z = \frac{1}{Z} \frac{\partial Z}{\partial z_c} = \frac{1}{Z} $e^{z_c}$ = \hat{P}(c | x)$$
 
 
 ### Derivative of Loss w.r.t. z_y
@@ -395,7 +395,7 @@ Direct computation $\log(\sum e^{z_i})$ can overflow/underflow.
 
 Using LSE trick:
 
-$$\log \sum_i e^{z_i} = \max(z) + \log \sum_i e^{z_i - \max(z)}$$
+$$\log \sum_i $e^{z_i}$ = \max(z) + \log \sum_i e^{z_i - \max(z)}$$
 
 
 After subtracting max, all exponents are ≤ 0, preventing overflow.

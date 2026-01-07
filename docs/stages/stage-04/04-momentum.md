@@ -63,12 +63,12 @@ Where:
 
 Expand the velocity term:
 
-$$v_t = \eta \nabla L_t + \beta \eta \nabla L_{t-1} + \beta^2 \eta \nabla L_{t-2} + ...$$
+$$v_t = \eta \nabla L_t + \beta \eta \nabla L_{t-1} + \$beta^2$ \eta \nabla L_{t-2} + ...$$
 
 This is an **exponentially weighted moving average** of gradients!
 
 - Recent gradients have weight ~1
-- Old gradients have weight ~β^t → 0
+- Old gradients have weight ~$β^t$ → 0
 
 ### Intuition 2: Dampening Oscillations
 
@@ -92,7 +92,7 @@ Without momentum:        With momentum:
 
 After many steps with consistent gradient g:
 
-$$v_\infty = g + \beta g + \beta^2 g + ... = \frac{g}{1-\beta}$$
+$$v_\infty = g + \beta g + \$beta^2$ g + ... = \frac{g}{1-\beta}$$
 
 The effective learning rate becomes $\frac{\eta}{1-\beta}$.
 
@@ -163,7 +163,7 @@ Nesterov "looks ahead" to where momentum will take us, then corrects. This provi
 
 **Theorem** (Nesterov, 1983): For smooth convex functions with optimal β:
 
-$$L(\theta_T) - L(\theta^*) \leq O\left(\frac{1}{T^2}\right)$$
+$$L(\theta_T) - L(\theta^*) \leq O\left(\frac{1}{$T^2$}\right)$$
 
 This is **optimal** for first-order methods! (Compared to O(1/T) for vanilla GD)
 

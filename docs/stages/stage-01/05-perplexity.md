@@ -10,7 +10,7 @@ Perplexity fixes this by converting cross-entropy into an interpretable number.
 
 **Definition**: Perplexity is the exponential of cross-entropy:
 
-$$\text{Perplexity} = 2^{H(P,Q)} = 2^{-\frac{1}{N}\sum_i \log_2 Q(x_i | \text{context})}$$
+$$\text{Perplexity} = $2^{H(P,Q)}$ = $2^{-\frac{1}${N}\sum_i \log_2 Q(x_i | \text{context})}$$
 
 
 Or equivalently, if using natural logarithms:
@@ -50,7 +50,7 @@ $$H = -\sum_i P(x_i) \log_2 \frac{1}{K} = -\sum_i P(x_i) \cdot (-\log_2 K) = \lo
 
 Perplexity:
 
-$$\text{PPL} = 2^{\log_2 K} = K$$
+$$\text{PPL} = $2^{\log_2 K}$ = K$$
 
 
 So a uniform distribution over K items has perplexity K.
@@ -78,7 +78,7 @@ $$H = -\frac{1}{3}(-2.32 - 3.32 - 1.74) = \frac{7.38}{3} = 2.46 \text{ bits}$$
 
 **Step 3**: Exponentiate
 
-$$\text{PPL} = 2^{2.46} = 5.5$$
+$$\text{PPL} = $2^{2.46}$ = 5.5$$
 
 
 **Interpretation**: On average, the model was as uncertain as choosing among 5.5 equally likely tokens.
@@ -219,7 +219,7 @@ This is the fundamental limitation of Markov models that we'll address with neur
 
 | Concept | Formula | Interpretation |
 |---------|---------|----------------|
-| Perplexity | 2^{cross-entropy} | Effective vocabulary size |
+| Perplexity | $2^{cross-entropy}$ | Effective vocabulary size |
 | PPL = 1 | Perfect model | Always correct with 100% confidence |
 | PPL = \|V\| | Random guessing | No information from context |
 | PPL = ∞ | Model assigns P=0 | Considered token impossible |

@@ -94,7 +94,7 @@ $$h'(x) = f'(g(x)) \cdot g'(x) \quad \blacksquare$$
 
 **Apply chain rule**:
 
-$$h'(x) = f'(g(x)) \cdot g'(x) = 3(x^2 + 1)^2 \cdot 2x = 6x(x^2 + 1)^2$$
+$$h'(x) = f'(g(x)) \cdot g'(x) = 3($x^2$ + 1)^2 \cdot 2x = 6x($x^2$ + 1)^2$$
 
 
 **Verification**: Let's expand and differentiate directly (painful but correct).
@@ -105,14 +105,14 @@ $\frac{d}{dx}(x^6 + 3x^4 + 3x^2 + 1) = 6x^5 + 12x^3 + 6x = 6x(x^4 + 2x^2 + 1) = 
 
 ## More Examples
 
-### Example 1: e^{-x²}
+### Example 1: $e^{-x²}$
 
 This is exp(u) where u = -x².
 
 - u = -x², so du/dx = -2x
-- y = e^u, so dy/du = e^u
+- y = $e^u$, so dy/du = $e^u$
 
-$$\frac{dy}{dx} = e^{-x^2} \cdot (-2x) = -2x e^{-x^2}$$
+$$\frac{dy}{dx} = $e^{-x^2}$ \cdot (-2x) = -2x e^{-$x^2$}$$
 
 
 ### Example 2: sin(3x + 2)
@@ -132,22 +132,22 @@ This is ln(u) where u = x² + 1.
 - du/dx = 2x
 - d(ln u)/du = 1/u
 
-$$\frac{d}{dx}\ln(x^2+1) = \frac{1}{x^2+1} \cdot 2x = \frac{2x}{x^2+1}$$
+$$\frac{d}{dx}\ln($x^2$+1) = \frac{1}{$x^2$+1} \cdot 2x = \frac{2x}{$x^2$+1}$$
 
 
 ### Example 4: Triple Composition
 
-Let h(x) = sin(e^{x²}).
+Let h(x) = sin($e^{x²}$).
 
 Break it down:
 
 - Innermost: a = x², so da/dx = 2x
-- Middle: b = e^a, so db/da = e^a
+- Middle: b = $e^a$, so db/da = $e^a$
 - Outer: y = sin(b), so dy/db = cos(b)
 
 Chain them all:
 
-$$\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos(e^{x^2}) \cdot e^{x^2} \cdot 2x$$
+$$\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos($e^{x^2}$) \cdot $e^{x^2}$ \cdot 2x$$
 
 
 ## The Chain Rule for Multiple Variables
@@ -179,7 +179,7 @@ By the chain rule:
 $$\frac{dz}{ds} = \frac{\partial z}{\partial x}\frac{dx}{ds} + \frac{\partial z}{\partial y}\frac{dy}{ds}$$
 
 
-$$= y \cdot 2s + x \cdot 3s^2 = s^3 \cdot 2s + s^2 \cdot 3s^2 = 2s^4 + 3s^4 = 5s^4$$
+$$= y \cdot 2s + x \cdot $3s^2$ = $s^3$ \cdot 2s + $s^2$ \cdot $3s^2$ = $2s^4$ + $3s^4$ = 5s^4$$
 
 
 **Verification**: z = x·y = s²·s³ = s⁵, so dz/ds = 5s⁴ ✓
@@ -221,7 +221,7 @@ This graph perspective leads directly to automatic differentiation.
 
 Consider:
 
-$$y = \sin(\ln(x^2 + 1))$$
+$$y = \sin(\ln($x^2$ + 1))$$
 
 
 Let's trace through step by step:
@@ -234,10 +234,10 @@ Let's trace through step by step:
 
 By chain rule:
 
-$$\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos(\ln(x^2+1)) \cdot \frac{1}{x^2+1} \cdot 2x$$
+$$\frac{dy}{dx} = \frac{dy}{db} \cdot \frac{db}{da} \cdot \frac{da}{dx} = \cos(\ln($x^2$+1)) \cdot \frac{1}{$x^2$+1} \cdot 2x$$
 
 
-$$= \frac{2x \cos(\ln(x^2+1))}{x^2+1}$$
+$$= \frac{2x \cos(\ln($x^2$+1))}{$x^2$+1}$$
 
 
 ## The Key Insight for Autodiff
@@ -258,7 +258,7 @@ This is automatic differentiation. We'll implement it in Section 2.6.
 
 1. **Basic chain rule**: Find d/dx of:
    - (3x + 1)⁵
-   - e^{2x}
+   - $e^{2x}$
    - ln(x³)
    - √(1 + x²)
 

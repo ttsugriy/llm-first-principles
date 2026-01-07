@@ -221,7 +221,7 @@ If all weights are zero:
 
 Simple approach: small random values.
 
-$$W_{ij} \sim \mathcal{N}(0, \sigma^2)$$
+$$W_{ij} \sim \mathcal{N}(0, \$sigma^2$)$$
 
 
 But what should σ be?
@@ -232,7 +232,7 @@ Consider a single layer: y = Wx where x ∈ ℝⁿ.
 
 If $x_i$ has variance $\text{Var}(x)$ and $W_{ij}$ has variance σ²:
 
-$$\text{Var}(y_j) = \sum_{i=1}^{n} \text{Var}(W_{ij}) \cdot \text{Var}(x_i) = n \cdot \sigma^2 \cdot \text{Var}(x)$$
+$$\text{Var}(y_j) = \sum_{i=1}^{n} \text{Var}(W_{ij}) \cdot \text{Var}(x_i) = n \cdot \$sigma^2$ \cdot \text{Var}(x)$$
 
 
 The variance grows by factor n!

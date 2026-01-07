@@ -117,7 +117,7 @@ where η is the learning rate.
 
 The Hessian matrix H contains all second derivatives:
 
-$$H_{ij} = \frac{\partial^2 L}{\partial \theta_i \partial \theta_j}$$
+$$H_{ij} = \frac{\$partial^2$ L}{\partial \theta_i \partial \theta_j}$$
 
 The Hessian tells us about curvature:
 
@@ -127,7 +127,7 @@ The Hessian tells us about curvature:
 
 **Second-order methods** like Newton's method use the Hessian to take smarter steps:
 
-$$\theta_{new} = \theta_{old} - H^{-1} \nabla L$$
+$$\theta_{new} = \theta_{old} - $H^{-1}$ \nabla L$$
 
 **Problem**: For 100M parameters, H is a 100M × 100M matrix. Computing and inverting it is impossible.
 
@@ -162,7 +162,7 @@ In the elongated case, the gradient points sideways, not toward the minimum. Thi
 |-----------|------|-------|
 | Compute gradient | O(n) | One backward pass |
 | Compute full Hessian | O(n²) | Prohibitive for large n |
-| Store Hessian | O(n²) | 100M params = 10^16 bytes |
+| Store Hessian | O(n²) | 100M params = $10^16$ bytes |
 | Hessian-vector product | O(n) | Used in some methods |
 
 This is why first-order methods dominate deep learning.

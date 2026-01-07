@@ -333,7 +333,7 @@ Still seeing:
 
 | Concept | Definition | Implication |
 |---------|------------|-------------|
-| Scaling law | L ∝ N^{-α} | Performance predictable |
+| Scaling law | L ∝ $N^{-α}$ | Performance predictable |
 | Chinchilla rule | D ≈ 20N | Train longer on less data |
 | Compute-optimal | Balance N and D | Don't over-parameterize |
 | Emergence | Sudden capability gain | Scale unlocks abilities |

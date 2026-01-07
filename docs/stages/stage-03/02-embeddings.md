@@ -381,7 +381,7 @@ Before training, embeddings must start somewhere. The initialization affects:
 
 **Random Normal**:
 
-$$E[i,j] \sim \mathcal{N}(0, \sigma^2)$$
+$$E[i,j] \sim \mathcal{N}(0, \$sigma^2$)$$
 
 
 With σ typically 0.01 to 0.1.
@@ -415,7 +415,7 @@ Small random values that will be refined by training.
 |---------|-------------|
 | One-hot | Sparse, high-dimensional, no similarity |
 | Embedding | Dense, low-dimensional, learned similarity |
-| Embedding matrix | E ∈ ℝ^{&#124;V&#124;×d}, lookup table of vectors |
+| Embedding matrix | E ∈ $ℝ^{&#124;V&#124;×d}$, lookup table of vectors |
 | Lookup operation | embed(i) = E[i,:], O(d) not O(&#124;V&#124;d) |
 | Why it works | Similar contexts → similar gradients → similar embeddings |
 | Geometry | Clusters, directions, linear relationships |

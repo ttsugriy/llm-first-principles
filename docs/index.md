@@ -152,3 +152,26 @@ By the end of this book, you will have implemented:
     [:octicons-arrow-right-24: Capstone](capstone/index.md)
 
 </div>
+
+---
+
+## More from the Author
+
+### The First Principles Trilogy
+
+This book is part of a series teaching ML fundamentals from first principles:
+
+📘 **Building LLMs from First Principles** *(You are here)*
+Learn how transformers work by building them from scratch—full math derivations, working code, and comprehensive test suites. From Markov chains to GPT.
+
+🔬 **[Mechanistic Interpretability from First Principles](https://ttsugriy.github.io/mechinterp-first-principles/)**
+Reverse-engineer neural networks to understand their internal algorithms. Features, superposition, circuits, and sparse autoencoders explained from the ground up.
+
+⚡ **[The Algebra of Speed](https://ttsugriy.github.io/performance-book/)**
+Mathematical foundations of computational performance. Why FlashAttention, LoRA, and quantization work—and how to recognize when similar optimizations apply to your problems.
+
+### Blog
+
+✍️ **[Software Bits](https://softwarebits.substack.com/)** — Short, focused essays on performance, ML, and computer science fundamentals. Subscribe for updates.
+
+💻 **[GitHub: perf-bits](https://github.com/ttsugriy/perf-bits)** — Blog posts with full code and interactive demos.

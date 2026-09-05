@@ -201,5 +201,5 @@ This page collects the most valuable external resources for each topic covered i
 ### Newsletters
 
 - [The Batch](https://www.deeplearning.ai/the-batch/) - DeepLearning.AI
+- [AI Weekly](https://aiweekly.co/) - Discover what AI experts are reading and sharing right now
 - [Import AI](https://jack-clark.net/) - Jack Clark
-
